@@ -16,7 +16,7 @@
 // EXIT: 1 if any category exceeds its budget.
 // ============================================================
 
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
 import { resolve, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -29,10 +29,24 @@ const LIST = process.argv.includes("--list");
 
 // Consumer files only. Generated artifacts are exempt by definition — they are
 // where the literals are SUPPOSED to live.
+//
+// The patterns/ directory is enumerated at run time rather than listed, and that
+// matters more than it looks. Extracting a component MOVES its literals. With a
+// hardcoded list, every extraction would silently shrink the count — the ratchet
+// would record progress for code that merely changed address, and would then
+// refuse to let that number go back up. Reading the directory means a file
+// cannot leave the audit by being created.
+const PATTERNS_DIR = "Onboarding Flow/src/components/patterns";
 const SOURCES = [
   "Onboarding Flow/src/components/Onboarding.tsx",
   "Onboarding Flow/src/components/MainApp.tsx",
   "Onboarding Flow/src/index.css",
+  ...(existsSync(resolve(ROOT, PATTERNS_DIR))
+    ? readdirSync(resolve(ROOT, PATTERNS_DIR))
+        .filter((f) => /\.(tsx?|css)$/.test(f))
+        .sort()
+        .map((f) => `${PATTERNS_DIR}/${f}`)
+    : []),
 ];
 
 // Reuse the comment stripper's contract: comments are blanked space-for-space

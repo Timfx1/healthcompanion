@@ -42,28 +42,14 @@
 import { useState, useRef, useEffect } from "react";
 import { D, c as s, theme, scale, painStep, type Mode } from "./tokens";
 import LockBadge from "./patterns/LockBadge";
+import LockedCard from "./patterns/LockedCard";
+import Toast from "./patterns/Toast";
+import InsightSentence from "./patterns/InsightSentence";
+import PainSparklineWithCorridor from "./patterns/PainSparklineWithCorridor";
+import { cat, type Category } from "./patterns/category";
 
-// ============================================================
-// CATEGORY COLOUR ACCESS
-//
-// Components below take a category NAME, never a colour string, and resolve
-// mark/ink/onMark themselves at the point of use.
-//
-// That is not a style preference — it is the fix for a whole class of bug this
-// system is supposed to prevent. When a component takes `color: string`, the
-// call site has to decide mark-vs-ink, and the call site is exactly where that
-// knowledge is absent: it knows "this row is about sleep", not "this value will
-// be painted as a 2px data stroke". Every mark-as-text and mark-as-stroke defect
-// found in the contrast sweep came through a `color` prop or a `color` field on
-// a data object — the trend badge word, the sparkline stroke, the fast-path
-// selected word, the milestone title. None came from a direct token reference.
-//
-// Passing the name moves the decision inside the component that does the
-// painting, which is the only place that can get it right, and leaves the call
-// site with nothing to get wrong.
-// ============================================================
-type Category = "pain" | "sleep" | "energy" | "mood" | "meds";
-const cat = (mode: Mode, c: Category) => theme(mode).color.category[c];
+// Category colour access now lives in patterns/category.ts, next to the pattern
+// components that were the reason it exists.
 
 // ============================================================
 // LIGHT MODE vs DARK MODE — VISUAL COMPARISON GUIDE (MAIN APP)
@@ -445,90 +431,6 @@ function SectionLabel({ label, mode }: { label: string; mode: Mode }) {
   return (
     <div style={{ fontSize: scale.font.size["2xs"], fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: s(D.textSec, D.lTextSec, mode), marginBottom: 8 }}>
       {label}
-    </div>
-  );
-}
-
-// ============================================================
-// COMPONENT: LockBadge
-// PURPOSE: Visual lock indicator for premium-gated features.
-//   C8 RULE: Only used for:
-//     - Advanced insight correlations (Sleep↔Pain, Activity patterns)
-//     - History depth gate (beyond 30 days)
-//     - Photo compare feature
-//     - Multiple recovery profiles
-//   C8 RULE: NOT shown on:
-//     - Check-in flow
-//     - Quick capture field
-//     - Timeline, journal
-//     - Basic charts (pain trend, week comparison, mini sparklines)
-//     - Medications
-//     - Appointments
-//     - Doctor report
-//   SIZE: Default 18px circle. Customizable via size prop.
-//   APPEARANCE: #5C58788C bg, blur(4px), white SVG padlock.
-// ============================================================
-
-// ============================================================
-// COMPONENT: LockedCard
-// PURPOSE: Overlay wrapper for premium-locked content.
-//   C8: Only used for advanced insight cards (not basic charts, doctor report, etc.)
-//
-// VISUAL EFFECT:
-//   Container: filter: saturate(0.55) opacity(0.75) — desaturates underlying content.
-//   Overlay: absolute inset-0, #15141F8C bg + blur(2px).
-//   Center: LockBadge (28px) + hook text (11px semibold, max-width 140px).
-//
-// INTERACTION:
-//   BUTTON: Entire card tappable via onClick on wrapper.
-//   ACTION: onUnlock() → setShowPaywall(true) in MainApp → PaywallSheet opens.
-//   PRESS FEEDBACK: .btn-press (scale 0.97, 120ms).
-//   hook: Short persuasive sentence shown over the blur (e.g. "See how sleep affects your pain").
-// ============================================================
-function LockedCard({ mode, children, onUnlock, hook }: { mode: Mode; children: React.ReactNode; onUnlock: () => void; hook: string }) {
-  return (
-    <div onClick={onUnlock} className="btn-press relative overflow-hidden rounded-2xl cursor-pointer"
-      style={{ border: `1px solid ${s(D.border, D.lBorder, mode)}`, filter: "saturate(0.55) opacity(0.75)" }}>
-      {children}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-2xl"
-        style={{ background: "#15141F8C", backdropFilter: "blur(2px)" }}>
-        <LockBadge mode={mode} size={28} />
-        <span style={{ fontSize: scale.font.size["2xs"], color: "#FFFFFFD9", fontWeight: 600, textAlign: "center", maxWidth: 140, lineHeight: 1.3 }}>{hook}</span>
-      </div>
-    </div>
-  );
-}
-
-// ============================================================
-// COMPONENT: Toast
-// PURPOSE: Non-blocking confirmation notification.
-//   Appears at top of phone shell after quick-capture save.
-//
-// POSITION: absolute, top 52px (below status bar), centered via translateX(-50%).
-//   zIndex 60 — above all other overlays.
-//   pointerEvents: none — does not block touch events beneath it.
-//
-// ANIMATION:
-//   APPEAR: opacity 0→1 — transition: 250ms ease-out (on visible = true).
-//   DISMISS: opacity 1→0 — same transition (on visible = false).
-//   AUTO-DISMISS: setTimeout 2400ms in HomeScreen sets visible → false.
-//
-// CONTENT: Green checkmark SVG + white message text.
-// ============================================================
-function Toast({ message, visible }: { message: string; visible: boolean }) {
-  return (
-    <div className="absolute flex items-center gap-2 px-4 rounded-full"
-      style={{
-        top: 52, left: "50%", transform: "translateX(-50%)", height: 36, zIndex: scale.z.toast,
-        background: s(D.card, "#333", "dark"),
-        boxShadow: "0 4px 20px #0000004D",
-        opacity: visible ? 1 : 0,
-        transition: `opacity ${scale.duration.medium}ms ease-out`,
-        pointerEvents: "none",
-        whiteSpace: "nowrap",
-      }}>
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke={D.mood} strokeWidth="2" strokeLinecap="round"><path d="M2 7l3 3 7-7"/></svg>
-      <span style={{ fontSize: scale.font.size.xs, fontWeight: 600, color: "#fff" }}>{message}</span>
     </div>
   );
 }
@@ -1457,100 +1359,6 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
 //   8. Activity pattern (LockedCard)
 // ============================================================
 const PAIN_DATA = [6,7,5,5,4,6,4,3,5,4,3,4,3,4,3,2,4,3,3,2,3,3,2,3,2,3,2,3,3,2];
-
-// ============================================================
-// COMPONENT: InsightSentence
-// PURPOSE: C5 — Human-readable trend statement above each chart.
-//   NEVER relies on color alone — always shows trend icon + word badge + text.
-//   Trend badge: rounded-full, category color 22% bg, colored text.
-//   Text: 14px semibold, primary text color, 1.35 line-height.
-//   marginBottom: 8px (above chart).
-// ============================================================
-function InsightSentence({ text, trend, category, mode }: { text: string; trend: "up" | "down" | "stable"; category: Category; mode: Mode }) {
-  const trendIcon = trend === "down" ? "↓" : trend === "up" ? "↑" : "→";
-  const trendWord = trend === "down" ? "Decreasing" : trend === "up" ? "Increasing" : "Stable";
-  const k = cat(mode, category);
-  return (
-    <div className="flex items-start gap-2 mb-2">
-      {/* Trend badge: icon + word — never colour alone.
-          The FILL and BORDER are mark (decorative tints of the category hue);
-          the WORD is ink, because it carries the meaning and must be readable.
-          It used to be mark too, which on light gave 1.40-1.80:1 against the
-          very tint sitting behind it. Nothing caught it because no pair
-          declared text on a tint of its own mark. */}
-      <div className="flex items-center gap-1 px-2 py-0.5 rounded-full shrink-0 mt-0.5" style={{ background: `${k.mark}22`, border: `1px solid ${k.mark}44` }}>
-        <span style={{ fontSize: scale.font.size["2xs"], fontWeight: 700, color: k.ink }}>{trendIcon} {trendWord}</span>
-      </div>
-      <div style={{ fontSize: scale.font.size.base, fontWeight: 600, color: s(D.text, D.lText, mode), lineHeight: 1.35 }}>{text}</div>
-    </div>
-  );
-}
-
-// ============================================================
-// COMPONENT: PainSparklineWithCorridor
-// PURPOSE: C4 — SVG sparkline chart with optional corridor band.
-//   The corridor is always a RANGE (common population range),
-//   never a target line or pass/fail threshold.
-//
-// SVG STRUCTURE:
-//   viewBox: 0 0 300 {height}. Scales to container width via preserveAspectRatio="none".
-//   Area fill: polyline with fill={color}22 (below the line, to baseline).
-//   Line: polyline, 2px stroke, round caps/joins.
-//
-// CORRIDOR BAND (when showCorridor=true):
-//   rect: fills from corridorTop (pain=5) to corridorBot (pain=2).
-//   Fill: #9B8FE021 dark / #7C6FCD1A light.
-//   Top dashed line: 1px, strokeDasharray "4 3", bandBorder color.
-//   Bottom dashed line: same. Both indicate RANGE boundaries.
-//   corridorLabel (below chart): 10px italic, muted accent color.
-//   Text: "Common range for knee rehab, weeks 4–6 · Everyone heals differently ↗"
-//
-// HISTORY DEPTH GATE (rendered in ProgressScreen, not here):
-//   A gradient overlay + pill button is placed BELOW the chart card.
-//   This is a soft gate — never a hard modal block.
-//   BUTTON: "Unlock full history" pill → onPaywall() → PaywallSheet opens.
-// ============================================================
-function PainSparklineWithCorridor({ data, category, mode, height = 64, showCorridor = false, corridorLabel = "" }: {
-  data: number[]; category: Category; mode: Mode; height?: number; showCorridor?: boolean; corridorLabel?: string;
-}) {
-  const k = cat(mode, category);
-  const max = Math.max(...data) + 1;
-  const w = 300; const h = height;
-  const pts = data.map((v, i) => `${(i / (data.length - 1)) * w},${h - (v / max) * h}`).join(" ");
-  // C4: corridor = common range for knee rehab weeks 4–6 = pain 2–5
-  const corridorTop = h - (5 / max) * h;
-  const corridorBot = h - (2 / max) * h;
-  const bandColor = mode === "dark" ? "#9B8FE021" : "#7C6FCD1A";
-  const bandBorder = mode === "dark" ? "#9B8FE04D" : "#7C6FCD40";
-  return (
-    <div style={{ position: "relative" }}>
-      <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
-        {showCorridor && (
-          <>
-            {/* C4 CORRIDOR BAND: always a RANGE, not a target.
-                rect: filled band. dashed lines: range boundaries. */}
-            <rect x="0" y={corridorTop} width={w} height={corridorBot - corridorTop} fill={bandColor}/>
-            <line x1="0" y1={corridorTop} x2={w} y2={corridorTop} stroke={bandBorder} strokeWidth="1" strokeDasharray="4 3"/>
-            <line x1="0" y1={corridorBot} x2={w} y2={corridorBot} stroke={bandBorder} strokeWidth="1" strokeDasharray="4 3"/>
-          </>
-        )}
-        {/* Area fill: MARK. Decorative wash under the line, carries no meaning
-            on its own — the exact case the mark role exists for. */}
-        <polyline points={`0,${h} ${pts} ${w},${h}`} fill={`${k.mark}22`} stroke="none"/>
-        {/* Line: INK. This is the data. The token docs name a chart line as the
-            canonical thing that must NOT use mark, and it was using mark —
-            1.47-1.96:1 on light against a 3:1 non-text threshold. Now 4.80-4.84. */}
-        <polyline points={pts} fill="none" stroke={k.ink} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
-      {/* Corridor label — italic, muted accent, 10px */}
-      {showCorridor && corridorLabel && (
-        <div style={{ fontSize: scale.font.size["3xs"], color: mode === "dark" ? "#9B8FE0B3" : "#7C6FCDCC", marginTop: 2, fontStyle: "italic" }}>
-          {corridorLabel}
-        </div>
-      )}
-    </div>
-  );
-}
 
 function ProgressScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void }) {
   return (
