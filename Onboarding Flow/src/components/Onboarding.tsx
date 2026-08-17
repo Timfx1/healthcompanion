@@ -53,7 +53,7 @@
 // ============================================================
 
 import { useState, useEffect, useRef } from "react";
-import { D, c as s2, theme, scale, type Mode } from "./tokens";
+import { D, c as s2, theme, scale, painStep, type Mode } from "./tokens";
 import LockBadge from "./patterns/LockBadge";
 
 // ============================================================
@@ -1045,13 +1045,16 @@ function SymptomsScreen({ mode, selected, onToggle, onNext, onBack }: {
 //   - "Continue" primary button (always enabled)
 //
 // PAIN NUMERAL:
-//   Color: PAIN_COLORS[value] — green (0) → yellow (4–5) → red (9–10).
+//   Color: painStep(mode, value) — green (0) → yellow (4–5) → red (9–10).
+//   .ink writes the numeral, .mark fills the track. On light the ink ramp is
+//   darker (olive through the middle) because a readable yellow on near-white
+//   does not exist; on dark ink and mark are the same value.
 //   TRANSITION: color 200ms (inline style transition).
 //   Label: PAIN_LABELS[value] ("None", "Mild", "Moderate", "Severe", "Intense", "Unbearable").
 //   TRANSITION: all 150ms.
 //
 // RANGE SLIDER:
-//   Track background: linear-gradient — filled portion uses PAIN_COLORS[value],
+//   Track background: linear-gradient — filled portion uses painStep().mark,
 //   unfilled portion uses D.border/lBorder. Updates in real time.
 //   TRANSITION: background 200ms.
 //   Thumb: 24×24px white circle with drop shadow (see index.css).
@@ -1069,12 +1072,18 @@ function SymptomsScreen({ mode, selected, onToggle, onNext, onBack }: {
 //   Emoji row: animate-fade-up, delay 180ms.
 // ============================================================
 const PAIN_LABELS = ["None", "Mild", "Mild", "Mild", "Moderate", "Moderate", "Moderate", "Severe", "Severe", "Intense", "Unbearable"];
-const PAIN_COLORS = ["#A8D9B8","#A8D9B8","#B8DDA8","#D9DA8A","#F5D08A","#F5C070","#F5A860","#F2A09E","#E0748A","#D4607F","#BA4A79"];
 
+// The ramp that used to live here as a hardcoded array — duplicated verbatim in
+// MainApp.tsx — is now color.painScale in the token source, split mark/ink.
+//
+// It had no light-mode counterpart, and the numeral below was painted with the
+// FILL value: nine of its eleven steps failed the 3:1 large-text floor on the
+// light page, the worst at 1.37:1. Dark mode carried the design at 3.77-12.46,
+// which is why it read as fine.
 function PainScreen({ mode, value, onChange, onNext, onBack }: {
   mode: Mode; value: number; onChange: (v: number) => void; onNext: () => void; onBack: () => void;
 }) {
-  const color = PAIN_COLORS[value];
+  const step = painStep(mode, value);
   return (
     <div className="flex flex-col flex-1 px-6 pb-8">
       <div className="flex items-center gap-3 mb-6"><BackButton onClick={onBack} mode={mode} /></div>
@@ -1082,8 +1091,9 @@ function PainScreen({ mode, value, onChange, onNext, onBack }: {
       <div className="flex-1 flex flex-col justify-center items-center gap-8">
         {/* ANIMATION: animate-fade-up, delay 80ms — numeral entry */}
         <div className="animate-fade-up flex flex-col items-center gap-1" style={{ animationDelay: "80ms" }}>
-          {/* REACTIVE: color transitions 200ms as slider moves */}
-          <div style={{ fontSize: 80, fontWeight: 600, lineHeight: 1, color, transition: `color ${scale.duration.compact}ms` }}>{value}</div>
+          {/* REACTIVE: color transitions 200ms as slider moves.
+              INK, not mark — this is an 80px numeral, which is text. */}
+          <div style={{ fontSize: 80, fontWeight: 600, lineHeight: 1, color: step.ink, transition: `color ${scale.duration.compact}ms` }}>{value}</div>
           <div style={{ fontSize: 16, fontWeight: 500, color: s(D.textSec, D.lTextSec, mode), transition: `all ${scale.duration.quick}ms` }}>{PAIN_LABELS[value]}</div>
         </div>
 
@@ -1097,7 +1107,8 @@ function PainScreen({ mode, value, onChange, onNext, onBack }: {
             className="w-full"
             style={{
               appearance: "none", height: 8, borderRadius: scale.radius.sm, outline: "none",
-              background: `linear-gradient(to right, ${color} 0%, ${color} ${value * 10}%, ${s(D.border, D.lBorder, mode)} ${value * 10}%, ${s(D.border, D.lBorder, mode)} 100%)`,
+              /* MARK, not ink — the track is a fill, and the vivid ramp is right here. */
+              background: `linear-gradient(to right, ${step.mark} 0%, ${step.mark} ${value * 10}%, ${s(D.border, D.lBorder, mode)} ${value * 10}%, ${s(D.border, D.lBorder, mode)} 100%)`,
               transition: `background ${scale.duration.compact}ms`,
             }}
           />

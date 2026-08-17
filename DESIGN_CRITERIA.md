@@ -184,21 +184,22 @@ Recorded rather than hidden, per the rule at the top of this document. All figur
 
 That is not hypothetical. A read-through of the screens found **six rendered combinations that had never been declared, five of which failed** — including white on a category fill at **1.58:1**, in both modes, on a button label in the free experience: worse than anything the original audit had tracked as debt. All six are now declared and fixed; the count is 110 pair-mode combinations, 0 regressions, 0 debt. The full table and the three structural lessons are in `RECONCILIATION.md`.
 
-### Open — found, measured, not yet fixed
-
-**The pain numeral fails the large-text threshold on light, for most of its range.** The 80px score on the onboarding baseline screen and in the check-in sheet takes its colour from an 11-step ramp (`PAIN_COLORS`) that is hardcoded — and *duplicated verbatim* in `Onboarding.tsx` and `MainApp.tsx`. The ramp has no light-mode counterpart, so on the light page background:
+**The pain numeral — resolved.** The 80px score (and the 22px/700 one in the check-in sheet) took its colour from an 11-step ramp that was hardcoded and *duplicated verbatim* across both screen files, with no light-mode counterpart. Both numerals are large text, so the floor is 3:1, and on the light page:
 
 | Score | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Ratio | 1.48 | 1.48 | 1.41 | 1.37 | 1.38 | 1.56 | 1.85 | 1.91 | 2.80 | 3.41 | 4.54 |
+| Was | 1.48 | 1.48 | 1.41 | 1.37 | 1.38 | 1.56 | 1.85 | 1.91 | 2.80 | 3.41 | 4.54 |
+| Now | 3.23 | 3.23 | 3.20 | 3.20 | 3.24 | 3.23 | 3.22 | 3.22 | 3.21 | 3.41 | 4.54 |
 
-At 80px this is large text, so the threshold is 3:1 — **nine of the eleven steps fail**, and the captured baseline sits at score 5 (1.56:1). It is dark mode that carries this design: the same ramp clears 3.77–12.46 there.
+Nine of eleven steps failed; dark mode carried the design at 3.77–12.46, which is why it read as fine. It was the mark/ink split unapplied — a set of fills reused as text — and it is now `color.painScale`, split per step, consumed through `painStep(mode, score)`.
 
-This is the mark/ink split again, unapplied: the ramp is a set of *marks* (it fills the slider track, which is legitimate) being reused as *text*. The fix is an ink counterpart for the ramp, authored once as a token family so the two copies collapse into one. Not attempted here because it is 11 mode-paired values plus a re-baseline of two more screens, and it deserves its own pass rather than being appended to this one.
+Two things worth keeping from it. **The worst step was in the middle of the range** (score 3, 1.37:1), not at an end, which is why the eleven steps are declared as eleven pairs: a scale audited at one value tells you nothing about the rest. And **the light ink ramp goes olive through its yellow-green middle** — a colour light enough to read as "yellow" cannot also reach 3:1 against near-white. The hue journey survives; its brightness does not. The mark ramp keeps the vivid values wherever it fills rather than writes.
+
+### Open — found, measured, not yet fixed
 
 **The manifest is still hand-maintained.** Nothing verifies it covers what the screens render. The sweep above was done by reading code; the next undeclared combination will be exactly as invisible as these six were.
 
-**The fast-path fix is unbaselined.** `app-checkin` captures the fast path with nothing selected, so the selected-word contrast fix is not exercised by any baseline — it falls in the coverage gap already recorded in `tests/visual.spec.ts`.
+**Two contrast fixes are unbaselined, and it is the same gap both times.** `app-checkin` captures the fast path with nothing selected *and* the detail panel collapsed, so neither the selected-word fix nor the 22px pain numeral is exercised by any baseline. The pain-ramp change moved exactly one screenshot (`ob-05-pain-baseline`, light) when it should logically have moved two. This is the coverage gap already recorded in `tests/visual.spec.ts` — interactive states have no dev-route hook — and it is now demonstrably hiding real changes rather than only theoretically able to. Adding `&state=` to the dev route is the fix.
 
 **Structural gap:** the design file has no light-mode frames at all, so light mode has never been visually reviewed against a design — only implemented. That is the most likely explanation for why the light-mode failures cluster so heavily, and it is why the code is canonical for light mode by decision rather than by preference.
 

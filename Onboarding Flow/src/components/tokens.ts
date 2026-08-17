@@ -41,5 +41,5 @@
 //   screen files. `theme(mode)` has no raw-value channel.
 // ============================================================
 
-export { D, c, theme, scale } from "./tokens.generated";
+export { D, c, theme, scale, painStep } from "./tokens.generated";
 export type { Mode, Theme } from "./tokens.generated";

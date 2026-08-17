@@ -299,9 +299,34 @@ function emitWeb() {
   ts += `const THEMES = ${JSON.stringify(resolved.modes, null, 2)} as const;\n\n`;
   ts += `export const scale = ${JSON.stringify(resolved.primitive, null, 2)} as const;\n\n`;
   ts += `export function theme(mode: Mode) {\n  return THEMES[mode];\n}\n\n`;
+  ts += PAIN_STEP;
   ts += `export type Theme = (typeof THEMES)["dark"];\n`;
   return ts;
 }
+
+// The pain scale is the one colour family indexed by a RUNTIME NUMBER rather
+// than a name, so it gets an accessor instead of raw property access.
+//
+// Clamping is the whole reason it exists. The score comes from a range input;
+// an out-of-range or fractional index would return undefined, and an undefined
+// colour does not throw — it renders as no colour at all. A silently invisible
+// numeral is a worse failure than a crash, and it would only appear at the ends
+// of the scale, which is where a manual pass is least likely to look.
+const PAIN_STEP = [
+  "/**",
+  " * Colours for a 0-10 pain score. `mark` fills (slider track), `ink` writes",
+  " * (the numeral) — see color.painScale in the token source.",
+  " *",
+  " * Clamps and rounds, so a fractional or out-of-range score cannot produce an",
+  " * undefined colour that renders as nothing.",
+  " */",
+  "export function painStep(mode: Mode, score: number) {",
+  "  const i = Math.max(0, Math.min(10, Math.round(score)));",
+  '  return THEMES[mode].color.painScale[String(i) as keyof Theme["color"]["painScale"]];',
+  "}",
+  "",
+  "",
+].join("\n");
 
 // dist/tokens.native.ts — React Native shapes.
 function emitNative() {
@@ -319,6 +344,7 @@ function emitNative() {
   ts += `const THEMES = ${JSON.stringify(resolved.modes, null, 2)} as const;\n\n`;
   ts += `export const scale = ${JSON.stringify(resolved.primitive, null, 2)} as const;\n\n`;
   ts += `export function theme(mode: Mode) {\n  return THEMES[mode];\n}\n\n`;
+  ts += PAIN_STEP;
   ts += `export type Theme = (typeof THEMES)["dark"];\n`;
   ts += `export type ColorRole = keyof Theme["color"];\n`;
   return ts;

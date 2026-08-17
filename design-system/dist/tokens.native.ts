@@ -73,6 +73,52 @@ const THEMES = {
           "onMark": "#1A1830"
         }
       },
+      "painScale": {
+        "0": {
+          "mark": "#A8D9B8",
+          "ink": "#A8D9B8"
+        },
+        "1": {
+          "mark": "#A8D9B8",
+          "ink": "#A8D9B8"
+        },
+        "2": {
+          "mark": "#B8DDA8",
+          "ink": "#B8DDA8"
+        },
+        "3": {
+          "mark": "#D9DA8A",
+          "ink": "#D9DA8A"
+        },
+        "4": {
+          "mark": "#F5D08A",
+          "ink": "#F5D08A"
+        },
+        "5": {
+          "mark": "#F5C070",
+          "ink": "#F5C070"
+        },
+        "6": {
+          "mark": "#F5A860",
+          "ink": "#F5A860"
+        },
+        "7": {
+          "mark": "#F2A09E",
+          "ink": "#F2A09E"
+        },
+        "8": {
+          "mark": "#E0748A",
+          "ink": "#E0748A"
+        },
+        "9": {
+          "mark": "#D4607F",
+          "ink": "#D4607F"
+        },
+        "10": {
+          "mark": "#BA4A79",
+          "ink": "#BA4A79"
+        }
+      },
       "cta": {
         "from": "#6A5CB5",
         "to": "#7365C6",
@@ -422,6 +468,52 @@ const THEMES = {
           "icon": "meds",
           "label": "Medication",
           "onMark": "#1A1830"
+        }
+      },
+      "painScale": {
+        "0": {
+          "mark": "#A8D9B8",
+          "ink": "#71927C"
+        },
+        "1": {
+          "mark": "#A8D9B8",
+          "ink": "#71927C"
+        },
+        "2": {
+          "mark": "#B8DDA8",
+          "ink": "#79926F"
+        },
+        "3": {
+          "mark": "#D9DA8A",
+          "ink": "#8D8E5A"
+        },
+        "4": {
+          "mark": "#F5D08A",
+          "ink": "#9F875A"
+        },
+        "5": {
+          "mark": "#F5C070",
+          "ink": "#A9844D"
+        },
+        "6": {
+          "mark": "#F5A860",
+          "ink": "#B87E48"
+        },
+        "7": {
+          "mark": "#F2A09E",
+          "ink": "#B97A79"
+        },
+        "8": {
+          "mark": "#E0748A",
+          "ink": "#D06C80"
+        },
+        "9": {
+          "mark": "#D4607F",
+          "ink": "#D4607F"
+        },
+        "10": {
+          "mark": "#BA4A79",
+          "ink": "#BA4A79"
         }
       },
       "cta": {
@@ -858,6 +950,18 @@ export const scale = {
 
 export function theme(mode: Mode) {
   return THEMES[mode];
+}
+
+/**
+ * Colours for a 0-10 pain score. `mark` fills (slider track), `ink` writes
+ * (the numeral) — see color.painScale in the token source.
+ *
+ * Clamps and rounds, so a fractional or out-of-range score cannot produce an
+ * undefined colour that renders as nothing.
+ */
+export function painStep(mode: Mode, score: number) {
+  const i = Math.max(0, Math.min(10, Math.round(score)));
+  return THEMES[mode].color.painScale[String(i) as keyof Theme["color"]["painScale"]];
 }
 
 export type Theme = (typeof THEMES)["dark"];

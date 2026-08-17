@@ -59,6 +59,18 @@
     { "id": "category/mood onMark on mood fill",   "fg": "color.category.mood.onMark",   "bg": "color.category.mood.mark",   "usage": "body-text" },
     { "id": "category/meds onMark on meds fill",   "fg": "color.category.meds.onMark",   "bg": "color.category.meds.mark",   "usage": "body-text" },
 
+    { "id": "painScale/0 ink on base",  "fg": "color.painScale.0.ink",  "bg": "color.surface.base", "usage": "large-text", "note": "THE PAIN NUMERAL — 80px on the onboarding baseline screen, 22px/700 in the check-in sheet. Both are large text, so the floor is 3:1. Declared PER STEP because a ramp is a scale, not a colour: auditing one value says nothing about the other ten, and the failure it replaced was worst in the MIDDLE of the range (score 3, 1.37:1) where a spot-check would never have looked." },
+    { "id": "painScale/1 ink on base",  "fg": "color.painScale.1.ink",  "bg": "color.surface.base", "usage": "large-text" },
+    { "id": "painScale/2 ink on base",  "fg": "color.painScale.2.ink",  "bg": "color.surface.base", "usage": "large-text" },
+    { "id": "painScale/3 ink on base",  "fg": "color.painScale.3.ink",  "bg": "color.surface.base", "usage": "large-text" },
+    { "id": "painScale/4 ink on base",  "fg": "color.painScale.4.ink",  "bg": "color.surface.base", "usage": "large-text" },
+    { "id": "painScale/5 ink on base",  "fg": "color.painScale.5.ink",  "bg": "color.surface.base", "usage": "large-text", "note": "The value the captured baseline sits at. Was 1.56:1." },
+    { "id": "painScale/6 ink on base",  "fg": "color.painScale.6.ink",  "bg": "color.surface.base", "usage": "large-text" },
+    { "id": "painScale/7 ink on base",  "fg": "color.painScale.7.ink",  "bg": "color.surface.base", "usage": "large-text" },
+    { "id": "painScale/8 ink on base",  "fg": "color.painScale.8.ink",  "bg": "color.surface.base", "usage": "large-text" },
+    { "id": "painScale/9 ink on base",  "fg": "color.painScale.9.ink",  "bg": "color.surface.base", "usage": "large-text", "note": "Already cleared before this work; the ink is the mark unchanged." },
+    { "id": "painScale/10 ink on base", "fg": "color.painScale.10.ink", "bg": "color.surface.base", "usage": "large-text", "note": "Already cleared before this work; the ink is the mark unchanged." },
+
     { "id": "safety/ink on base",   "fg": "color.safety.ink",  "bg": "color.surface.base",   "usage": "body-text", "note": "FIXED in v1 and mode-paired. Red-flag copy — the one thing a health app must not get wrong." },
     { "id": "safety/ink on raised", "fg": "color.safety.ink",  "bg": "color.surface.raised", "usage": "body-text", "note": "FIXED in v1. Was 4.38:1 dark and 3.78:1 light." },
     { "id": "safety/ink on card",   "fg": "color.safety.ink",  "bg": "color.surface.card",   "usage": "body-text" },

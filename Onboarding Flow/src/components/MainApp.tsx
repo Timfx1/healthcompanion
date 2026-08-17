@@ -40,7 +40,7 @@
 // ============================================================
 
 import { useState, useRef, useEffect } from "react";
-import { D, c as s, theme, scale, type Mode } from "./tokens";
+import { D, c as s, theme, scale, painStep, type Mode } from "./tokens";
 import LockBadge from "./patterns/LockBadge";
 
 // ============================================================
@@ -1219,7 +1219,7 @@ function TimelineScreen({ mode, onShareMilestone }: { mode: Mode; onShareMilesto
 //   TRIGGER: "Add detail" row tap → toggles detailOpen boolean.
 //   CHEVRON: rotates 0° → 180° on open (transition: transform 200ms ease-out).
 //   CONTENT (animate-fade-up on open):
-//     - Pain slider (0–10, PAIN_COLORS array, range input, identical to onboarding)
+//     - Pain slider (0–10, color.painScale via painStep(), identical to onboarding)
 //     - Energy / Sleep quality / Mobility: 3-option Low/Med/High buttons
 //     - Medications taken: toggle switch (50×28px pill)
 //     - Quick note: text input (44px)
@@ -1256,7 +1256,10 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
   const [meds, setMeds] = useState(true);
   const [note, setNote] = useState("");
 
-  const PAIN_COLORS = ["#A8D9B8","#A8D9B8","#B8DDA8","#D9DA8A","#F5D08A","#F5C070","#F5A860","#F2A09E","#E0748A","#D4607F","#BA4A79"];
+  // The pain ramp used to be a hardcoded array here AND, verbatim, in
+  // Onboarding.tsx. It is now color.painScale in the token source, mark/ink
+  // split — see painStep(). Two copies of a scale is two chances to fix only one.
+  const painTone = painStep(mode, pain);
   const LEVELS = [{ icon: "⬇️", label: "Low" }, { icon: "➡️", label: "Med" }, { icon: "⬆️", label: "High" }];
 
   // C1: Icon + word label for each fast-path option. NEVER color-only (accessibility).
@@ -1367,13 +1370,14 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span style={{ fontSize: 13, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode) }}>Pain level</span>
-                {/* Pain numeral: PAIN_COLORS[pain] — color changes with value */}
-                <span style={{ fontSize: 22, fontWeight: 700, color: PAIN_COLORS[pain], lineHeight: 1 }}>{pain}</span>
+                {/* Pain numeral: painStep(mode, pain).ink — INK, because a numeral is text.
+                    The mark ramp fills the track below; it fails 3:1 on light as text. */}
+                <span style={{ fontSize: 22, fontWeight: 700, color: painTone.ink, lineHeight: 1 }}>{pain}</span>
               </div>
               <input type="range" min={0} max={10} step={1} value={pain} onChange={e => setPain(Number(e.target.value))}
                 className="w-full"
                 style={{ appearance: "none", height: 8, borderRadius: scale.radius.sm, outline: "none",
-                  background: `linear-gradient(to right, ${PAIN_COLORS[pain]} 0%, ${PAIN_COLORS[pain]} ${pain * 10}%, ${s(D.border, D.lBorder, mode)} ${pain * 10}%, ${s(D.border, D.lBorder, mode)} 100%)`,
+                  background: `linear-gradient(to right, ${painTone.mark} 0%, ${painTone.mark} ${pain * 10}%, ${s(D.border, D.lBorder, mode)} ${pain * 10}%, ${s(D.border, D.lBorder, mode)} 100%)`,
                   transition: `background ${scale.duration.compact}ms` }} />
             </div>
 

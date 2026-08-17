@@ -51,6 +51,34 @@
       "mood":   { "$type": "color", "$value": "#367B4D", "$description": "Mood ink. 5.13 / 4.84 / 4.56." },
       "meds":   { "$type": "color", "$value": "#775BB9", "$description": "Medication ink. 5.27 / 4.92 / 4.55." }
     },
+    "painRamp": {
+      "$note": "The 0–10 pain severity ramp — FILLS. It runs mint → chartreuse → amber → coral → rose → plum, and that journey is the point: the colour is the second reading of the score, after the numeral itself. These are the values the slider track fills with, and they are correct there.\n\nThey were also being used as the NUMERAL's colour, which is text. See painRampInk.",
+      "0": { "$type": "color", "$value": "#A8D9B8", "$description": "Score 0 — None." },
+      "1": { "$type": "color", "$value": "#A8D9B8", "$description": "Score 1 — Mild." },
+      "2": { "$type": "color", "$value": "#B8DDA8", "$description": "Score 2 — Mild." },
+      "3": { "$type": "color", "$value": "#D9DA8A", "$description": "Score 3 — Mild." },
+      "4": { "$type": "color", "$value": "#F5D08A", "$description": "Score 4 — Moderate." },
+      "5": { "$type": "color", "$value": "#F5C070", "$description": "Score 5 — Moderate." },
+      "6": { "$type": "color", "$value": "#F5A860", "$description": "Score 6 — Moderate." },
+      "7": { "$type": "color", "$value": "#F2A09E", "$description": "Score 7 — Severe." },
+      "8": { "$type": "color", "$value": "#E0748A", "$description": "Score 8 — Severe." },
+      "9": { "$type": "color", "$value": "#D4607F", "$description": "Score 9 — Intense." },
+      "10": { "$type": "color", "$value": "#BA4A79", "$description": "Score 10 — Unbearable." }
+    },
+    "painRampInk": {
+      "$note": "The readable counterpart, for the pain NUMERAL on light surfaces. Same story as pastel/pastelInk, one layer up: the ramp is a set of marks that was also being painted as text.\n\nThe numeral is 80px on the onboarding baseline screen and 22px/700 in the check-in sheet — large text either way, so the floor is 3:1. On the light page the mark ramp gave 1.37–4.54 and NINE OF ELEVEN STEPS FAILED, the worst at score 3. On dark the same ramp clears 3.77–12.46, which is why the design read as fine.\n\nSolved at >=3.2:1 against surface.base by scaling toward black, which preserves hue. The visible consequence is that the yellow-green middle of the ramp goes olive on light: a colour light enough to read as 'yellow' on white cannot also reach 3:1 against it. The hue journey survives, its brightness does not — and that is the honest trade, not a compromise to hide. The mark ramp keeps the vivid values wherever it fills rather than writes.\n\nSteps 9 and 10 already cleared the floor and are unchanged, so the scale meets its readable counterpart exactly where pain is worst.",
+      "0": { "$type": "color", "$value": "#71927C", "$description": "Score 0. 3.23:1 (was 1.48)." },
+      "1": { "$type": "color", "$value": "#71927C", "$description": "Score 1. 3.23:1 (was 1.48)." },
+      "2": { "$type": "color", "$value": "#79926F", "$description": "Score 2. 3.20:1 (was 1.41)." },
+      "3": { "$type": "color", "$value": "#8D8E5A", "$description": "Score 3. 3.20:1 (was 1.37 — the worst step in the ramp)." },
+      "4": { "$type": "color", "$value": "#9F875A", "$description": "Score 4. 3.24:1 (was 1.38)." },
+      "5": { "$type": "color", "$value": "#A9844D", "$description": "Score 5. 3.23:1 (was 1.56 — the value the captured baseline sits at)." },
+      "6": { "$type": "color", "$value": "#B87E48", "$description": "Score 6. 3.22:1 (was 1.85)." },
+      "7": { "$type": "color", "$value": "#B97A79", "$description": "Score 7. 3.22:1 (was 1.91)." },
+      "8": { "$type": "color", "$value": "#D06C80", "$description": "Score 8. 3.21:1 (was 2.80)." },
+      "9": { "$type": "color", "$value": "#D4607F", "$description": "Score 9. Already cleared at 3.41:1 — the mark value, unchanged." },
+      "10": { "$type": "color", "$value": "#BA4A79", "$description": "Score 10. Already cleared at 4.54:1 — the mark value, unchanged." }
+    },
     "alert": {
       "400": { "$type": "color", "$value": "#E86A5C", "$description": "Safety text on dark. AA-safe on all three dark surfaces (4.79–5.77:1). Added in v1; the original hue reached only 4.38:1 on raised." },
       "500": { "$type": "color", "$value": "#E05548", "$description": "The safety hue. Retained for non-text safety use (icons, borders, fills) where the 3:1 threshold applies. RESERVED — never decorative." },
