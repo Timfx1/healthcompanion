@@ -38,19 +38,32 @@ const SHOW_ALL = process.argv.includes("--all");
 const THRESHOLDS = { "body-text": 4.5, "large-text": 3.0, "ui-boundary": 3.0, decorative: 0 };
 
 // ── Token source ────────────────────────────────────────────────────────────
-// Read straight from the prototype's tokens.ts so this audit always reflects
-// what actually ships, not a transcription of it. Once dist/tokens.json exists
-// this switches to the generated file.
-const TOKENS_SRC = resolve(ROOT, "Onboarding Flow/src/components/tokens.ts");
+// Reads the GENERATED, RESOLVED tokens rather than parsing a source file. This
+// matters for correctness: dist/tokens.json has already resolved every
+// reference and every mode pairing, so what this audit measures is exactly what
+// the emitters hand to the app. Auditing the authored JSON instead would mean
+// re-implementing the resolver here and risking the two drifting apart.
+const TOKENS_JSON = resolve(ROOT, "design-system/dist/tokens.json");
 
 function loadTokens() {
-  const src = readFileSync(TOKENS_SRC, "utf8");
-  const body = src.slice(src.indexOf("export const D"));
-  const tokens = {};
-  const re = /^\s*([A-Za-z0-9_]+)\s*:\s*"(#[0-9A-Fa-f]{3,8})"/gm;
-  let m;
-  while ((m = re.exec(body)) !== null) tokens[m[1]] = normalizeHex(m[2]);
-  return tokens;
+  const doc = JSON.parse(readFileSync(TOKENS_JSON, "utf8"));
+  // Flatten each mode into dotted paths -> hex, e.g.
+  //   dark["color.surface.raised"] = "#1E1D2E"
+  const byMode = {};
+  for (const [mode, tree] of Object.entries(doc.modes)) {
+    const flat = {};
+    const walk = (node, path) => {
+      if (typeof node === "string") {
+        if (/^#[0-9A-Fa-f]{6,8}$/.test(node)) flat[path.join(".")] = normalizeHex(node);
+        return;
+      }
+      if (!node || typeof node !== "object") return;
+      for (const [k, v] of Object.entries(node)) walk(v, [...path, k]);
+    };
+    walk(tree, []);
+    byMode[mode] = flat;
+  }
+  return byMode;
 }
 
 function normalizeHex(hex) {
@@ -96,14 +109,22 @@ function contrastRatio(a, b) {
 
 // ── Color spec resolution ───────────────────────────────────────────────────
 // A spec is one of:
-//   "textSec"      -> token lookup
-//   "#F2A69E"      -> literal hex (6 or 8 digit)
-//   "accent@44"    -> token at a 2-hex-digit alpha (the prototype's own idiom)
-//   "accent@0.267" -> token at a float alpha
-function resolveSpec(spec, tokens) {
+//   "color.text.secondary"       -> dotted semantic path, resolved for the
+//                                   pair's own mode
+//   "pattern.corridor.band"      -> a pattern token (often already 8-digit hex)
+//   "#F2A69E"                    -> literal hex, 6 or 8 digit
+//   "color.accent.default@44"    -> token at a 2-hex-digit alpha
+//   "color.accent.default@0.267" -> token at a float alpha
+//
+// Alpha may arrive two ways: baked into an 8-digit hex by the emitter, or
+// appended here with @. Both end up in the same place — a colour with a < 1
+// that gets composited before measurement.
+function resolveSpec(spec, tokens, mode) {
   const [name, alphaPart] = String(spec).split("@");
-  const baseHex = name.startsWith("#") ? normalizeHex(name) : tokens[name];
-  if (!baseHex) throw new Error(`Unknown color token: "${name}"`);
+  const flat = tokens[mode];
+  if (!flat) throw new Error(`Unknown mode "${mode}"`);
+  const baseHex = name.startsWith("#") ? normalizeHex(name) : flat[name];
+  if (!baseHex) throw new Error(`Unknown token "${name}" in ${mode} mode. Use a dotted path from dist/tokens.json, e.g. color.text.secondary`);
   const rgba = toRgba(baseHex);
   if (alphaPart === undefined) return rgba;
   const alpha = alphaPart.includes(".") ? parseFloat(alphaPart) : parseInt(alphaPart, 16) / 255;
@@ -114,40 +135,68 @@ function resolveSpec(spec, tokens) {
 const tokens = loadTokens();
 const manifest = JSON.parse(readFileSync(resolve(HERE, "pairs.manifest.json"), "utf8"));
 
+// Each pair is declared ONCE and evaluated in BOTH modes. That is possible
+// because semantic tokens are mode-paired: `color.text.secondary` already means
+// the right thing in each mode, so a pair does not need a per-mode twin.
+//
+// It also removes a whole failure mode. Under the previous shape, every pair
+// had to be hand-written twice, and a pair that someone only remembered to
+// declare for dark would silently go unchecked on light — which is precisely
+// the blind spot that let the light-mode palette ship unmeasured.
 const results = [];
 for (const pair of manifest.pairs) {
   const usage = pair.usage ?? "body-text";
   const threshold = THRESHOLDS[usage];
   if (threshold === undefined) throw new Error(`Pair "${pair.id}": unknown usage class "${usage}"`);
 
-  // Backdrops must be opaque — you cannot measure contrast against something
-  // see-through without knowing what is behind it.
-  const bg = resolveSpec(pair.bg, tokens);
-  if (bg.a < 1) throw new Error(`Pair "${pair.id}": background "${pair.bg}" is translucent; declare the opaque surface beneath it.`);
+  for (const mode of pair.modes ?? ["dark", "light"]) {
+    // Backdrops must be opaque — you cannot measure contrast against something
+    // see-through without knowing what is behind it.
+    const bg = resolveSpec(pair.bg, tokens, mode);
+    if (bg.a < 1) throw new Error(`Pair "${pair.id}" (${mode}): background "${pair.bg}" is translucent; declare the opaque surface beneath it.`);
 
-  const fgRaw = resolveSpec(pair.fg, tokens);
-  const fg = composite(fgRaw, bg);
-  const ratio = contrastRatio(fg, bg);
+    const fgRaw = resolveSpec(pair.fg, tokens, mode);
+    const fg = composite(fgRaw, bg);
+    const ratio = contrastRatio(fg, bg);
 
-  results.push({
-    id: pair.id,
-    mode: pair.mode,
-    usage,
-    fg: pair.fg,
-    bg: pair.bg,
-    composited: fgRaw.a < 1 ? rgbToHex(fg) : null,
-    ratio: Math.round(ratio * 100) / 100,
-    threshold,
-    pass: usage === "decorative" ? null : ratio >= threshold,
-    note: pair.note ?? null,
-  });
+    results.push({
+      id: pair.id,
+      mode,
+      usage,
+      fg: pair.fg,
+      bg: pair.bg,
+      composited: fgRaw.a < 1 ? rgbToHex(fg) : null,
+      ratio: Math.round(ratio * 100) / 100,
+      threshold,
+      pass: usage === "decorative" ? null : ratio >= threshold,
+      note: pair.note ?? null,
+      // Debt is scoped PER MODE, not per pair. Most of the known failures fail
+      // on light only and pass comfortably on dark — marking the whole pair as
+      // debt would exempt the dark side too, and a later dark-mode regression
+      // would slip through under a flag that was never meant to cover it.
+      debt: pair.debt === true || (Array.isArray(pair.debt) && pair.debt.includes(mode)),
+    });
+  }
 }
 
 function rgbToHex({ r, g, b }) {
   return "#" + [r, g, b].map((v) => v.toString(16).padStart(2, "0").toUpperCase()).join("");
 }
 
+// Two classes of failure, and only one of them should break a build.
+//
+//   REGRESSION — a pair that is expected to pass and does not. Fails CI.
+//   DEBT       — a known failure explicitly marked in the manifest and tracked
+//                in RECONCILIATION.md with a fix direction.
+//
+// The distinction matters because a check that is permanently red stops being
+// read. Debt is still reported on every run, and the moment a debt pair starts
+// passing it is flagged so the marker can be removed — otherwise the manifest
+// slowly fills with stale exemptions that hide real problems.
 const failures = results.filter((r) => r.pass === false);
+const regressions = failures.filter((r) => !r.debt);
+const debt = failures.filter((r) => r.debt);
+const fixedDebt = results.filter((r) => r.debt && r.pass === true);
 
 if (AS_JSON) {
   console.log(JSON.stringify({ $generated: new Date().toISOString(), summary: { total: results.length, failures: failures.length }, results }, null, 2));
@@ -168,8 +217,14 @@ if (AS_JSON) {
       if (!r.pass && r.note) console.log(`                            ^ ${r.note}`);
     }
   }
-  console.log(`\n${results.length} pairs checked · ${failures.length} failing AA`);
-  if (!SHOW_ALL && failures.length) console.log("(passing pairs hidden — rerun with --all)");
+  console.log(`\n${results.length} pair-mode combinations checked`);
+  console.log(`  regressions : ${regressions.length}${regressions.length ? "  <-- fails the build" : ""}`);
+  console.log(`  tracked debt: ${debt.length}  (see RECONCILIATION.md)`);
+  if (fixedDebt.length) {
+    console.log(`\n  ${fixedDebt.length} pair(s) marked as debt now PASS — remove the debt flag:`);
+    for (const r of fixedDebt) console.log(`    ${r.id} (${r.mode}) ${r.ratio}:1`);
+  }
+  if (!SHOW_ALL) console.log("\n(rerun with --all to see passing pairs)");
 }
 
-process.exit(failures.length ? 1 : 0);
+process.exit(regressions.length ? 1 : 0);
