@@ -1,0 +1,85 @@
+{
+  "$generated": "2026-08-17",
+  "$generator": "manual screenshot pass via Figma MCP get_screenshot @ maxDimension 380",
+  "$file": {
+    "key": "Hnu6aDZKAhTA7NShQemXZW",
+    "name": "Healthcompaniondesigns",
+    "page": "0:1 Page 1",
+    "variables": "NONE — get_variable_defs returns {} for every node sampled",
+    "modes": "DARK ONLY — all 30 content frames render the sun toggle glyph; zero light-mode frames exist"
+  },
+
+  "$why": "Frame identity in this file cannot be read from the document structure. Every top-level frame is named 'Onboarding Flow' because the screens were pasted from Figma Make without renaming. Text content is ALSO unreliable: the flattened export retains layers that are visually occluded, so a frame whose text begins 'Good morning / Alex' may actually render a modal covering Home. Four such cases are recorded below. Identity here was established by rendered screenshot only.",
+
+  "$legend": {
+    "kind": "screen = a distinct destination; state = same screen, different data/interaction state; overlay = drawn above another screen",
+    "confidence": "confirmed = visually verified at 380px; pending = needs a higher-resolution pass before token values are read from it"
+  },
+
+  "rows": [
+    { "y": -467, "role": "onboarding", "frames": 15 },
+    { "y": 943, "role": "main app + overlays", "frames": 11 },
+    { "y": 2280, "role": "main app + overlays (continued)", "frames": 5 }
+  ],
+
+  "frames": [
+    { "node": "1:3",    "row": 1, "x": -201, "screen": "onboarding/welcome",            "kind": "screen",  "state": "default",                    "confidence": "confirmed", "notes": "Brand moment. Pulsing heart mark, 3 feature rows, primary CTA 'Get started', secondary 'Already have an account? Sign in'. No progress bar." },
+    { "node": "1:96",   "row": 1, "x": 261,  "screen": "onboarding/recovery-type",      "kind": "state",   "state": "nothing-selected",           "confidence": "confirmed", "notes": "CARRIES THE DISABLED PRIMARY BUTTON STATE — flat muted fill, no gradient, no shadow. This is the only disabled-CTA reference in the file." },
+    { "node": "1:222",  "row": 1, "x": 723,  "screen": "onboarding/recovery-type",      "kind": "state",   "state": "selected:illness",           "confidence": "confirmed", "notes": "Selected option card: accent tint fill, accent border, trailing check. CTA enabled (gradient + glow)." },
+    { "node": "1:352",  "row": 1, "x": 1185, "screen": "onboarding/condition",          "kind": "screen",  "state": "body-area+condition-selected", "confidence": "confirmed", "notes": "Two chip groups: BODY AREA (required, 'Chest' selected) and CONDITION (OPTIONAL, 'Rotator cuff' selected). Secondary action 'Skip for now'." },
+    { "node": "1:499",  "row": 1, "x": 1647, "screen": "onboarding/start-date",         "kind": "state",   "state": "empty",                      "confidence": "confirmed", "notes": "Empty date field, CTA disabled. Secondary 'Not sure yet'." },
+    { "node": "1:661",  "row": 1, "x": 2169, "screen": "onboarding/start-date",         "kind": "state",   "state": "filled",                     "confidence": "confirmed", "notes": "Filled field + derived caption 'Day 16 of your recovery' — the Day-N counter origin. CTA enabled." },
+    { "node": "1:745",  "row": 1, "x": 2691, "screen": "onboarding/symptoms",           "kind": "screen",  "state": "default",                    "confidence": "confirmed", "notes": "Four category groups each led by a coloured dot: PAIN / MOBILITY / ENERGY / MOOD. Primary source for the category-hue tokens as group markers." },
+    { "node": "1:894",  "row": 1, "x": 3213, "screen": "onboarding/pain-baseline",      "kind": "screen",  "state": "value-5",                    "confidence": "confirmed", "notes": "Large expressive numeral (amber at value 5) + label 'Moderate', gradient track, five face markers. Carries the slider-track gradient and thumb spec." },
+    { "node": "2:2",    "row": 1, "x": 3682, "screen": "onboarding/goal",               "kind": "screen",  "state": "selected:become-pain-free",   "confidence": "confirmed", "notes": "Six goal rows, one selected." },
+    { "node": "2:114",  "row": 1, "x": 4162, "screen": "onboarding/notifications",      "kind": "screen",  "state": "default",                    "confidence": "confirmed", "notes": "Value-framed consent. Pulsing bell. Both paths advance — 'Allow notifications' primary, 'Maybe later' secondary of equal reachability (P2 / no dark pattern)." },
+    { "node": "2:4418", "row": 1, "x": 6575, "screen": "onboarding/plan-loading",       "kind": "state",   "state": "step-2-of-4",                "confidence": "confirmed", "notes": "POSITIONED OUT OF FLOW at the far right of row 1, though it precedes plan-reveal logically. Four-step checklist, two complete. NOTE: the prototype code merges loading and reveal into one PlanLoadingScreen with two internal phases, so Figma has 13 onboarding screens where the code has 12." },
+    { "node": "2:294",  "row": 1, "x": 4639, "screen": "onboarding/plan-reveal",        "kind": "screen",  "state": "default",                    "confidence": "confirmed", "notes": "CHANGE 10 corridor preview. Three phase bars (Week 1-2 / 3-4 / 5-8) with phase chips, and the disclaimer 'Everyone heals differently — this is a common range, not a deadline'. Primary corridor-token reference in onboarding." },
+    { "node": "2:433",  "row": 1, "x": 5137, "screen": "onboarding/free-plan-unlocked", "kind": "screen",  "state": "default",                    "confidence": "confirmed", "notes": "Celebration. Five free features each with a check. Deliberately precedes any paywall (P9)." },
+    { "node": "2:560",  "row": 1, "x": 5621, "screen": "onboarding/premium-teaser",     "kind": "screen",  "state": "default",                    "confidence": "confirmed", "notes": "CARRIES THE LOCKED-ROW TREATMENT — desaturated rows with trailing lock badges. Reference for lock.* pattern tokens. 'Continue with free plan' is a plainly visible escape." },
+    { "node": "2:691",  "row": 1, "x": 6098, "screen": "onboarding/trial-paywall",      "kind": "screen",  "state": "annual-selected",            "confidence": "confirmed", "notes": "Annual (SAVE 40% badge, mint) vs Monthly plan cards; benefit checklist; restore/terms/privacy row. Matches code pricing exactly." },
+
+    { "node": "2:839",  "row": 2, "x": -201, "screen": "main/home",                     "kind": "state",   "state": "weekly-card-visible",        "confidence": "confirmed", "notes": "CHANGE 6 weekly give-back card ('Your week') present at the bottom. Also quick-capture field (C2), Day-46 gradient card with '82% on track', appointment nudge (C9), today's actions." },
+    { "node": "2:1932", "row": 2, "x": 2049, "screen": "main/home",                     "kind": "state",   "state": "reports-row-visible",        "confidence": "confirmed", "notes": "Same Home, scrolled/varied so the REPORTS section shows 'Generate doctor report — Day 1-46 · Ready to preview' with NO lock badge (P6/C8 compliance evidence)." },
+    { "node": "2:1099", "row": 2, "x": 321,  "screen": "overlay/check-in-fast-path",    "kind": "overlay", "state": "over-home",                  "confidence": "confirmed", "notes": "OCCLUSION CASE — text content reads as Home; render is the CHANGE 1 fast-path check-in. Better / Same / Worse, each icon+word (never colour alone), caption 'One tap logs your check-in. Done in <10 seconds.', collapsed 'Add detail'." },
+    { "node": "2:3178", "row": 3, "x": -141, "screen": "overlay/check-in-fast-path",    "kind": "overlay", "state": "over-progress",              "confidence": "confirmed", "notes": "OCCLUSION CASE — text content reads as Progress; render is the same fast-path check-in overlay." },
+    { "node": "2:1374", "row": 2, "x": 946,  "screen": "overlay/check-in-confirmation", "kind": "overlay", "state": "logged",                     "confidence": "confirmed", "notes": "OCCLUSION CASE — text reads as Home; render is the post-check-in success state: check mark, 'Logged ✓', 'Day 46 · Aug 16', 'Back to home'." },
+    { "node": "2:3489", "row": 3, "x": 556,  "screen": "overlay/check-in-confirmation", "kind": "overlay", "state": "logged",                     "confidence": "pending",   "duplicateOf": "2:1374", "notes": "The only frame NOT named 'Onboarding Flow' — it is named 'PhoneShell' and is a bare shell without the outer page wrapper. Renders the same content as 2:1374; PNGs differ in bytes (18,043 vs 23,766) but show no visible difference at 380px, consistent with a wrapper/background-extent difference rather than a content one. Confirm at full resolution before reading any value from it." },
+    { "node": "2:1613", "row": 2, "x": 1446, "screen": "overlay/paywall-sheet",         "kind": "overlay", "state": "over-home",                  "confidence": "confirmed", "notes": "OCCLUSION CASE — text reads as Home; render is the dismissible paywall BOTTOM SHEET over a dimmed Home, with a visible close affordance and 'Dismiss to keep using free.' Confirms P9 (no hard wall, no countdown, no fake urgency)." },
+    { "node": "2:2154", "row": 2, "x": 2691, "screen": "main/timeline",                 "kind": "state",   "state": "filter:all",                 "confidence": "confirmed", "notes": "CARRIES THE REST-DAY TREATMENT — a 'Jun 12' gap entry rendered in muted neutral, never red or labelled as missed (CHANGE 3 / P2). Reference for rest.* pattern tokens. Also shows the FAB." },
+    { "node": "2:2485", "row": 2, "x": 3414, "screen": "main/timeline",                 "kind": "state",   "state": "filter:check-ins",           "confidence": "confirmed", "notes": "Active filter chip = solid accent; inactive = outlined." },
+    { "node": "2:2655", "row": 2, "x": 4017, "screen": "main/timeline",                 "kind": "state",   "state": "filter:milestones",          "confidence": "confirmed", "notes": "Milestone entries carry an inline 'Share' affordance (CHANGE 7 entry point). NOTE: the ShareCardPreview destination itself does not exist in this Figma file, though the prototype code implements a ShareCardScreen." },
+    { "node": "2:2809", "row": 2, "x": 4639, "screen": "main/timeline",                 "kind": "state",   "state": "filter:meds",                "confidence": "confirmed" },
+    { "node": "2:2932", "row": 2, "x": 5219, "screen": "main/timeline",                 "kind": "state",   "state": "filter:photos",              "confidence": "confirmed" },
+    { "node": "2:3055", "row": 2, "x": 5861, "screen": "main/timeline",                 "kind": "state",   "state": "filter:notes",               "confidence": "confirmed" },
+
+    { "node": "2:3741", "row": 3, "x": 1185, "screen": "main/progress",                 "kind": "screen",  "state": "default",                    "confidence": "confirmed", "notes": "RICHEST PATTERN FRAME. Carries: insight sentence styled as primary with a '↓ Decreasing' icon+word trend chip (CHANGE 5); the corridor band behind the pain chart with 'Common range for knee rehab, weeks 4-6 · Everyone heals differently' (CHANGE 4); the phase chip '📍 Weight-bearing usually returns'; the history-fade gate with an 'Unlock full history' pill (C8); week-vs-week comparison; sleep and energy trend cards." },
+    { "node": "2:3989", "row": 3, "x": 1882, "screen": "main/progress",                 "kind": "screen",  "state": "default",                    "confidence": "pending",   "duplicateOf": "2:3741", "notes": "Renders indistinguishably from 2:3741 at 380px; PNGs differ in bytes (37,682 vs 38,609). Likely a wrapper/background difference or an unrendered state delta. Resolve before reading values — do not treat as a second distinct screen without checking." },
+    { "node": "2:4236", "row": 3, "x": 2579, "screen": "main/profile",                  "kind": "screen",  "state": "free-plan",                  "confidence": "confirmed", "notes": "Account header, 'Free plan' upgrade row, then: Manage recoveries, Medications, Appointments, Doctor reports, Education hub, Settings, 'When to contact a doctor' (the safety entry point), Medical disclaimer. Several of these destinations do not exist as frames — see $absent." },
+
+    { "node": "2:4592", "row": null, "x": 41, "screen": null, "kind": "annotation", "state": null, "confidence": "confirmed", "notes": "Loose 0x15 text node on the canvas, not a screen." }
+  ],
+
+  "$distinctScreens": {
+    "onboarding": ["welcome", "recovery-type", "condition", "start-date", "symptoms", "pain-baseline", "goal", "notifications", "plan-loading", "plan-reveal", "free-plan-unlocked", "premium-teaser", "trial-paywall"],
+    "main": ["home", "timeline", "progress", "profile"],
+    "overlay": ["check-in-fast-path", "check-in-confirmation", "paywall-sheet"],
+    "total": 20
+  },
+
+  "$absent": {
+    "$note": "Spec-mandated surfaces with no frame in this file. Listed so the token layer can reserve pattern slots for them (per the approved plan) without pretending a design exists.",
+    "inCodeButNotFigma": ["ShareCardScreen"],
+    "inNeither": [
+      "doctor-report-preview — the spec flagship (P6, free forever, 'what changed since last visit' block). Reachable from Home and Profile in the designs, but the destination itself is undesigned. Product risk.",
+      "share-card-preview — CHANGE 7 destination; entry point exists on milestone entries",
+      "welcome-back — CHANGE 3 returning-user state",
+      "safety / red-flags — entry point exists in Profile ('When to contact a doctor'); destination undesigned. This is the one surface allowed to use the safety colour.",
+      "appointment-detail and questions-for-doctor",
+      "photo-compare — sold on the paywall as a premium benefit",
+      "journal-entry",
+      "medication-detail",
+      "home-screen widget — CHANGE 2 asked for a mockup"
+    ]
+  }
+}
