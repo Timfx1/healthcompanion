@@ -827,7 +827,12 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
 
         {/* DAY COUNTER CARD: Recovery headline card. Non-interactive display.
             Background: gradient from accentD to surface (mode-aware). */}
-        <Card mode={mode} style={{ background: `linear-gradient(135deg, ${D.accentD} 0%, ${mode === "dark" ? "#1E1D2E" : "#EDE9FA"} 100%)` }}>
+        {/* Day-N card gradient. Both stops come from pattern.dayCard, which is
+            mode-paired. Light mode previously reused the DARK start (accentD, a
+            deep indigo) behind near-black text — 1.58:1 at the top of the card.
+            Light now mirrors dark rather than copying it: pale-to-white with
+            dark text, where dark is deep-to-darker with light text. */}
+        <Card mode={mode} style={{ background: `linear-gradient(135deg, ${theme(mode).pattern.dayCard.from} 0%, ${theme(mode).pattern.dayCard.to} 100%)` }}>
           <div className="flex items-start justify-between">
             <div>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: D.accentL, marginBottom: 2 }}>YOUR RECOVERY</div>

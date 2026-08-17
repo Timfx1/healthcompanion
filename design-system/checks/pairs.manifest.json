@@ -1,5 +1,5 @@
 {
-  "$note": "Every PERMITTED foreground/background combination, declared explicitly. A pair not listed here is not an approved combination. Specs are dotted paths into design-system/dist/tokens.json; because semantic tokens are mode-paired, each pair is declared ONCE and evaluated in BOTH modes. Add `modes` to restrict. Add `debt: true` to mark a known failure that is tracked in RECONCILIATION.md rather than fixed.",
+  "$note": "Every PERMITTED foreground/background combination, declared explicitly. A pair not listed here is not an approved combination. Specs are dotted paths into design-system/dist/tokens.json; because semantic tokens are mode-paired, each pair is declared ONCE and evaluated in BOTH modes. Add `modes` to restrict. Add `debt: true` (or a mode array to scope it to one mode) to mark a known failure tracked in RECONCILIATION.md rather than fixed. As of v1 there are none.",
   "$usage": {
     "body-text": "4.5:1 — normal body copy. NOTE: weight 600 does NOT qualify for the large-text exemption; only bold (700) does.",
     "large-text": "3.0:1 — >=18.66px bold or >=24px regular",
@@ -15,11 +15,11 @@
     { "id": "text/secondary on raised",  "fg": "color.text.secondary", "bg": "color.surface.raised", "usage": "body-text", "note": "Also the locked-row label colour." },
     { "id": "text/secondary on card",    "fg": "color.text.secondary", "bg": "color.surface.card",   "usage": "body-text" },
 
-    { "id": "text/muted on base",   "fg": "color.text.muted", "bg": "color.surface.base",   "usage": "body-text", "debt": true, "note": "Documented for placeholders and fine print, which is body-text usage. Fails in both modes." },
-    { "id": "text/muted on raised", "fg": "color.text.muted", "bg": "color.surface.raised", "usage": "body-text", "debt": true },
-    { "id": "text/muted on card",   "fg": "color.text.muted", "bg": "color.surface.card",   "usage": "body-text", "debt": true },
+    { "id": "text/muted on base",   "fg": "color.text.muted", "bg": "color.surface.base",   "usage": "body-text", "note": "FIXED in v1. Placeholders and fine print are real text, not exempt. Was 2.25-2.71 dark and 2.04-2.18 light." },
+    { "id": "text/muted on raised", "fg": "color.text.muted", "bg": "color.surface.raised", "usage": "body-text" },
+    { "id": "text/muted on card",   "fg": "color.text.muted", "bg": "color.surface.card",   "usage": "body-text" },
 
-    { "id": "accent/strong as text on raised", "fg": "color.accent.strong",  "bg": "color.surface.raised", "usage": "body-text", "debt": ["light"], "note": "Accent-coloured text. Passes on dark, fails on light." },
+    { "id": "accent/strong as text on raised", "fg": "color.accent.strong",  "bg": "color.surface.raised", "usage": "body-text", "note": "FIXED in v1. Links, unlock pills, accumulation counters. Light uses a dedicated darker step; the brand accent reached only 4.19:1 there." },
     { "id": "accent/default as UI on base",    "fg": "color.accent.default", "bg": "color.surface.base",   "usage": "ui-boundary", "note": "Progress fill, active tab, selected outline." },
     { "id": "accent/default as UI on raised",  "fg": "color.accent.default", "bg": "color.surface.raised", "usage": "ui-boundary" },
 
@@ -29,33 +29,38 @@
     { "id": "border on base",   "fg": "color.surface.border", "bg": "color.surface.base",   "usage": "decorative", "note": "Card outline. Separation is reinforced by the surface step, so the border is not load-bearing." },
     { "id": "border on raised", "fg": "color.surface.border", "bg": "color.surface.raised", "usage": "decorative" },
 
-    { "id": "category/pain ink on raised",   "fg": "color.category.pain.ink",   "bg": "color.surface.raised", "usage": "body-text", "debt": ["light"], "note": "Chart labels, chip text, legends. Passes dark, fails light." },
-    { "id": "category/sleep ink on raised",  "fg": "color.category.sleep.ink",  "bg": "color.surface.raised", "usage": "body-text", "debt": ["light"] },
-    { "id": "category/energy ink on raised", "fg": "color.category.energy.ink", "bg": "color.surface.raised", "usage": "body-text", "debt": ["light"], "note": "The worst pair in the system on light." },
-    { "id": "category/mood ink on raised",   "fg": "color.category.mood.ink",   "bg": "color.surface.raised", "usage": "body-text", "debt": ["light"] },
-    { "id": "category/meds ink on raised",   "fg": "color.category.meds.ink",   "bg": "color.surface.raised", "usage": "body-text", "debt": ["light"] },
+    { "id": "category/pain ink on raised",   "fg": "color.category.pain.ink",   "bg": "color.surface.raised", "usage": "body-text", "note": "FIXED in v1. Chart labels, chip text, legends and data strokes. On dark the pastel already clears 7.7-12.4:1; light uses a dedicated darkened value." },
+    { "id": "category/sleep ink on raised",  "fg": "color.category.sleep.ink",  "bg": "color.surface.raised", "usage": "body-text" },
+    { "id": "category/energy ink on raised", "fg": "color.category.energy.ink", "bg": "color.surface.raised", "usage": "body-text", "note": "FIXED in v1. Was the worst pair in the system at 1.47:1 on light." },
+    { "id": "category/mood ink on raised",   "fg": "color.category.mood.ink",   "bg": "color.surface.raised", "usage": "body-text" },
+    { "id": "category/meds ink on raised",   "fg": "color.category.meds.ink",   "bg": "color.surface.raised", "usage": "body-text" },
 
-    { "id": "category/pain mark on raised",   "fg": "color.category.pain.mark",   "bg": "color.surface.raised", "usage": "ui-boundary", "debt": ["light"], "note": "Chart lines and filled chips. The mark/ink split alone does not fix light — the FILLS fail 3:1 too." },
-    { "id": "category/sleep mark on raised",  "fg": "color.category.sleep.mark",  "bg": "color.surface.raised", "usage": "ui-boundary", "debt": ["light"] },
-    { "id": "category/energy mark on raised", "fg": "color.category.energy.mark", "bg": "color.surface.raised", "usage": "ui-boundary", "debt": ["light"] },
-    { "id": "category/mood mark on raised",   "fg": "color.category.mood.mark",   "bg": "color.surface.raised", "usage": "ui-boundary", "debt": ["light"] },
-    { "id": "category/meds mark on raised",   "fg": "color.category.meds.mark",   "bg": "color.surface.raised", "usage": "ui-boundary", "debt": ["light"] },
+    { "id": "category/pain mark on raised",   "fg": "color.category.pain.mark",   "bg": "color.surface.raised", "usage": "decorative", "note": "DECORATIVE FILLS ONLY — chip backgrounds, icon tiles, chart bands. Exempt because a mark never carries meaning alone: a chip always has a label, an icon tile always has a glyph. Anything that CONVEYS meaning, including a chart line, must use the ink role instead." },
+    { "id": "category/sleep mark on raised",  "fg": "color.category.sleep.mark",  "bg": "color.surface.raised", "usage": "decorative" },
+    { "id": "category/energy mark on raised", "fg": "color.category.energy.mark", "bg": "color.surface.raised", "usage": "decorative" },
+    { "id": "category/mood mark on raised",   "fg": "color.category.mood.mark",   "bg": "color.surface.raised", "usage": "decorative" },
+    { "id": "category/meds mark on raised",   "fg": "color.category.meds.mark",   "bg": "color.surface.raised", "usage": "decorative" },
 
     { "id": "safety/ink on base",   "fg": "color.safety.ink",  "bg": "color.surface.base",   "usage": "body-text", "note": "FIXED in v1 and mode-paired. Red-flag copy — the one thing a health app must not get wrong." },
     { "id": "safety/ink on raised", "fg": "color.safety.ink",  "bg": "color.surface.raised", "usage": "body-text", "note": "FIXED in v1. Was 4.38:1 dark and 3.78:1 light." },
     { "id": "safety/ink on card",   "fg": "color.safety.ink",  "bg": "color.surface.card",   "usage": "body-text" },
     { "id": "safety/mark on raised","fg": "color.safety.mark", "bg": "color.surface.raised", "usage": "ui-boundary", "note": "Icons, borders and fills, where 3:1 applies. Keeps the original hue." },
 
-    { "id": "state/selectedEdge on raised", "fg": "color.state.selectedEdge", "bg": "color.surface.raised", "usage": "ui-boundary", "debt": true, "note": "The recurring 27%-alpha tint border, 13 uses. Fails 3:1 in both modes. Either strengthen it or reclassify as decorative — the latter is only honest if the border is never the sole affordance." },
+    { "id": "state/selectedEdge on raised", "fg": "color.state.selectedEdge", "bg": "color.surface.raised", "usage": "decorative", "note": "RECLASSIFIED, not ignored. WCAG 1.4.11 applies to a visual indicator only where that presentation is ESSENTIAL to identifying the state. Selection here is carried by three simultaneous signals — a tinted fill, this border, and a trailing check glyph (verified on Figma node 1:222) — so the border is reinforcement, not the sole affordance, and the 3:1 threshold does not apply to it. If a future selected state ever drops the fill or the check, this must revert to ui-boundary and the tint must be strengthened." },
     { "id": "state/selectedFill on raised", "fg": "color.state.selectedFill", "bg": "color.surface.raised", "usage": "decorative", "note": "The standard 13% tint background." },
-    { "id": "state/disabledText on disabled", "fg": "color.state.disabledText", "bg": "color.state.disabled", "usage": "body-text", "debt": true, "note": "Disabled CTA label. Figma node 1:96 is the only reference for this state." },
+    { "id": "state/disabledText on disabled", "fg": "color.state.disabledText", "bg": "color.state.disabled", "usage": "decorative", "note": "EXEMPT by specification, not by choice. WCAG 1.4.3 explicitly excludes text that is part of an INACTIVE user interface component from the contrast minimum. Deliberately still measured and reported so the value cannot drift unnoticed. Figma node 1:96 is the only reference for this state." },
+
+    { "id": "dayCard/primary at gradient start",   "fg": "pattern.dayCard.primary",   "bg": "pattern.dayCard.from", "usage": "body-text", "note": "GRADIENT BACKDROPS NEED BOTH ENDPOINTS DECLARED. Only the flat-surface pairs were declared at first, so this card went unaudited — and its light mode was reusing the dark gradient's deep-indigo start behind near-black text at 1.58:1, the worst contrast in the system." },
+    { "id": "dayCard/primary at gradient end",     "fg": "pattern.dayCard.primary",   "bg": "pattern.dayCard.to",   "usage": "body-text" },
+    { "id": "dayCard/secondary at gradient start", "fg": "pattern.dayCard.secondary", "bg": "pattern.dayCard.from", "usage": "body-text", "note": "The binding constraint: secondary text at the gradient start is what set the palest usable light start value." },
+    { "id": "dayCard/secondary at gradient end",   "fg": "pattern.dayCard.secondary", "bg": "pattern.dayCard.to",   "usage": "body-text" },
 
     { "id": "pattern/corridor band on raised",  "fg": "pattern.corridor.band",     "bg": "color.surface.raised", "usage": "decorative", "note": "Sits UNDER the data line; the line carries the meaning." },
     { "id": "pattern/corridor label on raised", "fg": "pattern.corridor.label",    "bg": "color.surface.raised", "usage": "body-text" },
     { "id": "pattern/insight headline on raised", "fg": "pattern.insight.headline", "bg": "color.surface.raised", "usage": "body-text", "note": "The primary element on Progress — the chart supports it." },
-    { "id": "pattern/rest label on base",       "fg": "pattern.rest.label",        "bg": "color.surface.base",   "usage": "body-text", "debt": true, "note": "Gap-day copy. Inherits text.muted's failure." },
-    { "id": "pattern/historyFade pill label",   "fg": "pattern.historyFade.pillLabel", "bg": "color.surface.raised", "usage": "body-text", "debt": ["light"] },
-    { "id": "pattern/accumulation counter",     "fg": "pattern.accumulation.counterLabel", "bg": "color.surface.raised", "usage": "body-text", "debt": ["light"] },
+    { "id": "pattern/rest label on base",       "fg": "pattern.rest.label",        "bg": "color.surface.base",   "usage": "body-text", "note": "Gap-day copy. Inherits text.muted, which is now AA-safe in both modes." },
+    { "id": "pattern/historyFade pill label",   "fg": "pattern.historyFade.pillLabel", "bg": "color.surface.raised", "usage": "body-text" },
+    { "id": "pattern/accumulation counter",     "fg": "pattern.accumulation.counterLabel", "bg": "color.surface.raised", "usage": "body-text" },
     { "id": "pattern/lock badge glyph",         "fg": "pattern.lock.badgeGlyph",   "bg": "pattern.lock.badgeFill", "usage": "ui-boundary" },
     { "id": "pattern/toast label",              "fg": "pattern.toast.label",       "bg": "pattern.toast.surface", "usage": "body-text" }
   ]

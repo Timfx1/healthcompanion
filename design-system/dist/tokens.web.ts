@@ -23,13 +23,13 @@ export const D = {
   "accentD": "#3D3668",
   "text": "#F0EFFE",
   "textSec": "#9B97B8",
-  "textMut": "#5C5878",
+  "textMut": "#8D89A8",
   "lBase": "#F8F7FC",
   "lCard": "#FFFFFF",
   "lBorder": "#E4E1F5",
   "lText": "#1A1830",
   "lTextSec": "#6B6890",
-  "lTextMut": "#B0ACCF",
+  "lTextMut": "#716AA9",
   "pain": "#F2A69E",
   "sleep": "#9EC3F5",
   "energy": "#F5D08A",
@@ -58,7 +58,7 @@ const THEMES = {
       "text": {
         "primary": "#F0EFFE",
         "secondary": "#9B97B8",
-        "muted": "#5C5878",
+        "muted": "#8D89A8",
         "onAccent": "#FFFFFF"
       },
       "accent": {
@@ -290,7 +290,7 @@ const THEMES = {
       "rest": {
         "surface": "#15141F",
         "mark": "#2E2C45",
-        "label": "#5C5878"
+        "label": "#8D89A8"
       },
       "accumulation": {
         "counterFill": "#7C6FCD22",
@@ -375,9 +375,15 @@ const THEMES = {
       "capture": {
         "field": "#1E1D2E",
         "edge": "#2E2C45",
-        "placeholder": "#5C5878",
+        "placeholder": "#8D89A8",
         "actionIdle": "#2E2C45",
         "actionReady": "#7C6FCD"
+      },
+      "dayCard": {
+        "from": "#332C55",
+        "to": "#1E1D2E",
+        "primary": "#F0EFFE",
+        "secondary": "#9B97B8"
       },
       "toast": {
         "surface": "#252438",
@@ -398,42 +404,42 @@ const THEMES = {
       "text": {
         "primary": "#1A1830",
         "secondary": "#6B6890",
-        "muted": "#B0ACCF",
+        "muted": "#716AA9",
         "onAccent": "#FFFFFF"
       },
       "accent": {
         "default": "#7C6FCD",
-        "strong": "#7C6FCD",
+        "strong": "#7163C9",
         "dim": "#3D3668"
       },
       "category": {
         "pain": {
           "mark": "#F2A69E",
-          "ink": "#F2A69E",
+          "ink": "#BA4A79",
           "icon": "pain",
           "label": "Pain"
         },
         "sleep": {
           "mark": "#9EC3F5",
-          "ink": "#9EC3F5",
+          "ink": "#4473B3",
           "icon": "sleep",
           "label": "Sleep"
         },
         "energy": {
           "mark": "#F5D08A",
-          "ink": "#F5D08A",
+          "ink": "#8B6D35",
           "icon": "energy",
           "label": "Energy"
         },
         "mood": {
           "mark": "#A8D9B8",
-          "ink": "#A8D9B8",
+          "ink": "#388050",
           "icon": "mood",
           "label": "Mood"
         },
         "meds": {
           "mark": "#C9B8F0",
-          "ink": "#C9B8F0",
+          "ink": "#7E60C3",
           "icon": "meds",
           "label": "Medication"
         }
@@ -625,17 +631,17 @@ const THEMES = {
         "edge": "#7C6FCD33",
         "label": "#6B6890",
         "phaseChip": "#7C6FCD22",
-        "phaseLabel": "#7C6FCD"
+        "phaseLabel": "#7163C9"
       },
       "rest": {
         "surface": "#F8F7FC",
         "mark": "#E4E1F5",
-        "label": "#B0ACCF"
+        "label": "#716AA9"
       },
       "accumulation": {
         "counterFill": "#7C6FCD22",
         "counterEdge": "#7C6FCD44",
-        "counterLabel": "#7C6FCD",
+        "counterLabel": "#7163C9",
         "dotFilled": "#7C6FCD",
         "dotEmpty": "#E4E1F5"
       },
@@ -652,7 +658,7 @@ const THEMES = {
         "fadeTo": "#FFFFFF",
         "pillFill": "#7C6FCD22",
         "pillEdge": "#7C6FCD44",
-        "pillLabel": "#7C6FCD"
+        "pillLabel": "#7163C9"
       },
       "insight": {
         "headline": "#1A1830",
@@ -715,9 +721,15 @@ const THEMES = {
       "capture": {
         "field": "#FFFFFF",
         "edge": "#E4E1F5",
-        "placeholder": "#B0ACCF",
+        "placeholder": "#716AA9",
         "actionIdle": "#E4E1F5",
         "actionReady": "#7C6FCD"
+      },
+      "dayCard": {
+        "from": "#F0EDFB",
+        "to": "#FFFFFF",
+        "primary": "#1A1830",
+        "secondary": "#6B6890"
       },
       "toast": {
         "surface": "#FFFFFF",

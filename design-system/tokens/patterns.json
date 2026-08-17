@@ -134,6 +134,16 @@
     "actionReady": { "$type": "ref", "$value": "{color.accent.default}" }
   },
 
+  "dayCard": {
+    "$intent": "The Day-N counter card — the product's emotional anchor and the first thing a returning user looks at.",
+    "$contract": "A gradient card carrying the day count, condition, start date and a week-over-week comparison. Text must stay legible across the WHOLE gradient, not just at the end where it happens to be lightest.",
+    "$bug": "The light mode of this card reused the DARK gradient's start (accent.dim, a deep indigo) while keeping near-black text, giving 1.58:1 at the top of the card — the worst contrast in the entire system, and worse than anything in the original audit. It went unnoticed because the contrast manifest only declared pairs against FLAT surfaces; a gradient needs BOTH endpoints declared as backdrops. Light now mirrors dark properly: dark goes deep-to-darker with light text, light goes pale-to-white with dark text.",
+    "from":      { "$type": "color", "$value": { "dark": "{color.lavender.750}",   "light": "{color.paper.100}" }, "$description": "Both modes are constrained by SECONDARY text at this stop, not primary — the numeral is comfortable either way. Dark needed deepening from accent.dim (3.90:1) and light needed the palest lavender that still works (4.54:1)." },
+    "to":        { "$type": "color", "$value": { "dark": "{color.surface.raised}", "light": "{color.paper.0}" } },
+    "primary":   { "$type": "ref", "$value": "{color.text.primary}",   "$description": "The Day-N numeral. Clears 9.60 dark / 14.96 light at the gradient start." },
+    "secondary": { "$type": "ref", "$value": "{color.text.secondary}", "$description": "Condition and start date. Clears 4.54 light at the gradient start — the constraint that set paper.100." }
+  },
+
   "toast": {
     "$intent": "Confirm quietly.",
     "surface": { "$type": "ref", "$value": "{color.surface.card}" },

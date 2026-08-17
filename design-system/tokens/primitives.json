@@ -11,31 +11,45 @@
       "600": { "$type": "color", "$value": "#2E2C45", "$description": "Dark hairline: dividers, card outlines, lock-badge fill." }
     },
     "lavender": {
-      "700": { "$type": "color", "$value": "#3D3668", "$description": "Deep accent tint. Gradient starts and accent-tinted card fills." },
+      "700": { "$type": "color", "$value": "#3D3668", "$description": "Deep accent tint, for accent-tinted fills and decorative gradient starts. NOT safe behind secondary text — that reaches only 3.90:1. Use lavender.750 where text sits on top." },
+      "750": { "$type": "color", "$value": "#332C55", "$description": "Deeper accent tint for gradient starts that CARRY TEXT. Secondary clears 4.60:1 and primary 11.32:1. Exists because the Day-N card puts both text roles over its gradient start." },
       "600": { "$type": "color", "$value": "#6A5CB5", "$description": "AA-safe CTA gradient start. Added in v1 so white body text clears 4.5:1 — see the note on lavender.500." },
       "550": { "$type": "color", "$value": "#7365C6", "$description": "AA-safe CTA gradient end. White reaches 4.77:1 here, against 2.84:1 on the original light stop." },
+      "650": { "$type": "color", "$value": "#7163C9", "$description": "Accent TEXT on light surfaces. 4.55:1 on the light page, 4.85:1 on card. The brand accent reaches only 4.19:1 there." },
       "500": { "$type": "color", "$value": "#7C6FCD", "$description": "Brand accent. Primary for non-text use: active tab, progress fill, selected outline, focus. NOT safe behind white body text — white reaches only 4.19:1." },
-      "400": { "$type": "color", "$value": "#9B8FE0", "$description": "Lighter accent, for accent-coloured text on dark surfaces." }
+      "400": { "$type": "color", "$value": "#9B8FE0", "$description": "Lighter accent, for accent-coloured text on dark surfaces. 5.82:1 on raised." }
     },
     "ink": {
       "50":  { "$type": "color", "$value": "#F0EFFE", "$description": "Primary text on dark." },
       "300": { "$type": "color", "$value": "#9B97B8", "$description": "Secondary text on dark: labels, captions, supporting copy." },
-      "500": { "$type": "color", "$value": "#5C5878", "$description": "Muted text on dark. FAILS AA as body text on every dark surface (2.25–2.71:1) — tracked debt." }
+      "400": { "$type": "color", "$value": "#8D89A8", "$description": "Muted text on dark, AA-safe: 5.45 / 4.94 / 4.52 across the three dark surfaces. Replaces #5C5878, which reached only 2.25–2.71:1 while being documented for placeholders and fine print — and placeholder text is real text, not exempt." },
+      "500": { "$type": "color", "$value": "#5C5878", "$description": "RETAINED FOR NON-TEXT USE ONLY (decorative rules, empty dots). Fails AA as text on every dark surface. Never assign this to a text role." }
     },
     "paper": {
       "0":   { "$type": "color", "$value": "#FFFFFF", "$description": "Light card surface." },
       "50":  { "$type": "color", "$value": "#F8F7FC", "$description": "Light page background." },
+      "100": { "$type": "color", "$value": "#F0EDFB", "$description": "Palest lavender tint. The light-mode gradient start for the Day-N card — the palest value at which BOTH primary and secondary text still clear 4.5:1 (14.96 and 4.54)." },
       "200": { "$type": "color", "$value": "#E4E1F5", "$description": "Light hairline." },
-      "400": { "$type": "color", "$value": "#B0ACCF", "$description": "Muted text on light. FAILS AA (2.04–2.18:1) — tracked debt. This is one of the two tokens the old @theme block was missing." },
+      "400": { "$type": "color", "$value": "#B0ACCF", "$description": "RETAINED FOR NON-TEXT USE ONLY. Fails AA as text (2.04–2.18:1). This was one of the two tokens the old @theme block was missing." },
+      "500": { "$type": "color", "$value": "#716AA9", "$description": "Muted text on light, AA-safe: 4.54 on the light page, 4.84 on card." },
       "600": { "$type": "color", "$value": "#6B6890", "$description": "Secondary text on light." },
       "900": { "$type": "color", "$value": "#1A1830", "$description": "Primary text on light." }
     },
     "pastel": {
-      "pain":   { "$type": "color", "$value": "#F2A69E", "$description": "Pain category. Fill/mark use only — 1.96:1 on white." },
-      "sleep":  { "$type": "color", "$value": "#9EC3F5", "$description": "Sleep category. Fill/mark use only — 1.81:1 on white." },
-      "energy": { "$type": "color", "$value": "#F5D08A", "$description": "Energy category. Fill/mark use only — 1.47:1 on white." },
-      "mood":   { "$type": "color", "$value": "#A8D9B8", "$description": "Mood category. Fill/mark use only — 1.58:1 on white." },
-      "meds":   { "$type": "color", "$value": "#C9B8F0", "$description": "Medication category. Fill/mark use only — 1.81:1 on white." }
+      "$note": "FILLS ONLY. These are the decorative marks — chip backgrounds, icon tiles, chart bands. They are unreadable as text on light surfaces (1.47–1.96:1), which is why every category also has an `ink` value below.",
+      "pain":   { "$type": "color", "$value": "#F2A69E", "$description": "Pain category fill." },
+      "sleep":  { "$type": "color", "$value": "#9EC3F5", "$description": "Sleep category fill." },
+      "energy": { "$type": "color", "$value": "#F5D08A", "$description": "Energy category fill." },
+      "mood":   { "$type": "color", "$value": "#A8D9B8", "$description": "Mood category fill." },
+      "meds":   { "$type": "color", "$value": "#C9B8F0", "$description": "Medication category fill." }
+    },
+    "pastelInk": {
+      "$note": "The readable counterparts, for category TEXT, icons and data strokes on LIGHT surfaces. On dark the pastels themselves already clear 7.7–12.4:1, so the ink role reuses them there and only light needs these. Saturation is damped so they stay muted rather than neon, per the design brief.",
+      "pain":   { "$type": "color", "$value": "#BA4A79", "$description": "Pain ink, 4.54:1. DELIBERATELY SHIFTED toward plum (hue 335) rather than the darkened peach the maths first produced (#B95247). That value sat RGB-distance 35 from the reserved safety red at a near-identical hue, which would have made a pain chart label read as an alert and quietly undermined the reserved-colour rule. This sits at distance 76." },
+      "sleep":  { "$type": "color", "$value": "#4473B3", "$description": "Sleep ink, 4.53:1." },
+      "energy": { "$type": "color", "$value": "#8B6D35", "$description": "Energy ink, 4.54:1." },
+      "mood":   { "$type": "color", "$value": "#388050", "$description": "Mood ink, 4.51:1." },
+      "meds":   { "$type": "color", "$value": "#7E60C3", "$description": "Medication ink, 4.53:1." }
     },
     "alert": {
       "400": { "$type": "color", "$value": "#E86A5C", "$description": "Safety text on dark. AA-safe on all three dark surfaces (4.79–5.77:1). Added in v1; the original hue reached only 4.38:1 on raised." },
