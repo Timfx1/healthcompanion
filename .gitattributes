@@ -1,0 +1,43 @@
+# ============================================================
+# Line-ending normalisation — versioned deliberately.
+#
+# WHY THIS FILE EXISTS, AND WHY IT IS NOT OPTIONAL HERE.
+#
+# The drift gate (`node design-system/build/build.mjs --check`) works by
+# BYTE-COMPARING a freshly generated artifact against the committed copy. That
+# comparison is the mechanism that makes token drift impossible — and it is
+# exactly as strong as the guarantee that a checkout reproduces the committed
+# bytes.
+#
+# It did not. `core.autocrlf=false` and `core.eol=lf` were set in .git/config,
+# which is machine-local and does NOT travel with a clone. On Windows a fresh
+# clone instead inherits `autocrlf=true` from the system gitconfig, checks out
+# every generated artifact with CRLF, and the drift gate reports all six as
+# drifted against a source that has not changed. Verified by cloning: the blob
+# holds 3,949 bytes with 0 CRLF, the clone's working file 4,074 with 125.
+#
+# The failure is worse than a false alarm. A gate that fails on a clean clone is
+# a gate people learn to ignore, and the instruction it prints — "Run:
+# build.mjs" — silently rewrites all six artifacts to CRLF and commits a
+# whole-file diff that hides any real change inside it.
+#
+# So normalisation is declared in the repository, where it is part of the
+# contract, rather than in one machine's config where it is a coincidence.
+# ============================================================
+
+# Everything is text and checks out LF, on every platform. Git still detects
+# binary content by inspection and leaves it alone, so this is safe for any
+# file type; the explicit rules below are belt-and-braces for the ones where
+# corruption would be silent.
+* text=auto eol=lf
+
+# Visual-parity baselines. A byte-for-byte contract — never touched, never
+# diffed as text. (Also LFS-tracked by "Onboarding Flow/.gitattributes", whose
+# deeper rules win for the paths it covers; repeated here so the guarantee does
+# not depend on that file's continued existence.)
+*.png  binary
+*.woff2 binary
+*.pdf  binary
+
+# Lockfiles: LF, and not worth diffing by hand.
+pnpm-lock.yaml -diff
