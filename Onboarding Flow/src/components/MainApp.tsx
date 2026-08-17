@@ -501,7 +501,7 @@ function Toast({ message, visible }: { message: string; visible: boolean }) {
         background: s(D.card, "#333", "dark"),
         boxShadow: "0 4px 20px #0000004D",
         opacity: visible ? 1 : 0,
-        transition: "opacity 250ms ease-out",
+        transition: `opacity ${scale.duration.medium}ms ease-out`,
         pointerEvents: "none",
         whiteSpace: "nowrap",
       }}>
@@ -807,7 +807,7 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
           />
           {/* Mic/confirm button — changes icon based on captureText presence */}
           <button className="btn-press flex items-center justify-center rounded-xl"
-            style={{ width: 32, height: 32, background: captureText ? D.accent : s(D.border, D.lBorder, mode), border: "none", cursor: "pointer", transition: "background 150ms", flexShrink: 0 }}>
+            style={{ width: 32, height: 32, background: captureText ? D.accent : s(D.border, D.lBorder, mode), border: "none", cursor: "pointer", transition: `background ${scale.duration.quick}ms`, flexShrink: 0 }}>
             {captureText
               ? <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M2 7l4 4 6-6"/></svg>
               : <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke={s(D.textSec, D.lTextSec, mode)} strokeWidth="1.6"><rect x="5" y="1" width="4" height="7" rx="2"/><path d="M2 7c0 3 2.5 5 5 5s5-2 5-5" strokeLinecap="round"/><path d="M7 13v-1"/></svg>
@@ -889,7 +889,7 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
                   </div>
                   <span style={{ fontSize: 14, fontWeight: 500, flex: 1, color: done ? s(D.textSec, D.lTextSec, mode) : s(D.text, D.lText, mode), textDecoration: done ? "line-through" : "none" }}>{a.label}</span>
                   {/* Completion circle: transitions from border-color → action color (200ms) */}
-                  <div className="flex items-center justify-center rounded-full" style={{ width: 22, height: 22, background: done ? a.color : s(D.border, D.lBorder, mode), transition: "background 200ms" }}>
+                  <div className="flex items-center justify-center rounded-full" style={{ width: 22, height: 22, background: done ? a.color : s(D.border, D.lBorder, mode), transition: `background ${scale.duration.compact}ms` }}>
                     {done && <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M2 5.5l2.5 2.5 4.5-4.5"/></svg>}
                   </div>
                 </button>
@@ -1066,7 +1066,7 @@ function TimelineScreen({ mode, onShareMilestone }: { mode: Mode; onShareMilesto
           const sel = filter === chip;
           return (
             <button key={chip} onClick={() => setFilter(chip)} className="btn-press whitespace-nowrap px-3 rounded-xl text-sm font-medium shrink-0"
-              style={{ height: 30, background: sel ? D.accent : s(D.raised, D.lCard, mode), color: sel ? "#fff" : s(D.textSec, D.lTextSec, mode), border: `1px solid ${sel ? D.accent : s(D.border, D.lBorder, mode)}`, cursor: "pointer", transition: "all 150ms" }}>
+              style={{ height: 30, background: sel ? D.accent : s(D.raised, D.lCard, mode), color: sel ? "#fff" : s(D.textSec, D.lTextSec, mode), border: `1px solid ${sel ? D.accent : s(D.border, D.lBorder, mode)}`, cursor: "pointer", transition: `all ${scale.duration.quick}ms` }}>
               {chip}
             </button>
           );
@@ -1290,7 +1290,7 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
                   height: 100,
                   background: sel ? `${opt.color}44` : s(D.raised, D.lCard, mode),
                   border: `2px solid ${sel ? opt.color : s(D.border, D.lBorder, mode)}`,
-                  cursor: "pointer", transition: "all 150ms",
+                  cursor: "pointer", transition: `all ${scale.duration.quick}ms`,
                 }}>
                 <span style={{ fontSize: 30, lineHeight: 1 }}>{opt.icon}</span>
                 <span style={{ fontSize: 15, fontWeight: 700, color: sel ? opt.color : s(D.text, D.lText, mode) }}>{opt.word}</span>
@@ -1314,7 +1314,7 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
           <span style={{ fontSize: 13, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode) }}>Add detail</span>
           {/* CHEVRON: 0° closed, 180° open. TRANSITION: transform 200ms ease-out. */}
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke={s(D.textSec, D.lTextSec, mode)} strokeWidth="1.8" strokeLinecap="round"
-            style={{ transform: detailOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 200ms" }}>
+            style={{ transform: detailOpen ? "rotate(180deg)" : "rotate(0deg)", transition: `transform ${scale.duration.compact}ms` }}>
             <path d="M4 6l4 4 4-4"/>
           </svg>
         </button>
@@ -1336,7 +1336,7 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
                 className="w-full"
                 style={{ appearance: "none", height: 8, borderRadius: scale.radius.sm, outline: "none",
                   background: `linear-gradient(to right, ${PAIN_COLORS[pain]} 0%, ${PAIN_COLORS[pain]} ${pain * 10}%, ${s(D.border, D.lBorder, mode)} ${pain * 10}%, ${s(D.border, D.lBorder, mode)} 100%)`,
-                  transition: "background 200ms" }} />
+                  transition: `background ${scale.duration.compact}ms` }} />
             </div>
 
             {/* ENERGY / SLEEP / MOBILITY: 3-option Low/Med/High buttons (38px).
@@ -1352,7 +1352,7 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
                     const sel = val === i;
                     return (
                       <button key={i} onClick={() => setter(i)} className="btn-press flex-1 flex items-center justify-center gap-1 rounded-xl"
-                        style={{ height: 38, background: sel ? `${color}22` : s(D.raised, D.lCard, mode), border: `1px solid ${sel ? color : s(D.border, D.lBorder, mode)}`, cursor: "pointer", transition: "all 150ms" }}>
+                        style={{ height: 38, background: sel ? `${color}22` : s(D.raised, D.lCard, mode), border: `1px solid ${sel ? color : s(D.border, D.lBorder, mode)}`, cursor: "pointer", transition: `all ${scale.duration.quick}ms` }}>
                         <span style={{ fontSize: 13 }}>{l.icon}</span>
                         <span style={{ fontSize: 12, color: sel ? color : s(D.textSec, D.lTextSec, mode), fontWeight: 500 }}>{l.label}</span>
                       </button>
@@ -1369,8 +1369,8 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
             <div className="flex items-center justify-between">
               <span style={{ fontSize: 13, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode) }}>Medications taken?</span>
               <button onClick={() => setMeds(!meds)} className="btn-press flex items-center rounded-full"
-                style={{ width: 50, height: 28, background: meds ? D.accent : s(D.border, D.lBorder, mode), padding: "0 3px", border: "none", cursor: "pointer", transition: "background 200ms", justifyContent: meds ? "flex-end" : "flex-start" }}>
-                <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#fff", boxShadow: "0 1px 4px #00000040", transition: "transform 200ms" }} />
+                style={{ width: 50, height: 28, background: meds ? D.accent : s(D.border, D.lBorder, mode), padding: "0 3px", border: "none", cursor: "pointer", transition: `background ${scale.duration.compact}ms`, justifyContent: meds ? "flex-end" : "flex-start" }}>
+                <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#fff", boxShadow: "0 1px 4px #00000040", transition: `transform ${scale.duration.compact}ms` }} />
               </button>
             </div>
 
@@ -1839,7 +1839,7 @@ export default function MainApp({
 
   return (
     // Page wrapper — background transitions 400ms on mode change
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 16px", background: screenBg, transition: "background 400ms" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 16px", background: screenBg, transition: `background ${scale.duration.theme}ms` }}>
 
       {/* MODE TOGGLE: fixed top-right, always visible, zIndex 100.
           INTERACTION: Tap → toggles mode dark ↔ light.
@@ -1879,7 +1879,7 @@ export default function MainApp({
           INTERACTION: Tap dot → setTab(t) directly (bypasses handleTab check-in logic). */}
       <div className="flex gap-2 mt-4 items-center">
         {(["home","timeline","progress","profile"] as Tab[]).map(t => (
-          <div key={t} onClick={() => setTab(t)} style={{ width: tab === t ? 16 : 6, height: 6, borderRadius: scale.radius.xs, background: tab === t ? D.accent : (mode === "dark" ? "#FFFFFF33" : "#00000026"), transition: "all 250ms", cursor: "pointer" }} />
+          <div key={t} onClick={() => setTab(t)} style={{ width: tab === t ? 16 : 6, height: 6, borderRadius: scale.radius.xs, background: tab === t ? D.accent : (mode === "dark" ? "#FFFFFF33" : "#00000026"), transition: `all ${scale.duration.medium}ms`, cursor: "pointer" }} />
         ))}
       </div>
     </div>

@@ -725,7 +725,7 @@ function RecoveryTypeScreen({ mode, value, onChange, onNext, onBack }: {
                 background: selected ? `linear-gradient(135deg, ${D.accentD} 0%, ${D.accent}33)` : s(D.raised, D.lCard, mode),
                 border: `1.5px solid ${selected ? D.accent : s(D.border, D.lBorder, mode)}`,
                 cursor: "pointer",
-                transition: "border-color 150ms, background 150ms",
+                transition: `border-color ${scale.duration.quick}ms, background ${scale.duration.quick}ms`,
               }}
             >
               <span style={{ fontSize: 26, width: 36, textAlign: "center" }}>{t.icon}</span>
@@ -804,7 +804,7 @@ function ConditionScreen({ mode, condition, bodyPart, onCondition, onBodyPart, o
                     height: 34, background: sel ? D.accent : s(D.raised, D.lCard, mode),
                     color: sel ? "#fff" : s(D.textSec, D.lTextSec, mode),
                     border: `1px solid ${sel ? D.accent : s(D.border, D.lBorder, mode)}`,
-                    cursor: "pointer", transition: "all 150ms",
+                    cursor: "pointer", transition: `all ${scale.duration.quick}ms`,
                   }}>{p}</button>
               );
             })}
@@ -823,7 +823,7 @@ function ConditionScreen({ mode, condition, bodyPart, onCondition, onBodyPart, o
                     height: 34, background: sel ? D.accent : s(D.raised, D.lCard, mode),
                     color: sel ? "#fff" : s(D.textSec, D.lTextSec, mode),
                     border: `1px solid ${sel ? D.accent : s(D.border, D.lBorder, mode)}`,
-                    cursor: "pointer", transition: "all 150ms",
+                    cursor: "pointer", transition: `all ${scale.duration.quick}ms`,
                   }}>{c}</button>
               );
             })}
@@ -1012,7 +1012,7 @@ function SymptomsScreen({ mode, selected, onToggle, onNext, onBack }: {
                       background: sel ? `${g.color}22` : s(D.raised, D.lCard, mode),
                       color: sel ? (mode === "dark" ? g.color : "#333") : s(D.textSec, D.lTextSec, mode),
                       border: `1px solid ${sel ? g.color : s(D.border, D.lBorder, mode)}`,
-                      cursor: "pointer", transition: "all 150ms",
+                      cursor: "pointer", transition: `all ${scale.duration.quick}ms`,
                     }}>{item}</button>
                 );
               })}
@@ -1083,8 +1083,8 @@ function PainScreen({ mode, value, onChange, onNext, onBack }: {
         {/* ANIMATION: animate-fade-up, delay 80ms — numeral entry */}
         <div className="animate-fade-up flex flex-col items-center gap-1" style={{ animationDelay: "80ms" }}>
           {/* REACTIVE: color transitions 200ms as slider moves */}
-          <div style={{ fontSize: 80, fontWeight: 600, lineHeight: 1, color, transition: "color 200ms" }}>{value}</div>
-          <div style={{ fontSize: 16, fontWeight: 500, color: s(D.textSec, D.lTextSec, mode), transition: "all 150ms" }}>{PAIN_LABELS[value]}</div>
+          <div style={{ fontSize: 80, fontWeight: 600, lineHeight: 1, color, transition: `color ${scale.duration.compact}ms` }}>{value}</div>
+          <div style={{ fontSize: 16, fontWeight: 500, color: s(D.textSec, D.lTextSec, mode), transition: `all ${scale.duration.quick}ms` }}>{PAIN_LABELS[value]}</div>
         </div>
 
         {/* ANIMATION: animate-fade-up, delay 140ms — slider entry */}
@@ -1098,7 +1098,7 @@ function PainScreen({ mode, value, onChange, onNext, onBack }: {
             style={{
               appearance: "none", height: 8, borderRadius: scale.radius.sm, outline: "none",
               background: `linear-gradient(to right, ${color} 0%, ${color} ${value * 10}%, ${s(D.border, D.lBorder, mode)} ${value * 10}%, ${s(D.border, D.lBorder, mode)} 100%)`,
-              transition: "background 200ms",
+              transition: `background ${scale.duration.compact}ms`,
             }}
           />
           <div className="flex justify-between mt-2">
@@ -1115,7 +1115,7 @@ function PainScreen({ mode, value, onChange, onNext, onBack }: {
             // Opacity reflects proximity to current value: 1 if near, 0.4 if far.
             // TRANSITION: opacity 150ms.
             <button key={i} onClick={() => onChange(i * 2.5 | 0)} className="btn-press text-2xl"
-              style={{ background: "none", border: "none", cursor: "pointer", opacity: Math.abs(value - i * 2.5) < 1.5 ? 1 : 0.4, transition: "opacity 150ms" }}>
+              style={{ background: "none", border: "none", cursor: "pointer", opacity: Math.abs(value - i * 2.5) < 1.5 ? 1 : 0.4, transition: `opacity ${scale.duration.quick}ms` }}>
               {e}
             </button>
           ))}
@@ -1178,7 +1178,7 @@ function GoalScreen({ mode, value, onChange, onNext, onBack }: {
                 height: 56,
                 background: sel ? `linear-gradient(135deg, ${D.accentD} 0%, ${D.accent}33)` : s(D.raised, D.lCard, mode),
                 border: `1.5px solid ${sel ? D.accent : s(D.border, D.lBorder, mode)}`,
-                cursor: "pointer", transition: "all 150ms",
+                cursor: "pointer", transition: `all ${scale.duration.quick}ms`,
               }}>
               <span style={{ fontSize: 22 }}>{g.icon}</span>
               <span style={{ fontSize: 15, fontWeight: 500, color: sel ? D.accentL : s(D.text, D.lText, mode) }}>{g.label}</span>
@@ -1386,14 +1386,14 @@ function PlanLoadingScreen({ mode, onNext }: { mode: Mode; onNext: () => void })
                 <div className="flex items-center justify-center rounded-full shrink-0" style={{
                   width: 22, height: 22,
                   background: step.done ? D.accent : s(D.border, D.lBorder, mode),
-                  transition: "background 300ms",
+                  transition: `background ${scale.duration.screen}ms`,
                 }}>
                   {step.done
                     ? <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M2 6l3 3 5-5"/></svg>
                     : <div className="w-2 h-2 rounded-full" style={{ background: s(D.textMut, D.lTextSec, mode) }} />
                   }
                 </div>
-                <span style={{ fontSize: 14, color: step.done ? s(D.text, D.lText, mode) : s(D.textMut, D.lTextSec, mode), transition: "color 300ms" }}>{step.label}</span>
+                <span style={{ fontSize: 14, color: step.done ? s(D.text, D.lText, mode) : s(D.textMut, D.lTextSec, mode), transition: `color ${scale.duration.screen}ms` }}>{step.label}</span>
               </div>
             ))}
           </div>
@@ -1470,7 +1470,7 @@ function PlanLoadingScreen({ mode, onNext }: { mode: Mode; onNext: () => void })
         </div>
       </div>
       {/* ANIMATION: animate-fade-up, delay 400ms — button entry */}
-      <div className="pt-4 animate-fade-up" style={{ animationDelay: "400ms" }}>
+      <div className="pt-4 animate-fade-up" style={{ animationDelay: `${scale.duration.theme}ms` }}>
         {/* BUTTON: "See your plan" → next() → screen 9 (FreePlanScreen) */}
         <PrimaryButton label="See your plan" onClick={onNext} mode={mode} />
       </div>
@@ -1636,7 +1636,7 @@ function PremiumTeaserScreen({ mode, onNext, onSkip }: { mode: Mode; onNext: () 
         </div>
       </div>
       {/* ANIMATION: animate-fade-up, delay 300ms */}
-      <div className="flex flex-col gap-3 pt-4 animate-fade-up" style={{ animationDelay: "300ms" }}>
+      <div className="flex flex-col gap-3 pt-4 animate-fade-up" style={{ animationDelay: `${scale.duration.screen}ms` }}>
         {/* BUTTON: "Start 14-day free trial" → onNext() → screen 11 */}
         <PrimaryButton label="Start 14-day free trial" onClick={onNext} mode={mode} />
         {/* BUTTON: "Continue with free plan" → onSkip() → screen 11 */}
@@ -1708,7 +1708,7 @@ function PaywallScreen({ mode, onNext, onSkip }: { mode: Mode; onNext: () => voi
                 style={{
                   background: sel ? `linear-gradient(135deg, ${D.accentD}, ${D.accent}44)` : s(D.raised, D.lCard, mode),
                   border: `1.5px solid ${sel ? D.accent : s(D.border, D.lBorder, mode)}`,
-                  cursor: "pointer", transition: "all 150ms",
+                  cursor: "pointer", transition: `all ${scale.duration.quick}ms`,
                 }}>
                 {plan === "annual" && (
                   <div className="inline-flex px-2 py-0.5 rounded-full mb-2" style={{ background: `${D.mood}33`, fontSize: 10, fontWeight: 700, color: theme(mode).color.category.mood.ink, letterSpacing: "0.06em" }}>SAVE 40%</div>
@@ -1872,7 +1872,7 @@ export default function Onboarding({ onComplete, initialMode, initialScreen }: {
       background: mode === "dark"
         ? "radial-gradient(ellipse at 30% 20%, #23204A 0%, #0D0C16 100%)"
         : "radial-gradient(ellipse at 30% 20%, #EAE6F8 0%, #F8F7FC 100%)",
-      transition: "background 400ms",
+      transition: `background ${scale.duration.theme}ms`,
     }}>
       {/* MODE TOGGLE: Fixed top-right. Switches dark ↔ light.
           INTERACTION: .btn-press (scale 0.97, 120ms) + mode change (bg 400ms). */}
@@ -1907,7 +1907,7 @@ export default function Onboarding({ onComplete, initialMode, initialScreen }: {
           <div key={i} style={{
             width: i === screen ? 16 : 6, height: 6, borderRadius: scale.radius.xs,
             background: i === screen ? D.accent : (mode === "dark" ? "#FFFFFF33" : "#00000026"),
-            transition: "all 250ms ease-out",
+            transition: `all ${scale.duration.medium}ms ease-out`,
           }} />
         ))}
       </div>
