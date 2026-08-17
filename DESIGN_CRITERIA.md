@@ -195,6 +195,26 @@ Nine of eleven steps failed; dark mode carried the design at 3.77–12.46, which
 
 Two things worth keeping from it. **The worst step was in the middle of the range** (score 3, 1.37:1), not at an end, which is why the eleven steps are declared as eleven pairs: a scale audited at one value tells you nothing about the rest. And **the light ink ramp goes olive through its yellow-green middle** — a colour light enough to read as "yellow" cannot also reach 3:1 against near-white. The hue journey survives; its brightness does not. The mark ramp keeps the vivid values wherever it fills rather than writes.
 
+### The visual flake — narrowed, not closed
+
+Three deliberate reproduction attempts, 95 runs, plus 16 earlier in the same session: **111 consecutive clean runs, no failure of any kind.**
+
+| Configuration | Runs | Median | Result |
+|---|---|---|---|
+| HEAD, warm Vite cache, tracing on | 40 | 35.3s | clean |
+| HEAD, Vite cache cleared before every run | 25 | 35.2s | clean |
+| **Commit `99939ec` verbatim, tracing off** | 30 | 25.7s | clean |
+
+The third matters most: `99939ec` is the exact commit that claimed to have cleared the flake and where the next eight runs still produced a failure. Same code, same config, no instrumentation. Thirty clean runs.
+
+**Eliminated.** *Screenshot comparison* and *a genuine UI regression* — both are deterministic at a fixed commit, so a content difference cannot come and go, and failing runs reported no pixel-diff count. *Cold start / dependency optimisation* — 25 runs with the Vite cache deleted beforehand, and the median did not move (35.2s vs 35.3s). *Font loading over the network* — Inter has been bundled since `56612ec`, which **precedes** the flake's last sighting, so the network was already off the critical path. *Animation* — suppressed in CSS, asserted before capture, and pinned by `animations: "disabled"`.
+
+**Remaining: timing, most plausibly host load** rather than anything in the harness. The original sightings were during active development, with builds and editors competing for cores — a condition a tight loop on an idle machine reproduces badly.
+
+**The caveat that matters.** `trace: "retain-on-failure"` costs ~37% of runtime (25.7s → 35.3s on the same 36 tests). If the flake is a race, instrumenting for it may be suppressing it. "Clean at HEAD" is therefore weaker evidence than 111 runs suggests — which is exactly why the third experiment removed that variable.
+
+**So it stays open, and CI stays advisory.** A shared runner is slower and more contended than this machine, which appears to be the condition that matters; the workflow uploads a trace on failure. That is where the answer will come from, not from a local loop.
+
 ### Open — found, measured, not yet fixed
 
 **The manifest is still hand-maintained.** Nothing verifies it covers what the screens render. The sweep above was done by reading code; the next undeclared combination will be exactly as invisible as these six were.

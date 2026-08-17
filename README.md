@@ -108,10 +108,14 @@ Start with [`design-system/README.md`](design-system/README.md).
 Kept here rather than only in commit messages, because a reader deserves to know
 what is not finished. Full detail in `DESIGN_CRITERIA.md` §11.
 
-- **The visual harness has an open intermittent failure** (~1 in 8–20, not
-  reproduced in 15 consecutive runs). It is instrumented to name its own stalled
-  step and retain a trace. CI runs it **advisory, not blocking**, until one
-  failure is captured — a gate that fails at random is worse than none.
+- **The visual harness has an open intermittent failure**, originally ~1 in 8–20,
+  **not reproduced in 111 consecutive runs** across three configurations —
+  including 30 at the exact commit where it was last seen, with instrumentation
+  removed. Screenshot comparison, a real UI regression, cold start, font
+  loading and animation are all eliminated; timing under host load is what
+  remains. CI runs it **advisory, not blocking** and uploads a trace on failure,
+  because a shared runner is the contended environment a local loop cannot
+  imitate. Full log in `DESIGN_CRITERIA.md` §11 and `playwright.config.ts`.
 - **The contrast manifest is hand-maintained.** Nothing verifies it covers what
   the screens actually render. A sweep found six undeclared combinations, five
   of which failed; the next one will be just as invisible.

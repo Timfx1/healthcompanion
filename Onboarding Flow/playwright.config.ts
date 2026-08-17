@@ -57,8 +57,12 @@ export default defineConfig({
       maxDiffPixels: 12,
       threshold: 0,
 
-      // RESIDUAL FLAKE, ~1 run in 8-20. STILL OPEN. This value is NOT a fix and
-      // was not shown to be one — read on before changing it.
+      // RESIDUAL FLAKE, ~1 run in 8-20 as originally reported. NOT REPRODUCED in
+      // 111 consecutive runs. Still open, but the search has narrowed a lot —
+      // see the reproduction log at the bottom of this file before changing
+      // anything here.
+      //
+      // This value is NOT a fix and was not shown to be one — read on.
       //
       // The original reasoning was: failing runs emit no pixel-diff count, so
       // the capture must be timing out, so give it more time. The timeout was
@@ -136,6 +140,56 @@ export default defineConfig({
       },
     },
   ],
+
+// ============================================================
+// REPRODUCTION LOG — the open flake
+//
+// Three deliberate attempts, 95 runs, plus 16 earlier in the same session:
+// 111 consecutive clean runs, no failure of any kind.
+//
+//   config                                     runs  median  result
+//   HEAD, warm Vite cache, tracing on            40   35.3s  clean
+//   HEAD, Vite cache CLEARED before every run    25   35.2s  clean
+//   commit 99939ec verbatim, tracing OFF         30   25.7s  clean
+//
+// The third is the important one: 99939ec is the exact commit whose message
+// claimed to have cleared the flake and where "the very next eight runs still
+// produced one failure". Same code, same config, no tracing. Thirty clean runs.
+//
+// WHAT THIS ELIMINATES
+//
+//   Screenshot comparison, and a genuine UI regression. Both are DETERMINISTIC
+//   at a fixed commit — the same render is compared to the same baseline every
+//   time, so a content difference cannot come and go. Consistent with the
+//   original symptom: failing runs reported no pixel-diff count.
+//
+//   Cold start / dependency optimisation. 25 runs with node_modules/.vite
+//   deleted beforehand, forcing a genuinely cold transform. All clean, and the
+//   median did not even move (35.2s against 35.3s warm).
+//
+//   Font loading over the network. Inter has been bundled since 56612ec, which
+//   PRECEDES 99939ec — so the network was already off the critical path when the
+//   flake was last seen. Whatever it is, it is not a slow font request.
+//
+//   Animation. Suppressed in CSS via ?motion=off and asserted before capture;
+//   also pinned by `animations: "disabled"` here.
+//
+// WHAT REMAINS: timing, and most plausibly host load rather than anything in the
+// harness. The original sightings happened during active development — builds,
+// dev servers and editors competing for the same cores — which is a condition a
+// tight loop on an otherwise idle machine reproduces badly.
+//
+// THE CAVEAT THAT MATTERS. `trace: "retain-on-failure"` costs about 37% of
+// suite runtime (25.7s -> 35.3s on the same 36 tests). If the flake is a race,
+// instrumenting for it may be suppressing it — the classic observer effect. So
+// "clean at HEAD" is weaker evidence than the run count suggests, and the third
+// experiment above exists precisely because it removes that variable.
+//
+// WHERE THE ANSWER WILL COME FROM: CI, not a local loop. A shared runner is
+// slower, noisier and more contended than this machine, which is the condition
+// that appears to matter. The workflow runs this suite advisory and uploads the
+// trace on failure. Do not make it blocking until one of those traces exists.
+// ============================================================
 
   webServer: {
     command: "corepack pnpm@10.34.3 dev",
