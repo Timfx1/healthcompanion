@@ -146,8 +146,10 @@
 
   "toast": {
     "$intent": "Confirm quietly.",
-    "surface": { "$type": "ref", "$value": "{color.surface.card}" },
-    "label":   { "$type": "ref", "$value": "{color.text.primary}" },
+    "$contract": "A dark pill in BOTH modes, floating above the shell, pointer-events none, gone in 2.4s. Never blocks, never requires dismissal, never reports a failure — the capture path cannot fail, so there is nothing for a toast to apologise for.",
+    "$note": "surface/label were originally surface.card and text.primary — mode-paired, so light mode would have rendered a WHITE pill with dark text. The screen never did that; it forced the dark value with a hardcoded mode argument, and the mismatch went unnoticed because the token family was consumed by nothing.\n\nThe SCREEN was right and the tokens were wrong. An always-dark confirmation pill is the platform snackbar convention, and the reason is sound: on a light screen a dark pill reads as system chrome rather than as part of the page, which is what makes a two-second message noticeable without shouting. So the tokens now say what the product always did, via surface.notification.\n\nWorth being precise about what was NOT wrong here: contrast. The pill renders 15.13:1 either way. This was dead code and a token family describing a design nobody had built — not an accessibility defect.",
+    "surface": { "$type": "ref", "$value": "{color.surface.notification}" },
+    "label":   { "$type": "ref", "$value": "{color.text.onNotification}" },
     "dwell":   { "$type": "ref", "$value": "{duration.dwell}" }
   }
 }

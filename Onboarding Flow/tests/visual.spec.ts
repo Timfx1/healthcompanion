@@ -70,6 +70,7 @@ const APP: Screen[] = [
   { id: "app-profile", route: "app:profile", note: "rows incl. safety entry point" },
   { id: "app-checkin", route: "app:checkin", note: "fast-path overlay (C1)" },
   { id: "app-paywall", route: "app:paywall", note: "dismissible bottom sheet (P9)" },
+  { id: "app-toast", route: "app:toast", note: "quick-capture confirmation, pinned visible" },
 ];
 
 const SCREENS = [...ONBOARDING, ...APP];

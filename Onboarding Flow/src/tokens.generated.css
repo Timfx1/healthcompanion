@@ -11,10 +11,12 @@
   --color-surface-card: #252438;
   --color-surface-border: #2E2C45;
   --color-surface-inverse: #FFFFFF;
+  --color-surface-notification: #252438;
   --color-text-primary: #F0EFFE;
   --color-text-secondary: #9B97B8;
   --color-text-muted: #8D89A8;
   --color-text-onAccent: #FFFFFF;
+  --color-text-onNotification: #FFFFFF;
   --color-accent-default: #7C6FCD;
   --color-accent-strong: #9B8FE0;
   --color-accent-dim: #3D3668;
@@ -121,10 +123,12 @@
   --color-surface-card: #FFFFFF;
   --color-surface-border: #E4E1F5;
   --color-surface-inverse: #1A1830;
+  --color-surface-notification: #252438;
   --color-text-primary: #1A1830;
   --color-text-secondary: #6B6890;
   --color-text-muted: #716AA9;
   --color-text-onAccent: #FFFFFF;
+  --color-text-onNotification: #FFFFFF;
   --color-accent-default: #7C6FCD;
   --color-accent-strong: #6B5DBE;
   --color-accent-dim: #3D3668;

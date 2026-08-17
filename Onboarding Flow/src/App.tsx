@@ -47,7 +47,9 @@ import type { Mode } from "./components/tokens";
 // regression on every downstream screen. Addressing the state directly keeps
 // each baseline a statement about one screen only.
 // ============================================================
-type Route = { kind: "onboarding"; step: number } | { kind: "app"; tab: Tab; overlay: "checkin" | "paywall" | null };
+type Route =
+  | { kind: "onboarding"; step: number }
+  | { kind: "app"; tab: Tab; overlay: "checkin" | "paywall" | null; pinToast?: boolean };
 
 function parseRoute(): { route: Route | null; mode: Mode } {
   const q = new URLSearchParams(window.location.search);
@@ -68,6 +70,12 @@ function parseRoute(): { route: Route | null; mode: Mode } {
     const target = screen.slice(4);
     if (target === "checkin") return { route: { kind: "app", tab: "home", overlay: "checkin" }, mode };
     if (target === "paywall") return { route: { kind: "app", tab: "home", overlay: "paywall" }, mode };
+    // Home with the confirmation toast pinned visible. A TRANSIENT state needs
+    // its own route or it cannot be baselined at all: it lives for 2.4s behind
+    // an interaction, and the harness advances the clock past that before it
+    // captures. The toast carried a dead code path and an unused token family
+    // for exactly as long as nothing could photograph it.
+    if (target === "toast") return { route: { kind: "app", tab: "home", overlay: null, pinToast: true }, mode };
     const tabs: Tab[] = ["home", "timeline", "progress", "profile"];
     if ((tabs as string[]).includes(target)) return { route: { kind: "app", tab: target as Tab, overlay: null }, mode };
   }
@@ -89,7 +97,7 @@ export default function App() {
   if (DEV_ROUTE) {
     return DEV_ROUTE.kind === "onboarding"
       ? <Onboarding initialMode={DEV_MODE} initialScreen={DEV_ROUTE.step} />
-      : <MainApp initialMode={DEV_MODE} initialTab={DEV_ROUTE.tab} initialOverlay={DEV_ROUTE.overlay} />;
+      : <MainApp initialMode={DEV_MODE} initialTab={DEV_ROUTE.tab} initialOverlay={DEV_ROUTE.overlay} pinToast={DEV_ROUTE.pinToast} />;
   }
 
   if (phase === "onboarding") {

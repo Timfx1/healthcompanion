@@ -9,14 +9,16 @@
       "raised":  { "$type": "color", "$value": { "dark": "{color.indigo.800}", "light": "{color.paper.0}" },   "$description": "Cards, sheets, tab bar." },
       "card":    { "$type": "color", "$value": { "dark": "{color.indigo.700}", "light": "{color.paper.0}" },   "$description": "Surface nested inside a raised one. Light mode collapses this onto white — the light palette separates by border, dark by fill." },
       "border":  { "$type": "color", "$value": { "dark": "{color.indigo.600}", "light": "{color.paper.200}" }, "$description": "Hairline dividers and card outlines." },
-      "inverse": { "$type": "color", "$value": { "dark": "{color.white}",      "light": "{color.paper.900}" }, "$description": "Foreground on a saturated fill." }
+      "inverse": { "$type": "color", "$value": { "dark": "{color.white}",      "light": "{color.paper.900}" }, "$description": "Foreground on a saturated fill." },
+      "notification": { "$type": "color", "$value": { "dark": "{color.indigo.700}", "light": "{color.indigo.700}" }, "$description": "A surface that stays DARK IN BOTH MODES on purpose. Exists for the transient confirmation pill, which follows the platform snackbar convention: a dark pill reads as system chrome rather than as part of the page, and on a light screen that is exactly what makes a two-second message noticeable without shouting. Mode-invariant is the whole point — do not 'fix' it by pairing it, and do not reach for it as a general surface." }
     },
 
     "text": {
       "primary":   { "$type": "color", "$value": { "dark": "{color.ink.50}",  "light": "{color.paper.900}" } },
       "secondary": { "$type": "color", "$value": { "dark": "{color.ink.300}", "light": "{color.paper.600}" }, "$description": "Labels, captions, supporting copy, and locked-row labels." },
       "muted":     { "$type": "color", "$value": { "dark": "{color.ink.400}", "light": "{color.paper.500}" }, "$description": "Placeholders and fine print. NOW AA-SAFE in both modes (4.52–5.45 dark, 4.54–4.84 light). NOTE the consequence: a muted step that meets AA necessarily sits close to the secondary step, so the three-tier text hierarchy compresses toward two. Differentiate quiet text by WEIGHT and SIZE, not by lowering contrast — which is the accessible way to build hierarchy regardless." },
-      "onAccent":  { "$type": "color", "$value": { "dark": "{color.white}",   "light": "{color.white}" },     "$description": "Label on a filled accent surface. Mode-invariant because the accent fill is." }
+      "onAccent":  { "$type": "color", "$value": { "dark": "{color.white}",   "light": "{color.white}" },     "$description": "Label on a filled accent surface. Mode-invariant because the accent fill is." },
+      "onNotification": { "$type": "color", "$value": { "dark": "{color.white}", "light": "{color.white}" }, "$description": "Label on surface.notification. Mode-invariant for the same reason: the surface it sits on is." }
     },
 
     "accent": {

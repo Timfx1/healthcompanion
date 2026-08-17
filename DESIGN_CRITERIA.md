@@ -199,7 +199,9 @@ Two things worth keeping from it. **The worst step was in the middle of the rang
 
 **The manifest is still hand-maintained.** Nothing verifies it covers what the screens render. The sweep above was done by reading code; the next undeclared combination will be exactly as invisible as these six were.
 
-**`Toast` ignores light mode, and its token family is unused.** `patterns/Toast.tsx` reads `s(D.card, "#333", "dark")` — the third argument is the *mode*, hardcoded. The dark branch is always taken and the light value has never rendered. Meanwhile `pattern.toast.{surface,label,dwell}` exists in `patterns.json`, mode-paired, and is referenced by nothing. Not fixed yet for a specific reason: the toast is only visible after a quick-capture save, and no baseline captures it in that state, so the fix is unverifiable by the harness in exactly the place the harness is already blind. It belongs in the same change as the dev-route state hook.
+**Correction — the `Toast` was never an accessibility defect.** An earlier entry here listed it alongside real contrast failures and described it as "ignores light mode", which invited the reading that it was one. Measured: the pill renders **15.13:1** as shipped, 12.63:1 for the dead value it documented, and 13.32/17.25:1 for the tokens it did not use. Every configuration passed comfortably.
+
+What was actually wrong was dead code and a token family describing a design nobody had built: the mode argument was hardcoded so `"#333"` never rendered, and `pattern.toast.*` was mode-paired to a **white** pill that no screen had ever drawn. The screen's intent — a dark pill in both modes, the platform snackbar convention — was right, so the tokens moved to match via `surface.notification` / `text.onNotification`. Now resolved, and captured by a baseline (`app-toast`).
 
 **`insight.*` is still defined and unused.** `insight.trendUp`/`trendDown` resolve to category **marks** while the component now correctly renders the trend word in `ink` — so adopting the family as written would reintroduce the failure that was just fixed. The family needs its trend roles repointed at `ink` before anything consumes it.
 
@@ -218,7 +220,9 @@ Two lessons worth keeping. **Three of the five corridor tokens — `edge`, `phas
 
 `lavender.650` was re-solved from `#7163C9` to `#6B5DBE` as part of this — same error as the category inks, calibrated against white when accent text usually sits inside an accent tint. Better on every backdrop, so nothing was traded for it.
 
-**Two contrast fixes are unbaselined, and it is the same gap both times.** `app-checkin` captures the fast path with nothing selected *and* the detail panel collapsed, so neither the selected-word fix nor the 22px pain numeral is exercised by any baseline. The pain-ramp change moved exactly one screenshot (`ob-05-pain-baseline`, light) when it should logically have moved two. This is the coverage gap already recorded in `tests/visual.spec.ts` — interactive states have no dev-route hook — and it is now demonstrably hiding real changes rather than only theoretically able to. Adding `&state=` to the dev route is the fix.
+**Two contrast fixes are still unbaselined, and it is the same gap both times.** `app-checkin` captures the fast path with nothing selected *and* the detail panel collapsed, so neither the selected-word fix nor the 22px pain numeral is exercised by any baseline. The pain-ramp change moved exactly one screenshot (`ob-05-pain-baseline`, light) when it should logically have moved two.
+
+This gap is no longer theoretical: it hid the Toast's dead code path and unused token family for the entire life of the component, because nothing could photograph a state that exists for 2.4 seconds behind an interaction. That one is now closed by the `app:toast` dev route — the same treatment the check-in's selected and expanded states still need.
 
 **Structural gap:** the design file has no light-mode frames at all, so light mode has never been visually reviewed against a design — only implemented. That is the most likely explanation for why the light-mode failures cluster so heavily, and it is why the code is canonical for light mode by decision rather than by preference.
 
@@ -254,10 +258,12 @@ Every semantic colour, both modes, as the emitters hand them to the app. A role 
 | `surface.card` | `#252438` | `#FFFFFF` |
 | `surface.border` | `#2E2C45` | `#E4E1F5` |
 | `surface.inverse` | `#FFFFFF` | `#1A1830` |
+| `surface.notification` | `#252438` | `#252438` |
 | `text.primary` | `#F0EFFE` | `#1A1830` |
 | `text.secondary` | `#9B97B8` | `#6B6890` |
 | `text.muted` | `#8D89A8` | `#716AA9` |
 | `text.onAccent` | `#FFFFFF` | `#FFFFFF` |
+| `text.onNotification` | `#FFFFFF` | `#FFFFFF` |
 | `accent.default` | `#7C6FCD` | `#7C6FCD` |
 | `accent.strong` | `#9B8FE0` | `#6B5DBE` |
 | `accent.dim` | `#3D3668` | `#3D3668` |
@@ -375,8 +381,8 @@ Product concepts with fixed contracts, defined once so they cannot drift between
 | `dayCard.to` | `#1E1D2E` | `#FFFFFF` |
 | `dayCard.primary` | `#F0EFFE` | `#1A1830` |
 | `dayCard.secondary` | `#9B97B8` | `#6B6890` |
-| `toast.surface` | `#252438` | `#FFFFFF` |
-| `toast.label` | `#F0EFFE` | `#1A1830` |
+| `toast.surface` | `#252438` | `#252438` |
+| `toast.label` | `#FFFFFF` | `#FFFFFF` |
 
 ### Type
 

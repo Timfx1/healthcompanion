@@ -335,12 +335,16 @@ import { cat, type Category } from "./patterns/category";
 //   LIGHT: #B0ACCF pale violet-gray. Slightly more readable on light bg.
 //
 // ── TOAST NOTIFICATION ──────────────────────────────────────
-//   NOTE: Toast always uses hardcoded dark styles (not mode-aware):
-//   bg: D.card (#252438) in dark mode call, "#333" fallback in light.
-//   DARK:  #252438 bg — dark pill blends naturally with dark shell.
-//   LIGHT: "#333" dark gray bg — the toast ALWAYS appears as a dark pill
-//          even on a light screen. This creates a "system notification" feel
-//          that is intentionally dark regardless of mode — stands out clearly.
+//   A dark pill in BOTH modes, on purpose — the platform snackbar convention.
+//   On a light screen a dark pill reads as system chrome rather than as part of
+//   the page, which is what makes a two-second message noticeable without
+//   shouting.
+//
+//   This block used to describe light mode as "#333". It never was: the mode
+//   argument was hardcoded, so the dark value rendered in both modes and "#333"
+//   was dead code. The intent above was right and the implementation reached it
+//   by accident. Now stated in the token layer as surface.notification /
+//   text.onNotification, which are mode-invariant by declaration.
 //
 // ── CATEGORY COLORS (mode-invariant) ────────────────────────
 //   These pastel hues DO NOT CHANGE between dark and light mode:
@@ -650,9 +654,13 @@ function ShareCardScreen({ mode, milestone, onClose }: { mode: Mode; milestone: 
 //   When isWelcomeBack=true: greeting changes to "Good to see you again 🤗"
 //   (C3 — warm return, no mention of missed days or streak broken).
 // ============================================================
-function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mode: Mode; onCheckIn: () => void; onPaywall: () => void; isWelcomeBack?: boolean }) {
+function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false, pinToast = false }: { mode: Mode; onCheckIn: () => void; onPaywall: () => void; isWelcomeBack?: boolean; pinToast?: boolean }) {
   const [captureText, setCaptureText] = useState("");
-  const [toastVisible, setToastVisible] = useState(false);
+  // pinToast is a DEV-ROUTE affordance only (?screen=app:toast). It shows the
+  // toast and schedules no dismissal, because the harness advances the clock by
+  // 6s and the real 2.4s timer would fire before the screenshot. Without it the
+  // toast is unbaselineable, which is exactly why its defects went unnoticed.
+  const [toastVisible, setToastVisible] = useState(pinToast);
   const [weeklyDismissed, setWeeklyDismissed] = useState(false);
   const [actionsDone, setActionsDone] = useState<string[]>(["meds"]);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -671,7 +679,7 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
     setCaptureText("");
     setToastVisible(true);
     if (toastTimer.current) clearTimeout(toastTimer.current);
-    toastTimer.current = setTimeout(() => setToastVisible(false), 2400);
+    toastTimer.current = setTimeout(() => setToastVisible(false), theme(mode).pattern.toast.dwell);
   }
 
   const todayActions = [
@@ -683,7 +691,7 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
   return (
     <div className="flex flex-col flex-1 overflow-y-auto" style={{ paddingBottom: 88 }}>
       {/* TOAST: Floats at top. Opacity transition 250ms ease-out. Auto-dismisses at 2400ms. */}
-      <Toast message="Added to your timeline" visible={toastVisible} />
+      <Toast message="Added to your timeline" visible={toastVisible} mode={mode} />
 
       {/* HEADER: Greeting + name + counter + notification bell */}
       <div className="flex items-start justify-between px-5 pt-3 pb-2 shrink-0">
@@ -1686,7 +1694,8 @@ export default function MainApp({
   // interaction timing.
   initialTab = "home" as Tab,
   initialOverlay = null as "checkin" | "paywall" | null,
-}: { initialMode?: Mode; initialTab?: Tab; initialOverlay?: "checkin" | "paywall" | null }) {
+  pinToast = false,
+}: { initialMode?: Mode; initialTab?: Tab; initialOverlay?: "checkin" | "paywall" | null; pinToast?: boolean }) {
   const [mode, setMode] = useState<Mode>(initialMode);
   const [tab, setTab] = useState<Tab>(initialTab);
   const [showCheckIn, setShowCheckIn] = useState(initialOverlay === "checkin");
@@ -1722,7 +1731,7 @@ export default function MainApp({
             position: relative is required for absolute-positioned overlays inside. */}
         <div key={tab} className="flex flex-col flex-1 overflow-hidden animate-fade-in" style={{ position: "relative" }}>
           {/* TAB CONTENT: Only the active tab renders */}
-          {tab === "home"     && <HomeScreen mode={mode} onCheckIn={() => setShowCheckIn(true)} onPaywall={() => setShowPaywall(true)} />}
+          {tab === "home"     && <HomeScreen mode={mode} onCheckIn={() => setShowCheckIn(true)} onPaywall={() => setShowPaywall(true)} pinToast={pinToast} />}
           {tab === "timeline" && <TimelineScreen mode={mode} onShareMilestone={m => setShareCard(m)} />}
           {tab === "progress" && <ProgressScreen mode={mode} onPaywall={() => setShowPaywall(true)} />}
           {tab === "profile"  && <ProfileScreen mode={mode} onPaywall={() => setShowPaywall(true)} />}

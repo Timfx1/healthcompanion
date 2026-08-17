@@ -53,13 +53,15 @@ const THEMES = {
         "raised": "#1E1D2E",
         "card": "#252438",
         "border": "#2E2C45",
-        "inverse": "#FFFFFF"
+        "inverse": "#FFFFFF",
+        "notification": "#252438"
       },
       "text": {
         "primary": "#F0EFFE",
         "secondary": "#9B97B8",
         "muted": "#8D89A8",
-        "onAccent": "#FFFFFF"
+        "onAccent": "#FFFFFF",
+        "onNotification": "#FFFFFF"
       },
       "accent": {
         "default": "#7C6FCD",
@@ -438,7 +440,7 @@ const THEMES = {
       },
       "toast": {
         "surface": "#252438",
-        "label": "#F0EFFE",
+        "label": "#FFFFFF",
         "dwell": 2400
       }
     }
@@ -450,13 +452,15 @@ const THEMES = {
         "raised": "#FFFFFF",
         "card": "#FFFFFF",
         "border": "#E4E1F5",
-        "inverse": "#1A1830"
+        "inverse": "#1A1830",
+        "notification": "#252438"
       },
       "text": {
         "primary": "#1A1830",
         "secondary": "#6B6890",
         "muted": "#716AA9",
-        "onAccent": "#FFFFFF"
+        "onAccent": "#FFFFFF",
+        "onNotification": "#FFFFFF"
       },
       "accent": {
         "default": "#7C6FCD",
@@ -834,8 +838,8 @@ const THEMES = {
         "secondary": "#6B6890"
       },
       "toast": {
-        "surface": "#FFFFFF",
-        "label": "#1A1830",
+        "surface": "#252438",
+        "label": "#FFFFFF",
         "dwell": 2400
       }
     }
