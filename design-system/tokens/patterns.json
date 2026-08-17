@@ -1,0 +1,143 @@
+{
+  "$layer": "patterns",
+  "$note": "LAYER 3. Product concepts with fixed visual contracts, defined ONCE so they cannot drift between screens. References semantic tokens only — never primitives. Several families exist as reserved slots for screens that are not designed yet; that is deliberate, so building those screens does not reopen the token layer.",
+
+  "$negativeSpace": {
+    "$note": "What is deliberately ABSENT here is as load-bearing as what is present. These names must never be added, and restricted.mjs fails the build if they are: corridor.target / corridor.goal (a corridor is a range, never a line you can fall short of); streak.* / chain.* / broken.* (nothing may visually break); missed.* (a gap is rest, not failure). The principle is enforced by the shape of the token set, not by review.",
+    "forbidden": ["target", "goal", "streak", "chain", "broken", "missed", "failed", "overdue"]
+  },
+
+  "corridor": {
+    "$intent": "Answer 'am I on track?' without letting anyone fail a benchmark nobody told them about.",
+    "$contract": "A soft translucent band behind the chart, labelled as a common range, with phase chips describing what typically happens and an 'everyone heals differently' affordance always within reach.",
+    "band":       { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint13}" }, "$description": "The range band itself. Sits UNDER the data line; the data must always read on top." },
+    "edge":       { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint20}" } },
+    "label":      { "$type": "ref", "$value": "{color.text.secondary}", "$description": "\"Common range for …\" — deliberately quiet. The band is context, not a verdict." },
+    "phaseChip":  { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint13}" } },
+    "phaseLabel": { "$type": "ref", "$value": "{color.accent.strong}" }
+  },
+
+  "rest": {
+    "$intent": "Render gaps as rest. Missing days are the normal texture of recovery, not a failure state.",
+    "$contract": "Muted neutral, visually quieter than a logged day. Never red, never alert-coloured, never labelled 'missed', never counted.",
+    "surface": { "$type": "ref", "$value": "{color.surface.base}" },
+    "mark":    { "$type": "ref", "$value": "{color.surface.border}" },
+    "label":   { "$type": "ref", "$value": "{color.text.muted}", "$description": "Copy reads like \"a few quiet days\" — descriptive, never evaluative." }
+  },
+
+  "accumulation": {
+    "$intent": "Show consistency without a chain that can break. Research puts guilt among the top abandonment drivers, and a broken streak manufactures it.",
+    "$contract": "A count, or dots that only ever accrue. Nothing sequential that can visibly reset.",
+    "counterFill":   { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint13}" } },
+    "counterEdge":   { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint27}" } },
+    "counterLabel":  { "$type": "ref", "$value": "{color.accent.strong}" },
+    "dotFilled":     { "$type": "ref", "$value": "{color.accent.default}" },
+    "dotEmpty":      { "$type": "ref", "$value": "{color.surface.border}", "$description": "An unfilled dot is neutral, not a hole. It never turns red and never carries a count of what was skipped." }
+  },
+
+  "lock": {
+    "$intent": "Mark premium depth, identically everywhere.",
+    "$contract": "Measured from Figma node 2:560, the only frame carrying this treatment. One badge, one desaturation level, one behaviour: tapping opens the paywall sheet.",
+    "$forbiddenOn": "Any core-loop surface, and the entire doctor report including its export. Free forever means no badge, ever.",
+    "cardOpacity": { "$type": "number", "$value": 0.70, "$description": "Row desaturation. From Figma — the code had it inline." },
+    "badgeFill":   { "$type": "ref", "$value": "{color.surface.border}" },
+    "badgeGlyph":  { "$type": "ref", "$value": "{color.text.secondary}" },
+    "badgeSize":   { "$type": "ref", "$value": "{size.badge}" },
+    "glyphSize":   { "$type": "ref", "$value": "{size.glyph}" },
+    "label":       { "$type": "ref", "$value": "{color.text.secondary}", "$description": "Locked rows demote their label from primary to secondary — the row reads as available-later, not as broken." }
+  },
+
+  "historyFade": {
+    "$intent": "Gate history depth without hiding that the data exists.",
+    "$contract": "A gradient fade at the free-history boundary plus an inline unlock pill. Never a hard wall, never a modal interrupt.",
+    "fadeFrom":  { "$type": "colorAlpha", "$value": { "base": "{color.surface.raised}", "alpha": "{alpha.tint05}" } },
+    "fadeTo":    { "$type": "ref", "$value": "{color.surface.raised}" },
+    "pillFill":  { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint13}" } },
+    "pillEdge":  { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint27}" } },
+    "pillLabel": { "$type": "ref", "$value": "{color.accent.strong}" }
+  },
+
+  "insight": {
+    "$intent": "Make data mean something. Charts without interpretation are a top-cited reason people quit.",
+    "$contract": "The headline sentence is the primary element and the chart supports it. Trend is icon PLUS word — never a bare colour or arrow.",
+    "headline":  { "$type": "ref", "$value": "{color.text.primary}" },
+    "headlineType": { "$type": "ref", "$value": "{type.insight}" },
+    "trendUp":   { "$type": "ref", "$value": "{color.category.mood.mark}",  "$description": "Paired with an explicit word such as \"Improving\"." },
+    "trendDown": { "$type": "ref", "$value": "{color.category.pain.mark}",  "$description": "Direction is not valence — falling pain is good. The WORD carries the meaning; colour only supports it." },
+    "trendFlat": { "$type": "ref", "$value": "{color.text.secondary}" },
+    "chartLine": { "$type": "ref", "$value": "{color.accent.default}" },
+    "chartGrid": { "$type": "colorAlpha", "$value": { "base": "{color.surface.border}", "alpha": "{alpha.tint53}" } }
+  },
+
+  "fastPath": {
+    "$intent": "The core retention mechanic: a complete, valid check-in in one tap, under ten seconds, without typing.",
+    "$contract": "Largest and first-rendered element on its screen, in the thumb zone. Each option is icon plus word. No scroll, no second decision.",
+    "optionFill":     { "$type": "ref", "$value": "{color.surface.card}" },
+    "optionEdge":     { "$type": "ref", "$value": "{color.surface.border}" },
+    "optionSelected": { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint27}" } },
+    "minHeight":      { "$type": "dimension", "$value": 88, "$description": "Twice the 44pt floor. This is the one control that should be unmissable on a bad day." },
+    "better": { "label": { "$type": "string", "$value": "Better" }, "mark": { "$type": "ref", "$value": "{color.category.mood.mark}" } },
+    "same":   { "label": { "$type": "string", "$value": "Same" },   "mark": { "$type": "ref", "$value": "{color.category.sleep.mark}" } },
+    "worse":  { "label": { "$type": "string", "$value": "Worse" },  "mark": { "$type": "ref", "$value": "{color.category.pain.mark}" } }
+  },
+
+  "share": {
+    "$intent": "Milestone artifacts people choose to send. The honest growth loop.",
+    "$contract": "Dignified, story-friendly ratio, light brandmark, beautiful in both modes. STRICTLY user-initiated — no share prompts anywhere.",
+    "$status": "RESERVED — ShareCardScreen exists in code but has no Figma frame.",
+    "cardFrom":   { "$type": "ref", "$value": "{color.accent.dim}" },
+    "cardTo":     { "$type": "ref", "$value": "{color.surface.raised}" },
+    "title":      { "$type": "ref", "$value": "{color.text.primary}" },
+    "meta":       { "$type": "ref", "$value": "{color.text.secondary}" },
+    "brandmark":  { "$type": "colorAlpha", "$value": { "base": "{color.text.primary}", "alpha": "{alpha.tint33}" }, "$description": "Light touch. The user's milestone is the subject; the app is a footnote." },
+    "aspectRatio":{ "$type": "number", "$value": 0.5625, "$description": "9:16 story ratio." }
+  },
+
+  "report": {
+    "$intent": "The doctor report — the spec flagship and the category's emotional peak.",
+    "$contract": "Restrained, print-friendly, scannable by a clinician in 60 seconds. 'What changed since last visit' is the visually dominant block.",
+    "$status": "RESERVED — exists in NEITHER Figma nor code, despite being linked from both Home and Profile. Recorded as a product risk in extraction/screens.json.",
+    "$never": "No lock badge, no paywall, no premium treatment anywhere on this surface or its export. Free forever.",
+    "surface":       { "$type": "ref", "$value": "{color.surface.raised}" },
+    "heading":       { "$type": "ref", "$value": "{color.text.primary}" },
+    "meta":          { "$type": "ref", "$value": "{color.text.secondary}" },
+    "changeBlock":   { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint13}" }, "$description": "The 'what changed' block — the one section allowed extra visual weight." },
+    "divider":       { "$type": "ref", "$value": "{color.surface.border}" }
+  },
+
+  "welcomeBack": {
+    "$intent": "Meet a returning user with warmth, never a recap of what they missed.",
+    "$contract": "One warm line, then straight into the fast path. No count of missed days, no catch-up prompt, no apology required.",
+    "$status": "RESERVED — no design in either source.",
+    "surface": { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint08}" } },
+    "message": { "$type": "ref", "$value": "{color.text.primary}" }
+  },
+
+  "paywall": {
+    "$intent": "Offer depth without ever compromising the free experience.",
+    "$contract": "A dismissible bottom sheet. Dismissing always returns to a fully intact free product.",
+    "$never": "Countdown timers, fake urgency, guilt copy, or a skip path that is hidden, delayed or visually starved.",
+    "sheet":       { "$type": "ref", "$value": "{color.surface.raised}" },
+    "scrim":       { "$type": "ref", "$value": "{color.state.scrim}" },
+    "handle":      { "$type": "ref", "$value": "{color.surface.border}" },
+    "savingsFill": { "$type": "colorAlpha", "$value": { "base": "{color.category.mood.mark}", "alpha": "{alpha.tint20}" } },
+    "savingsLabel":{ "$type": "ref", "$value": "{color.category.mood.mark}" }
+  },
+
+  "capture": {
+    "$intent": "The Notes-app lane: capture anything in under ten seconds with zero categorisation decisions.",
+    "$contract": "One line, one save. No required fields, ever. Offline-safe and optimistic — the entry appears immediately and the write is never something the user waits on.",
+    "field":       { "$type": "ref", "$value": "{color.surface.raised}" },
+    "edge":        { "$type": "ref", "$value": "{color.surface.border}" },
+    "placeholder": { "$type": "ref", "$value": "{color.text.muted}" },
+    "actionIdle":  { "$type": "ref", "$value": "{color.surface.border}" },
+    "actionReady": { "$type": "ref", "$value": "{color.accent.default}" }
+  },
+
+  "toast": {
+    "$intent": "Confirm quietly.",
+    "surface": { "$type": "ref", "$value": "{color.surface.card}" },
+    "label":   { "$type": "ref", "$value": "{color.text.primary}" },
+    "dwell":   { "$type": "ref", "$value": "{duration.dwell}" }
+  }
+}

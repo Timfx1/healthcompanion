@@ -1,0 +1,88 @@
+{
+  "$layer": "semantic",
+  "$note": "LAYER 2. Roles, not values. Every colour role is MODE-PAIRED in a single map: { dark, light }. This is the structural fix for the drift bug — the old system kept two parallel maps (text/lText in tokens.ts, and a separate @theme block), which is exactly the shape that let lTextMut and safety exist in one place and not the other. With pairing, a missing light value is a schema failure at build time rather than a comment nobody read.",
+  "$provenance": "dark = Figma (canonical for colour). light = code (Figma has no light-mode frames).",
+
+  "color": {
+    "surface": {
+      "base":    { "$type": "color", "$value": { "dark": "{color.indigo.900}", "light": "{color.paper.50}" },  "$description": "Page background beneath the shell." },
+      "raised":  { "$type": "color", "$value": { "dark": "{color.indigo.800}", "light": "{color.paper.0}" },   "$description": "Cards, sheets, tab bar." },
+      "card":    { "$type": "color", "$value": { "dark": "{color.indigo.700}", "light": "{color.paper.0}" },   "$description": "Surface nested inside a raised one. Light mode collapses this onto white — the light palette separates by border, dark by fill." },
+      "border":  { "$type": "color", "$value": { "dark": "{color.indigo.600}", "light": "{color.paper.200}" }, "$description": "Hairline dividers and card outlines." },
+      "inverse": { "$type": "color", "$value": { "dark": "{color.white}",      "light": "{color.paper.900}" }, "$description": "Foreground on a saturated fill." }
+    },
+
+    "text": {
+      "primary":   { "$type": "color", "$value": { "dark": "{color.ink.50}",  "light": "{color.paper.900}" } },
+      "secondary": { "$type": "color", "$value": { "dark": "{color.ink.300}", "light": "{color.paper.600}" }, "$description": "Labels, captions, supporting copy, and locked-row labels." },
+      "muted":     { "$type": "color", "$value": { "dark": "{color.ink.500}", "light": "{color.paper.400}" }, "$description": "Placeholders and fine print. FAILS AA in both modes (2.25–2.71 dark, 2.04–2.18 light) — tracked debt in RECONCILIATION.md, not accepted." },
+      "onAccent":  { "$type": "color", "$value": { "dark": "{color.white}",   "light": "{color.white}" },     "$description": "Label on a filled accent surface. Mode-invariant because the accent fill is." }
+    },
+
+    "accent": {
+      "default": { "$type": "color", "$value": { "dark": "{color.lavender.500}", "light": "{color.lavender.500}" }, "$description": "Brand accent for NON-TEXT use: active tab, progress fill, selected outline, focus ring. Mode-invariant by design." },
+      "strong":  { "$type": "color", "$value": { "dark": "{color.lavender.400}", "light": "{color.lavender.500}" }, "$description": "Accent-coloured TEXT. Light mode steps down to the darker value because the lighter one reaches only 2.84:1 on white." },
+      "dim":     { "$type": "color", "$value": { "dark": "{color.lavender.700}", "light": "{color.lavender.700}" }, "$description": "Deep accent tint for gradient starts and tinted card fills." }
+    },
+
+    "category": {
+      "$note": "MARK vs INK is the most important distinction in this system. `mark` is the pastel, for fills, chart lines, chips and dots. `ink` is for text, icons and meaningful strokes, and must meet contrast. Using a mark value as text is the single most likely accessibility regression here — which is why they have different names. Every family must define all four members or the build fails; that is how 'never meaning by colour alone' becomes mechanical.",
+      "pain":   { "mark": { "$type": "color", "$value": { "dark": "{color.pastel.pain}",   "light": "{color.pastel.pain}" } },   "ink": { "$type": "color", "$value": { "dark": "{color.pastel.pain}",   "light": "{color.pastel.pain}" },   "$description": "DEBT: 1.96:1 on white. Needs a darkened light value." }, "icon": { "$type": "string", "$value": "pain" },   "label": { "$type": "string", "$value": "Pain" } },
+      "sleep":  { "mark": { "$type": "color", "$value": { "dark": "{color.pastel.sleep}",  "light": "{color.pastel.sleep}" } },  "ink": { "$type": "color", "$value": { "dark": "{color.pastel.sleep}",  "light": "{color.pastel.sleep}" },  "$description": "DEBT: 1.81:1 on white." }, "icon": { "$type": "string", "$value": "sleep" },  "label": { "$type": "string", "$value": "Sleep" } },
+      "energy": { "mark": { "$type": "color", "$value": { "dark": "{color.pastel.energy}", "light": "{color.pastel.energy}" } }, "ink": { "$type": "color", "$value": { "dark": "{color.pastel.energy}", "light": "{color.pastel.energy}" }, "$description": "DEBT: 1.47:1 on white — the worst pair in the system." }, "icon": { "$type": "string", "$value": "energy" }, "label": { "$type": "string", "$value": "Energy" } },
+      "mood":   { "mark": { "$type": "color", "$value": { "dark": "{color.pastel.mood}",   "light": "{color.pastel.mood}" } },   "ink": { "$type": "color", "$value": { "dark": "{color.pastel.mood}",   "light": "{color.pastel.mood}" },   "$description": "DEBT: 1.58:1 on white." }, "icon": { "$type": "string", "$value": "mood" },   "label": { "$type": "string", "$value": "Mood" } },
+      "meds":   { "mark": { "$type": "color", "$value": { "dark": "{color.pastel.meds}",   "light": "{color.pastel.meds}" } },   "ink": { "$type": "color", "$value": { "dark": "{color.pastel.meds}",   "light": "{color.pastel.meds}" },   "$description": "DEBT: 1.81:1 on white." }, "icon": { "$type": "string", "$value": "meds" },   "label": { "$type": "string", "$value": "Medication" } }
+    },
+
+    "cta": {
+      "$note": "The primary call to action carries its OWN gradient rather than reusing the brand accent. White on the brand accent reaches 4.19:1 at the dark stop and 2.84:1 at the light stop, and the label is 16px at weight 600 — body text under WCAG, so 4.5:1 applies. Rather than shift the brand hue everywhere, the CTA gets darker dedicated stops and the accent stays intact for non-text use.",
+      "from":  { "$type": "color", "$value": { "dark": "{color.lavender.600}", "light": "{color.lavender.600}" }, "$description": "Gradient start. White 5.51:1." },
+      "to":    { "$type": "color", "$value": { "dark": "{color.lavender.550}", "light": "{color.lavender.550}" }, "$description": "Gradient end — the worst case for the label. White 4.77:1." },
+      "label": { "$type": "color", "$value": { "dark": "{color.white}",        "light": "{color.white}" } }
+    },
+
+    "safety": {
+      "$note": "RESERVED. These are the only tokens permitted to resolve to the alert hues, and restricted.mjs fails the build if that hue appears outside this family. Split into ink and mark for the same reason as the categories.",
+      "ink":    { "$type": "color", "$value": { "dark": "{color.alert.400}", "light": "{color.alert.700}" }, "$description": "Red-flag TEXT. Mode-paired so it clears 4.5:1 on both palettes — 4.79–5.77 dark, 4.70–5.01 light. The original single hue reached 4.38 and 3.54." },
+      "mark":   { "$type": "color", "$value": { "dark": "{color.alert.500}", "light": "{color.alert.500}" }, "$description": "Red-flag icons, borders and fills, where the 3:1 non-text threshold applies. Preserves the original hue." },
+      "surface":{ "$type": "colorAlpha", "$value": { "base": "{color.alert.500}", "alpha": "{alpha.tint13}" }, "$description": "Tinted background behind red-flag content." }
+    },
+
+    "state": {
+      "disabled":     { "$type": "color", "$value": { "dark": "{color.indigo.600}", "light": "{color.paper.200}" }, "$description": "Disabled control fill. The only disabled-CTA reference in the design file is Figma node 1:96." },
+      "disabledText": { "$type": "color", "$value": { "dark": "{color.ink.500}",    "light": "{color.paper.600}" } },
+      "selectedFill": { "$type": "colorAlpha", "$value": { "base": "{color.lavender.500}", "alpha": "{alpha.tint13}" }, "$description": "Selected option-card fill. The standard 13% tint." },
+      "selectedEdge": { "$type": "colorAlpha", "$value": { "base": "{color.lavender.500}", "alpha": "{alpha.tint27}" }, "$description": "Selected option-card border. The standard 27% tint; 13 uses. DEBT: 1.40/1.38:1 against the 3:1 non-text threshold." },
+      "scrim":        { "$type": "colorAlpha", "$value": { "base": "{color.black}", "alpha": "{alpha.scrim55}" }, "$description": "Dimming layer behind a sheet or overlay." }
+    }
+  },
+
+  "type": {
+    "$note": "Role -> { size, weight, lineHeight, tracking }. Line heights are absolute, matching what Figma reports.",
+    "display":   { "size": "{font.size.display}", "weight": "{font.weight.semibold}", "lineHeight": 48, "tracking": "{font.tracking.tight}", "$description": "Day-N counter, pain score. The emotional anchors." },
+    "heading":   { "size": "{font.size.3xl}",  "weight": "{font.weight.semibold}", "lineHeight": 33.6, "tracking": "{font.tracking.normal}" },
+    "title":     { "size": "{font.size.2xl}",  "weight": "{font.weight.semibold}", "lineHeight": 36,   "tracking": "{font.tracking.normal}" },
+    "body":      { "size": "{font.size.md}",   "weight": "{font.weight.regular}",  "lineHeight": 24,   "tracking": "{font.tracking.normal}" },
+    "rowLabel":  { "size": "{font.size.base}", "weight": "{font.weight.medium}",   "lineHeight": 21,   "tracking": "{font.tracking.normal}" },
+    "caption":   { "size": "{font.size.xs}",   "weight": "{font.weight.semibold}", "lineHeight": 18,   "tracking": "{font.tracking.normal}" },
+    "eyebrow":   { "size": "{font.size.2xs}",  "weight": "{font.weight.semibold}", "lineHeight": 16.5, "tracking": "{font.tracking.caps}", "$description": "Uppercase section label." },
+    "buttonPrimary":   { "size": "{font.size.lg}",   "weight": "{font.weight.semibold}", "lineHeight": 24, "tracking": "{font.tracking.wide}", "$description": "16/600 — BODY text under WCAG, not large text. See the CTA note above." },
+    "buttonSecondary": { "size": "{font.size.base}", "weight": "{font.weight.medium}",   "lineHeight": 20, "tracking": "{font.tracking.normal}" },
+    "insight":   { "size": "{font.size.md}",   "weight": "{font.weight.semibold}", "lineHeight": 22, "tracking": "{font.tracking.normal}", "$description": "The plain-language sentence above a chart. Styled as PRIMARY — the chart supports the sentence, not the reverse." }
+  },
+
+  "motion": {
+    "$note": "Named roles so components never quote a raw duration. Each pairs a duration with the curve it should use.",
+    "press":      { "duration": "{duration.micro}",     "easing": "{easing.out}",    "$description": "scale 0.97, opacity 0.88." },
+    "toggle":     { "duration": "{duration.quick}",     "easing": "{easing.out}" },
+    "control":    { "duration": "{duration.compact}",   "easing": "{easing.out}",    "$description": "Chevron rotation, fill transitions." },
+    "indicator":  { "duration": "{duration.medium}",    "easing": "{easing.out}",    "$description": "Dot-nav and filter-chip changes." },
+    "screen":     { "duration": "{duration.screen}",    "easing": "{easing.out}" },
+    "entrance":   { "duration": "{duration.entrance}",  "easing": "{easing.out}",    "$description": "Fade in and rise 16px. fill-mode both." },
+    "themeChange":{ "duration": "{duration.theme}",     "easing": "{easing.out}" },
+    "draw":       { "duration": "{duration.draw}",      "easing": "{easing.out}",    "$description": "Progress fill and chart draw-in. First view only — never on re-render." },
+    "celebrate":  { "duration": "{duration.celebrate}", "easing": "{easing.gentle}", "$description": "Confirmation check-mark. Resolves under a second." },
+    "ambient":    { "duration": "{duration.breathe}",   "easing": "{easing.inOut}",  "$description": "Slow breathing pulse. Ambient life only, never attention-getting." },
+    "spinner":    { "duration": "{duration.spin}",      "easing": "{easing.linear}" }
+  }
+}

@@ -1,0 +1,124 @@
+/* GENERATED FILE — DO NOT EDIT.
+ * Source: design-system/tokens/*.json
+ * Rebuild: node design-system/build/build.mjs
+ * Verify:  node design-system/build/build.mjs --check
+ */
+@theme {
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+
+  --color-surface-base: #15141F;
+  --color-surface-raised: #1E1D2E;
+  --color-surface-card: #252438;
+  --color-surface-border: #2E2C45;
+  --color-surface-inverse: #FFFFFF;
+  --color-text-primary: #F0EFFE;
+  --color-text-secondary: #9B97B8;
+  --color-text-muted: #5C5878;
+  --color-text-onAccent: #FFFFFF;
+  --color-accent-default: #7C6FCD;
+  --color-accent-strong: #9B8FE0;
+  --color-accent-dim: #3D3668;
+  --color-category-pain-mark: #F2A69E;
+  --color-category-pain-ink: #F2A69E;
+  --color-category-sleep-mark: #9EC3F5;
+  --color-category-sleep-ink: #9EC3F5;
+  --color-category-energy-mark: #F5D08A;
+  --color-category-energy-ink: #F5D08A;
+  --color-category-mood-mark: #A8D9B8;
+  --color-category-mood-ink: #A8D9B8;
+  --color-category-meds-mark: #C9B8F0;
+  --color-category-meds-ink: #C9B8F0;
+  --color-cta-from: #6A5CB5;
+  --color-cta-to: #7365C6;
+  --color-cta-label: #FFFFFF;
+  --color-safety-ink: #E86A5C;
+  --color-safety-mark: #E05548;
+  --color-safety-surface: #E0554822;
+  --color-state-disabled: #2E2C45;
+  --color-state-disabledText: #5C5878;
+  --color-state-selectedFill: #7C6FCD22;
+  --color-state-selectedEdge: #7C6FCD44;
+  --color-state-scrim: #0000008C;
+}
+
+/* Geometry scales. Deliberately OUTSIDE @theme and prefixed --rc- so they
+   cannot redefine a Tailwind utility scale. Reference material for CSS
+   authors; the typed `scale` export is the real consumer. */
+:root {
+  --rc-radius-xs: 3px;
+  --rc-radius-sm: 8px;
+  --rc-radius-md: 12px;
+  --rc-radius-lg: 16px;
+  --rc-radius-xl: 20px;
+  --rc-radius-2xl: 24px;
+  --rc-radius-shell: 44px;
+  --rc-radius-full: 9999px;
+  --rc-space-0: 0px;
+  --rc-space-1: 4px;
+  --rc-space-2: 8px;
+  --rc-space-3: 12px;
+  --rc-space-4: 16px;
+  --rc-space-5: 20px;
+  --rc-space-6: 24px;
+  --rc-space-8: 32px;
+  --rc-space-10: 40px;
+  --rc-space-12: 48px;
+  --rc-z-base: 0;
+  --rc-z-raised: 10;
+  --rc-z-overlay: 40;
+  --rc-z-feature: 45;
+  --rc-z-sheet: 50;
+  --rc-z-toast: 60;
+  --rc-z-dev: 100;
+  --rc-duration-instant: 0ms;
+  --rc-duration-micro: 120ms;
+  --rc-duration-quick: 150ms;
+  --rc-duration-compact: 200ms;
+  --rc-duration-medium: 250ms;
+  --rc-duration-screen: 300ms;
+  --rc-duration-entrance: 350ms;
+  --rc-duration-theme: 400ms;
+  --rc-duration-draw: 500ms;
+  --rc-duration-celebrate: 600ms;
+  --rc-duration-dwell: 2400ms;
+  --rc-duration-breathe: 2400ms;
+  --rc-duration-spin: 1800ms;
+}
+
+/* Light mode. Same role names, different values — so a component never
+   branches on mode to pick a colour. */
+:root[data-theme="light"] {
+  --color-surface-base: #F8F7FC;
+  --color-surface-raised: #FFFFFF;
+  --color-surface-card: #FFFFFF;
+  --color-surface-border: #E4E1F5;
+  --color-surface-inverse: #1A1830;
+  --color-text-primary: #1A1830;
+  --color-text-secondary: #6B6890;
+  --color-text-muted: #B0ACCF;
+  --color-text-onAccent: #FFFFFF;
+  --color-accent-default: #7C6FCD;
+  --color-accent-strong: #7C6FCD;
+  --color-accent-dim: #3D3668;
+  --color-category-pain-mark: #F2A69E;
+  --color-category-pain-ink: #F2A69E;
+  --color-category-sleep-mark: #9EC3F5;
+  --color-category-sleep-ink: #9EC3F5;
+  --color-category-energy-mark: #F5D08A;
+  --color-category-energy-ink: #F5D08A;
+  --color-category-mood-mark: #A8D9B8;
+  --color-category-mood-ink: #A8D9B8;
+  --color-category-meds-mark: #C9B8F0;
+  --color-category-meds-ink: #C9B8F0;
+  --color-cta-from: #6A5CB5;
+  --color-cta-to: #7365C6;
+  --color-cta-label: #FFFFFF;
+  --color-safety-ink: #C93D30;
+  --color-safety-mark: #E05548;
+  --color-safety-surface: #E0554822;
+  --color-state-disabled: #E4E1F5;
+  --color-state-disabledText: #6B6890;
+  --color-state-selectedFill: #7C6FCD22;
+  --color-state-selectedEdge: #7C6FCD44;
+  --color-state-scrim: #0000008C;
+}

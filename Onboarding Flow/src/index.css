@@ -15,42 +15,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 @import 'tailwindcss';
 
-/* ── Tailwind v4 theme tokens ─────────────────────────────────────────────── */
-/* These CSS custom properties mirror the D object in tokens.ts.
-   Both sets must be kept in sync if either is changed. */
-@theme {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+/* ── Design tokens ────────────────────────────────────────────────────────────
+   The @theme block that used to sit here is now GENERATED. Rebuild with:
 
-  /* Dark surface palette */
-  --color-surface-base: #15141F;
-  --color-surface-raised: #1E1D2E;
-  --color-surface-card: #252438;
-  --color-surface-border: #2E2C45;
+       node design-system/build/build.mjs
 
-  /* Accent */
-  --color-accent: #7C6FCD;
-  --color-accent-light: #9B8FE0;
-  --color-accent-dim: #3D3668;
+   It previously duplicated the D object in tokens.ts, with a comment in each
+   file saying the two must be kept in sync. They were not: lTextMut and safety
+   existed in tokens.ts and were missing here.
 
-  /* Text */
-  --color-text-primary: #F0EFFE;
-  --color-text-secondary: #9B97B8;
-  --color-text-muted: #5C5878;
+   That drift survived because NOTHING CONSUMED THESE VARIABLES — no component
+   used a bg-surface-* utility or a var(--color-*) reference, so the two sources
+   could disagree indefinitely with no visible symptom. Generating both from one
+   mode-paired source makes that class of bug impossible: a colour role missing
+   its light value now fails the build.
 
-  /* Light mode */
-  --color-light-base: #F8F7FC;
-  --color-light-card: #FFFFFF;
-  --color-light-border: #E4E1F5;
-  --color-light-text: #1A1830;
-  --color-light-text-secondary: #6B6890;
-
-  /* Pastel category hues */
-  --color-pastel-pain: #F2A69E;
-  --color-pastel-sleep: #9EC3F5;
-  --color-pastel-energy: #F5D08A;
-  --color-pastel-mood: #A8D9B8;
-  --color-pastel-meds: #C9B8F0;
-}
+   The generated file also adds a [data-theme="light"] block, so the light
+   palette is expressed under the SAME role names rather than as a parallel set
+   of l-prefixed ones. */
+@import './tokens.generated.css';
 
 html, body, #root {
   height: 100%;

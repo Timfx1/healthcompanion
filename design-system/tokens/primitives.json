@@ -1,0 +1,176 @@
+{
+  "$layer": "primitives",
+  "$note": "LAYER 1. Raw values with no product meaning. Screens may NEVER reference these directly — restricted.mjs fails the build if they do — because a primitive carries no mode pairing and no accessibility contract. Semantic and pattern tokens reference them; components reference those.",
+  "$provenance": "Colours: Figma (verified identical to code, see RECONCILIATION.md). Geometry, motion and type: code, because Figma's geometry is corrupted by the Figma Make paste.",
+
+  "color": {
+    "indigo": {
+      "900": { "$type": "color", "$value": "#15141F", "$description": "Deepest dark surface. Never pure black — the palette is plum-tinted throughout." },
+      "800": { "$type": "color", "$value": "#1E1D2E", "$description": "Elevated dark surface: cards, sheets, tab bar." },
+      "700": { "$type": "color", "$value": "#252438", "$description": "Dark surface nested inside an already-elevated one." },
+      "600": { "$type": "color", "$value": "#2E2C45", "$description": "Dark hairline: dividers, card outlines, lock-badge fill." }
+    },
+    "lavender": {
+      "700": { "$type": "color", "$value": "#3D3668", "$description": "Deep accent tint. Gradient starts and accent-tinted card fills." },
+      "600": { "$type": "color", "$value": "#6A5CB5", "$description": "AA-safe CTA gradient start. Added in v1 so white body text clears 4.5:1 — see the note on lavender.500." },
+      "550": { "$type": "color", "$value": "#7365C6", "$description": "AA-safe CTA gradient end. White reaches 4.77:1 here, against 2.84:1 on the original light stop." },
+      "500": { "$type": "color", "$value": "#7C6FCD", "$description": "Brand accent. Primary for non-text use: active tab, progress fill, selected outline, focus. NOT safe behind white body text — white reaches only 4.19:1." },
+      "400": { "$type": "color", "$value": "#9B8FE0", "$description": "Lighter accent, for accent-coloured text on dark surfaces." }
+    },
+    "ink": {
+      "50":  { "$type": "color", "$value": "#F0EFFE", "$description": "Primary text on dark." },
+      "300": { "$type": "color", "$value": "#9B97B8", "$description": "Secondary text on dark: labels, captions, supporting copy." },
+      "500": { "$type": "color", "$value": "#5C5878", "$description": "Muted text on dark. FAILS AA as body text on every dark surface (2.25–2.71:1) — tracked debt." }
+    },
+    "paper": {
+      "0":   { "$type": "color", "$value": "#FFFFFF", "$description": "Light card surface." },
+      "50":  { "$type": "color", "$value": "#F8F7FC", "$description": "Light page background." },
+      "200": { "$type": "color", "$value": "#E4E1F5", "$description": "Light hairline." },
+      "400": { "$type": "color", "$value": "#B0ACCF", "$description": "Muted text on light. FAILS AA (2.04–2.18:1) — tracked debt. This is one of the two tokens the old @theme block was missing." },
+      "600": { "$type": "color", "$value": "#6B6890", "$description": "Secondary text on light." },
+      "900": { "$type": "color", "$value": "#1A1830", "$description": "Primary text on light." }
+    },
+    "pastel": {
+      "pain":   { "$type": "color", "$value": "#F2A69E", "$description": "Pain category. Fill/mark use only — 1.96:1 on white." },
+      "sleep":  { "$type": "color", "$value": "#9EC3F5", "$description": "Sleep category. Fill/mark use only — 1.81:1 on white." },
+      "energy": { "$type": "color", "$value": "#F5D08A", "$description": "Energy category. Fill/mark use only — 1.47:1 on white." },
+      "mood":   { "$type": "color", "$value": "#A8D9B8", "$description": "Mood category. Fill/mark use only — 1.58:1 on white." },
+      "meds":   { "$type": "color", "$value": "#C9B8F0", "$description": "Medication category. Fill/mark use only — 1.81:1 on white." }
+    },
+    "alert": {
+      "400": { "$type": "color", "$value": "#E86A5C", "$description": "Safety text on dark. AA-safe on all three dark surfaces (4.79–5.77:1). Added in v1; the original hue reached only 4.38:1 on raised." },
+      "500": { "$type": "color", "$value": "#E05548", "$description": "The safety hue. Retained for non-text safety use (icons, borders, fills) where the 3:1 threshold applies. RESERVED — never decorative." },
+      "700": { "$type": "color", "$value": "#C93D30", "$description": "Safety text on light. AA-safe on both light surfaces (4.70–5.01:1); the original reached 3.54–3.78:1." }
+    },
+    "white": { "$type": "color", "$value": "#FFFFFF", "$description": "Pure white. Only for labels on saturated fills and light cards." },
+    "black": { "$type": "color", "$value": "#000000", "$description": "Only ever used with alpha, for scrims and shadows. Never a surface." }
+  },
+
+  "alpha": {
+    "$note": "A quantised ladder. Every translucent value in the system snaps to one of these steps, so the ~20 ad-hoc opacities found in the prototype collapse to a reviewable set. Emitters render these as the trailing byte of an 8-digit hex, which both CSS and React Native parse natively — that is why no rgba() string exists anywhere in this system.",
+    "tint05":  { "$type": "alpha", "$value": 0.051, "$hex": "0D", "$description": "Faintest wash." },
+    "tint08":  { "$type": "alpha", "$value": 0.078, "$hex": "14", "$description": "Hairline fill." },
+    "tint13":  { "$type": "alpha", "$value": 0.133, "$hex": "22", "$description": "Standard tint background. The most common tint in the product." },
+    "tint20":  { "$type": "alpha", "$value": 0.200, "$hex": "33", "$description": "Gradient stop; inactive dot on dark." },
+    "tint27":  { "$type": "alpha", "$value": 0.267, "$hex": "44", "$description": "Standard tint border. 13 uses. Fails the 3:1 non-text threshold — tracked debt." },
+    "tint33":  { "$type": "alpha", "$value": 0.333, "$hex": "55", "$description": "Glow and strong gradient stop." },
+    "tint40":  { "$type": "alpha", "$value": 0.400, "$hex": "66", "$description": "Selected state." },
+    "tint53":  { "$type": "alpha", "$value": 0.533, "$hex": "88", "$description": "Deep gradient tail." },
+    "scrim55": { "$type": "alpha", "$value": 0.549, "$hex": "8C", "$description": "Light modal scrim." },
+    "scrim72": { "$type": "alpha", "$value": 0.722, "$hex": "B8", "$description": "Heavy scrim; the phone-shell drop shadow." }
+  },
+
+  "space": {
+    "$note": "8pt grid with half-steps. Unitless — emitters add px on web and leave bare numbers for React Native.",
+    "0": { "$type": "dimension", "$value": 0 },
+    "1": { "$type": "dimension", "$value": 4 },
+    "2": { "$type": "dimension", "$value": 8 },
+    "3": { "$type": "dimension", "$value": 12 },
+    "4": { "$type": "dimension", "$value": 16 },
+    "5": { "$type": "dimension", "$value": 20 },
+    "6": { "$type": "dimension", "$value": 24 },
+    "8": { "$type": "dimension", "$value": 32 },
+    "10": { "$type": "dimension", "$value": 40 },
+    "12": { "$type": "dimension", "$value": 48 }
+  },
+
+  "radius": {
+    "xs":   { "$type": "dimension", "$value": 3,  "$description": "Progress-bar and dot-nav caps." },
+    "sm":   { "$type": "dimension", "$value": 8 },
+    "md":   { "$type": "dimension", "$value": 12, "$description": "Icon tiles, small controls." },
+    "lg":   { "$type": "dimension", "$value": 16, "$description": "The default card and button radius." },
+    "xl":   { "$type": "dimension", "$value": 20 },
+    "2xl":  { "$type": "dimension", "$value": 24, "$description": "Sheets." },
+    "shell":{ "$type": "dimension", "$value": 44, "$description": "Phone-shell corner." },
+    "full": { "$type": "dimension", "$value": 9999, "$description": "Pills and circles. Figma reports this as radii in the tens of millions — a paste artifact, not a value." }
+  },
+
+  "size": {
+    "tap":         { "$type": "dimension", "$value": 44, "$description": "Minimum interactive target. WCAG / HIG floor — never go below this." },
+    "control":     { "$type": "dimension", "$value": 40, "$description": "Mode toggle and small square controls." },
+    "iconTile":    { "$type": "dimension", "$value": 34, "$description": "Category icon tile on list rows." },
+    "badge":       { "$type": "dimension", "$value": 24, "$description": "Lock badge diameter." },
+    "glyph":       { "$type": "dimension", "$value": 12, "$description": "Glyph inside a badge." },
+    "dot":         { "$type": "dimension", "$value": 6,  "$description": "Screen-indicator dot." },
+    "dotActive":   { "$type": "dimension", "$value": 16, "$description": "Active indicator pill width." },
+    "sliderThumb": { "$type": "dimension", "$value": 24 },
+    "buttonPrimary":   { "$type": "dimension", "$value": 56 },
+    "buttonSecondary": { "$type": "dimension", "$value": 48 },
+    "rowStandard": { "$type": "dimension", "$value": 52 },
+    "hairline":    { "$type": "dimension", "$value": 1, "$description": "Border width. Figma reports 1.141px throughout — a paste artifact; 1 is the authored value." },
+    "hairlineThick": { "$type": "dimension", "$value": 2, "$description": "Selected-state border." },
+    "shellWidth":  { "$type": "dimension", "$value": 390 },
+    "shellHeight": { "$type": "dimension", "$value": 844 }
+  },
+
+  "z": {
+    "$note": "The full elevation order, fixed. Overlays must never be authored with an ad-hoc z-index.",
+    "base":    { "$type": "number", "$value": 0 },
+    "raised":  { "$type": "number", "$value": 10, "$description": "Floating action button." },
+    "overlay": { "$type": "number", "$value": 40, "$description": "Full-screen overlay (check-in)." },
+    "feature": { "$type": "number", "$value": 45, "$description": "Full-screen feature surface (share card)." },
+    "sheet":   { "$type": "number", "$value": 50, "$description": "Bottom sheet (paywall)." },
+    "toast":   { "$type": "number", "$value": 60, "$description": "Transient confirmation." },
+    "dev":     { "$type": "number", "$value": 100, "$description": "Mode toggle. Prototype-only affordance." }
+  },
+
+  "duration": {
+    "$note": "Bands from the design brief: micro 100–150, component 200–300, screen 300–350, chart draw 400–600 (first view only).",
+    "instant": { "$type": "duration", "$value": 0,   "$description": "Reduced-motion and screenshot-harness value." },
+    "micro":   { "$type": "duration", "$value": 120, "$description": "Press feedback." },
+    "quick":   { "$type": "duration", "$value": 150, "$description": "The de facto micro duration — 13 uses in the prototype." },
+    "compact": { "$type": "duration", "$value": 200, "$description": "Small component state changes." },
+    "medium":  { "$type": "duration", "$value": 250 },
+    "screen":  { "$type": "duration", "$value": 300, "$description": "Screen and tab transitions." },
+    "entrance":{ "$type": "duration", "$value": 350, "$description": "Fade-and-rise entrance." },
+    "theme":   { "$type": "duration", "$value": 400, "$description": "Colour-mode change. Above the screen band by intent — a theme change is not a navigation. Named so it is an exception rather than an outlier." },
+    "draw":    { "$type": "duration", "$value": 500, "$description": "Progress-bar fill and chart draw-in. DEVIATION: exceeds every band in the brief (see DESIGN_CRITERIA.md §7); retained for visual parity and flagged for review." },
+    "celebrate": { "$type": "duration", "$value": 600, "$description": "Confirmation check-mark draw-on." },
+    "dwell":   { "$type": "duration", "$value": 2400, "$description": "Toast auto-dismiss." },
+    "breathe": { "$type": "duration", "$value": 2400, "$description": "Ambient pulse cycle." },
+    "spin":    { "$type": "duration", "$value": 1800, "$description": "Loading ring revolution." }
+  },
+
+  "stagger": {
+    "step": { "$type": "duration", "$value": 60, "$description": "Delay between successive items in a staggered entrance. Five steps plus a 350ms entrance keeps total choreography at 650ms, the stated ceiling." },
+    "max":  { "$type": "number", "$value": 5, "$description": "Maximum staggered items before the delay stops accumulating." }
+  },
+
+  "easing": {
+    "$note": "Stored as cubic-bezier control points, never as the keyword 'ease-out' — the keyword resolves to different curves in different engines, and this system targets both CSS and Reanimated.",
+    "out":     { "$type": "cubicBezier", "$value": [0, 0, 0.58, 1],      "$description": "Entrances and most transitions." },
+    "in":      { "$type": "cubicBezier", "$value": [0.42, 0, 1, 1] },
+    "inOut":   { "$type": "cubicBezier", "$value": [0.42, 0, 0.58, 1],   "$description": "Ambient loops." },
+    "linear":  { "$type": "cubicBezier", "$value": [0, 0, 1, 1],         "$description": "Continuous rotation only." },
+    "gentle":  { "$type": "cubicBezier", "$value": [0.34, 1.2, 0.64, 1], "$description": "Soft settle for celebrations. The only curve permitted to overshoot, and only slightly." }
+  },
+
+  "font": {
+    "family": { "$type": "fontFamily", "$value": ["Inter", "ui-sans-serif", "system-ui", "sans-serif"], "$description": "One humanist sans." },
+    "weight": {
+      "regular":  { "$type": "number", "$value": 400 },
+      "medium":   { "$type": "number", "$value": 500 },
+      "semibold": { "$type": "number", "$value": 600 },
+      "bold":     { "$type": "number", "$value": 700, "$description": "Only weight that qualifies text for the WCAG large-text exemption." }
+    },
+    "size": {
+      "3xs": { "$type": "dimension", "$value": 10 },
+      "2xs": { "$type": "dimension", "$value": 11, "$description": "Eyebrow / uppercase label." },
+      "xs":  { "$type": "dimension", "$value": 12 },
+      "sm":  { "$type": "dimension", "$value": 13 },
+      "base":{ "$type": "dimension", "$value": 14, "$description": "List-row and control text." },
+      "md":  { "$type": "dimension", "$value": 15, "$description": "Body copy." },
+      "lg":  { "$type": "dimension", "$value": 16, "$description": "Primary button label. NOTE: 16 at weight 600 is BODY text under WCAG, not large text — this is exactly how the CTA contrast failure went unnoticed." },
+      "xl":  { "$type": "dimension", "$value": 18 },
+      "2xl": { "$type": "dimension", "$value": 24, "$description": "Section heading; also the large-text threshold at regular weight." },
+      "3xl": { "$type": "dimension", "$value": 28, "$description": "Screen heading." },
+      "display": { "$type": "dimension", "$value": 44, "$description": "Day-N counter and pain score. The emotional anchors." }
+    },
+    "tracking": {
+      "tight":  { "$type": "number", "$value": -0.2 },
+      "normal": { "$type": "number", "$value": 0 },
+      "wide":   { "$type": "number", "$value": 0.16 },
+      "caps":   { "$type": "number", "$value": 1.32, "$description": "Uppercase eyebrow labels." }
+    }
+  }
+}
