@@ -40,7 +40,29 @@ const SOURCES = [
 // in these files would dominate the count with values that are documentation,
 // not code.
 function stripComments(src, isCss) {
-  const out = Array.from(src);
+  // split("") — one element per UTF-16 CODE UNIT, deliberately NOT Array.from.
+  //
+  // This line used to read `Array.from(src)`, which splits by code POINT: an
+  // emoji outside the BMP becomes ONE element instead of the two units it
+  // occupies. The loop below walks `src[i]` and writes `out[i]`, both of which
+  // are code-unit indexed, so from the first astral character onward the two
+  // arrays were misaligned — and these screen files are full of emoji (📋 🎉
+  // 💊 …). 38 of them in Onboarding.tsx, 44 in MainApp.tsx.
+  //
+  // The damage was not what you would guess. The counts barely moved (349
+  // actual against 350 reported) because a regex still finds roughly the same
+  // number of matches in a shifted string. What broke was POSITION: the drift
+  // put the blanking writes over newline characters, merging lines, so
+  // Onboarding.tsx collapsed from 1,917 lines to 1,208 and MainApp.tsx from
+  // 1,936 to 1,182. Every line number `--list` printed after the first emoji
+  // pointed at the wrong line, which is why it kept reporting comment lines
+  // that contain no literal at all.
+  //
+  // That made the ratchet's headline trustworthy and its ONLY actionable
+  // output useless — `--list` is what you follow to find the call sites during
+  // a migration. Worth stating plainly: the bug was invisible precisely
+  // because the number everyone reads was right.
+  const out = src.split("");
   let i = 0, state = "code";
   while (i < src.length) {
     const ch = src[i], next = src[i + 1];
