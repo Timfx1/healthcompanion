@@ -113,6 +113,22 @@ const CATEGORIES = {
   },
   "raw font size": {
     re: /\bfontSize\s*:\s*\d+/g,
+    // 170 -> 23. The 147 that went were exact matches for an existing scale
+    // step, so they became scale.font.size.* with no pixel moving anywhere.
+    //
+    // The 23 that remain are OFF-SCALE — 9, 17, 20, 22, 26, 30, 32, 40, 48, 52,
+    // 56, 80 — and are deliberately left visible rather than snapped to their
+    // nearest neighbour. Snapping would change real sizes while looking like a
+    // mechanical refactor, which is the most expensive kind of diff to review.
+    // Whether they become new steps, collapse into existing ones, or stay as
+    // one-offs is a type-scale decision, not a codemod.
+    //
+    // The `why` below still points at TYPE ROLES rather than bare sizes, and
+    // that remains the destination: a role carries weight, line height and
+    // tracking with the size. Applying roles is NOT zero-diff — most call sites
+    // set no line height, so adopting one would move text — so it is a separate,
+    // deliberate pass. Bare sizes are the honest intermediate step, and they
+    // match how scale.duration.* and scale.radius.* are already consumed.
     why: "Use a type role, which carries size, weight, line height and tracking together.",
   },
 };

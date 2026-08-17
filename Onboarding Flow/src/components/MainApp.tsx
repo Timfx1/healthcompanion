@@ -393,11 +393,11 @@ function PhoneShell({ mode, children }: { mode: Mode; children: React.ReactNode 
           ? "0 32px 80px #000000B8, 0 0 0 1px #FFFFFF0F"
           : "0 24px 64px #645AB42E, 0 0 0 1px #786EC81F",
         fontFamily: "Inter, ui-sans-serif, sans-serif",
-        fontSize: 14,
+        fontSize: scale.font.size.base,
         color: s(D.text, D.lText, mode),
       }}>
       {/* Static iOS-style status bar — decorative, not interactive */}
-      <div className="flex items-center justify-between shrink-0 px-8 pt-4 pb-0" style={{ color: s(D.textSec, D.lTextSec, mode), fontSize: 12 }}>
+      <div className="flex items-center justify-between shrink-0 px-8 pt-4 pb-0" style={{ color: s(D.textSec, D.lTextSec, mode), fontSize: scale.font.size.xs }}>
         <span style={{ fontWeight: 600 }}>9:41</span>
         <div className="flex gap-1 items-center">
           <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="0.5"/><rect x="4.5" y="4.5" width="3" height="6.5" rx="0.5"/><rect x="9" y="2" width="3" height="9" rx="0.5"/><rect x="13.5" y="0" width="2.5" height="11" rx="0.5" opacity="0.4"/></svg>
@@ -443,7 +443,7 @@ function Card({ mode, children, style, onClick }: { mode: Mode; children: React.
 // ============================================================
 function SectionLabel({ label, mode }: { label: string; mode: Mode }) {
   return (
-    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: s(D.textSec, D.lTextSec, mode), marginBottom: 8 }}>
+    <div style={{ fontSize: scale.font.size["2xs"], fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: s(D.textSec, D.lTextSec, mode), marginBottom: 8 }}>
       {label}
     </div>
   );
@@ -493,7 +493,7 @@ function LockedCard({ mode, children, onUnlock, hook }: { mode: Mode; children: 
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-2xl"
         style={{ background: "#15141F8C", backdropFilter: "blur(2px)" }}>
         <LockBadge mode={mode} size={28} />
-        <span style={{ fontSize: 11, color: "#FFFFFFD9", fontWeight: 600, textAlign: "center", maxWidth: 140, lineHeight: 1.3 }}>{hook}</span>
+        <span style={{ fontSize: scale.font.size["2xs"], color: "#FFFFFFD9", fontWeight: 600, textAlign: "center", maxWidth: 140, lineHeight: 1.3 }}>{hook}</span>
       </div>
     </div>
   );
@@ -528,7 +528,7 @@ function Toast({ message, visible }: { message: string; visible: boolean }) {
         whiteSpace: "nowrap",
       }}>
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke={D.mood} strokeWidth="2" strokeLinecap="round"><path d="M2 7l3 3 7-7"/></svg>
-      <span style={{ fontSize: 12, fontWeight: 600, color: "#fff" }}>{message}</span>
+      <span style={{ fontSize: scale.font.size.xs, fontWeight: 600, color: "#fff" }}>{message}</span>
     </div>
   );
 }
@@ -576,15 +576,15 @@ function PaywallSheet({ mode, onClose }: { mode: Mode; onClose: () => void }) {
           <div>
             {/* Premium badge */}
             <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ background: `linear-gradient(135deg,${D.accentD},${D.accent}66)`, border: `1px solid ${D.accent}55` }}>
-              <span style={{ fontSize: 10, fontWeight: 700, color: D.accentL, letterSpacing: "0.08em" }}>✦ PREMIUM</span>
+              <span style={{ fontSize: scale.font.size["3xs"], fontWeight: 700, color: D.accentL, letterSpacing: "0.08em" }}>✦ PREMIUM</span>
             </div>
             <div style={{ fontSize: 17, fontWeight: 600, color: s(D.text, D.lText, mode), marginTop: 4 }}>14 days free, then cancel anytime</div>
             {/* C8: explicit "no charge" + easy dismiss copy */}
-            <div style={{ fontSize: 12, color: s(D.textSec, D.lTextSec, mode) }}>No charge today. Dismiss to keep using free.</div>
+            <div style={{ fontSize: scale.font.size.xs, color: s(D.textSec, D.lTextSec, mode) }}>No charge today. Dismiss to keep using free.</div>
           </div>
           {/* BUTTON: Close (×) → onClose() */}
           <button onClick={onClose} className="btn-press flex items-center justify-center rounded-full shrink-0"
-            style={{ width: 32, height: 32, background: s(D.border, D.lBorder, mode), border: "none", cursor: "pointer", color: s(D.textSec, D.lTextSec, mode), fontSize: 16, marginLeft: 8 }}>✕</button>
+            style={{ width: 32, height: 32, background: s(D.border, D.lBorder, mode), border: "none", cursor: "pointer", color: s(D.textSec, D.lTextSec, mode), fontSize: scale.font.size.lg, marginLeft: 8 }}>✕</button>
         </div>
 
         {/* PLAN TOGGLE: annual/monthly selector.
@@ -596,8 +596,8 @@ function PaywallSheet({ mode, onClose }: { mode: Mode; onClose: () => void }) {
               <button key={p} onClick={() => setPlan(p)} className="btn-press flex-1 rounded-xl p-3 text-left"
                 style={{ background: sel ? `linear-gradient(135deg,${D.accentD},${D.accent}44)` : s(D.card, D.lBase, mode), border: `1.5px solid ${sel ? D.accent : s(D.border, D.lBorder, mode)}`, cursor: "pointer" }}>
                 {p === "annual" && <div style={{ fontSize: 9, fontWeight: 700, color: theme(mode).color.category.mood.ink, letterSpacing: "0.06em", marginBottom: 2 }}>SAVE 40%</div>}
-                <div style={{ fontSize: 13, fontWeight: 600, color: sel ? D.accentL : s(D.text, D.lText, mode) }}>{p === "annual" ? "Annual" : "Monthly"}</div>
-                <div style={{ fontSize: 11, color: s(D.textSec, D.lTextSec, mode) }}>{p === "annual" ? "$4.99/mo · $59.99/yr" : "$8.99/mo"}</div>
+                <div style={{ fontSize: scale.font.size.sm, fontWeight: 600, color: sel ? D.accentL : s(D.text, D.lText, mode) }}>{p === "annual" ? "Annual" : "Monthly"}</div>
+                <div style={{ fontSize: scale.font.size["2xs"], color: s(D.textSec, D.lTextSec, mode) }}>{p === "annual" ? "$4.99/mo · $59.99/yr" : "$8.99/mo"}</div>
               </button>
             );
           })}
@@ -607,8 +607,8 @@ function PaywallSheet({ mode, onClose }: { mode: Mode; onClose: () => void }) {
         <div className="flex flex-col gap-2 mb-4">
           {([[D.meds,"🔬","Advanced insights & correlations"],[D.sleep,"📜","Full history beyond 30 days"],[D.energy,"📷","Photo progress compare"],[D.mood,"♾️","Multiple recovery profiles"]] as [string,string,string][]).map(([color,icon,label]) => (
             <div key={label} className="flex items-center gap-2">
-              <div className="flex items-center justify-center rounded-lg shrink-0" style={{ width: 26, height: 26, background: `${color}22` }}><span style={{ fontSize: 13 }}>{icon}</span></div>
-              <span style={{ fontSize: 13, color: s(D.text, D.lText, mode) }}>{label}</span>
+              <div className="flex items-center justify-center rounded-lg shrink-0" style={{ width: 26, height: 26, background: `${color}22` }}><span style={{ fontSize: scale.font.size.sm }}>{icon}</span></div>
+              <span style={{ fontSize: scale.font.size.sm, color: s(D.text, D.lText, mode) }}>{label}</span>
               <svg className="ml-auto shrink-0" width="13" height="13" viewBox="0 0 13 13" fill="none" stroke={D.accent} strokeWidth="2" strokeLinecap="round"><path d="M2 6.5l3 3 6-6"/></svg>
             </div>
           ))}
@@ -616,12 +616,12 @@ function PaywallSheet({ mode, onClose }: { mode: Mode; onClose: () => void }) {
 
         {/* BUTTON: "Start free trial" → onClose() (prototype — no payment) */}
         <button onClick={onClose} className="btn-press w-full flex items-center justify-center rounded-2xl font-semibold"
-          style={{ height: 52, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, color: "#fff", border: "none", cursor: "pointer", fontSize: 15, boxShadow: `0 4px 20px ${D.accent}44` }}>
+          style={{ height: 52, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, color: "#fff", border: "none", cursor: "pointer", fontSize: scale.font.size.md, boxShadow: `0 4px 20px ${D.accent}44` }}>
           Start free trial
         </button>
         <div className="text-center mt-2">
           {/* Legal text — prototype stub */}
-          <button onClick={onClose} style={{ fontSize: 11, color: s(D.textMut, D.lTextMut, mode), background: "none", border: "none", cursor: "pointer" }}>
+          <button onClick={onClose} style={{ fontSize: scale.font.size["2xs"], color: s(D.textMut, D.lTextMut, mode), background: "none", border: "none", cursor: "pointer" }}>
             Restore purchases · Terms · Privacy
           </button>
         </div>
@@ -667,9 +667,9 @@ function ShareCardScreen({ mode, milestone, onClose }: { mode: Mode; milestone: 
         {/* BUTTON: "← Back" → onClose() → ShareCardScreen unmounts */}
         <button onClick={onClose} className="btn-press flex items-center gap-2" style={{ background: "none", border: "none", cursor: "pointer", color: s(D.textSec, D.lTextSec, mode) }}>
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5L7 10l5 5"/></svg>
-          <span style={{ fontSize: 14 }}>Back</span>
+          <span style={{ fontSize: scale.font.size.base }}>Back</span>
         </button>
-        <div style={{ fontSize: 15, fontWeight: 600, color: s(D.text, D.lText, mode) }}>Share milestone</div>
+        <div style={{ fontSize: scale.font.size.md, fontWeight: 600, color: s(D.text, D.lText, mode) }}>Share milestone</div>
         {/* Spacer for centered title layout */}
         <div style={{ width: 60 }} />
       </div>
@@ -679,31 +679,31 @@ function ShareCardScreen({ mode, milestone, onClose }: { mode: Mode; milestone: 
         <div className="animate-fade-up flex flex-col items-center justify-between rounded-3xl overflow-hidden"
           style={{ width: 280, height: 496, background: `linear-gradient(155deg,${D.accentD} 0%,#0D0C16 60%,${D.accentD}88 100%)`, border: `1px solid ${D.accent}44`, padding: "40px 28px 32px" }}>
           {/* Brandmark — subtle watermark at top */}
-          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", color: `${D.accentL}66`, textTransform: "uppercase" }}>Recovery Companion</div>
+          <div style={{ fontSize: scale.font.size["3xs"], fontWeight: 700, letterSpacing: "0.14em", color: `${D.accentL}66`, textTransform: "uppercase" }}>Recovery Companion</div>
           {/* Center: milestone celebration content (dynamic from milestone prop) */}
           <div className="flex flex-col items-center text-center gap-3">
             <div style={{ fontSize: 48, lineHeight: 1 }}>🎉</div>
             <div style={{ fontSize: 22, fontWeight: 700, color: "#fff", lineHeight: 1.2 }}>{milestone.title}</div>
             <div className="flex items-center gap-2">
               <div className="px-3 py-1 rounded-full" style={{ background: `${D.accent}44`, border: `1px solid ${D.accent}66` }}>
-                <span style={{ fontSize: 13, fontWeight: 700, color: D.accentL }}>Day {milestone.day}</span>
+                <span style={{ fontSize: scale.font.size.sm, fontWeight: 700, color: D.accentL }}>Day {milestone.day}</span>
               </div>
-              <span style={{ fontSize: 13, color: s(D.textSec, "#FFFFFF80", mode) }}>{milestone.date}</span>
+              <span style={{ fontSize: scale.font.size.sm, color: s(D.textSec, "#FFFFFF80", mode) }}>{milestone.date}</span>
             </div>
           </div>
           {/* Footer quote — fixed copy */}
-          <div style={{ fontSize: 12, color: `${D.accentL}88`, textAlign: "center", fontStyle: "italic" }}>"This app remembers my recovery so I don't have to."</div>
+          <div style={{ fontSize: scale.font.size.xs, color: `${D.accentL}88`, textAlign: "center", fontStyle: "italic" }}>"This app remembers my recovery so I don't have to."</div>
         </div>
       </div>
       <div className="px-5 pb-8 flex flex-col gap-3 shrink-0">
         {/* BUTTON: "Share" — prototype stub (no native share API) */}
         <button className="btn-press w-full flex items-center justify-center gap-2 rounded-2xl font-semibold"
-          style={{ height: 52, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, color: "#fff", border: "none", cursor: "pointer", fontSize: 15, boxShadow: `0 4px 20px ${D.accent}44` }}>
+          style={{ height: 52, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, color: "#fff", border: "none", cursor: "pointer", fontSize: scale.font.size.md, boxShadow: `0 4px 20px ${D.accent}44` }}>
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round"><path d="M9 2v10M5 6l4-4 4 4M3 14h12"/></svg>
           Share
         </button>
         {/* C7: explicit opt-in copy — never auto-prompted */}
-        <div style={{ fontSize: 11, color: s(D.textMut, D.lTextSec, mode), textAlign: "center" }}>Share is always your choice — we never prompt automatically.</div>
+        <div style={{ fontSize: scale.font.size["2xs"], color: s(D.textMut, D.lTextSec, mode), textAlign: "center" }}>Share is always your choice — we never prompt automatically.</div>
       </div>
     </div>
   );
@@ -788,8 +788,8 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
         <div>
           {/* C3: welcome-back path — no recap of missed days */}
           {isWelcomeBack
-            ? <div style={{ fontSize: 15, fontWeight: 600, color: s(D.text, D.lText, mode) }}>Good to see you again 🤗</div>
-            : <div style={{ fontSize: 13, color: s(D.textSec, D.lTextSec, mode) }}>Good morning 👋</div>
+            ? <div style={{ fontSize: scale.font.size.md, fontWeight: 600, color: s(D.text, D.lText, mode) }}>Good to see you again 🤗</div>
+            : <div style={{ fontSize: scale.font.size.sm, color: s(D.textSec, D.lTextSec, mode) }}>Good morning 👋</div>
           }
           <div style={{ fontSize: 20, fontWeight: 700, color: s(D.text, D.lText, mode), lineHeight: 1.2 }}>Alex</div>
         </div>
@@ -797,7 +797,7 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
           {/* C3: check-in count, NOT a streak. Purple dot + "N check-ins" text. */}
           <div className="flex items-center gap-1 px-2 py-1 rounded-full" style={{ background: `${D.accent}22`, border: `1px solid ${D.accent}44` }}>
             <svg width="12" height="12" viewBox="0 0 12 12" fill={D.accent}><circle cx="6" cy="6" r="5"/></svg>
-            <span style={{ fontSize: 11, fontWeight: 600, color: D.accentL }}>{checkInCount} check-ins</span>
+            <span style={{ fontSize: scale.font.size["2xs"], fontWeight: 600, color: D.accentL }}>{checkInCount} check-ins</span>
           </div>
           {/* BUTTON: Notification bell (36px) — prototype stub, no action */}
           <button className="btn-press flex items-center justify-center rounded-full"
@@ -825,7 +825,7 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
             type="text" value={captureText} onChange={e => setCaptureText(e.target.value)}
             onKeyDown={e => e.key === "Enter" && handleCaptureSave()}
             placeholder="Note anything… ('knee hurt after stairs')"
-            style={{ flex: 1, background: "none", border: "none", outline: "none", fontSize: 13, color: s(D.text, D.lText, mode), fontFamily: "inherit" }}
+            style={{ flex: 1, background: "none", border: "none", outline: "none", fontSize: scale.font.size.sm, color: s(D.text, D.lText, mode), fontFamily: "inherit" }}
           />
           {/* Mic/confirm button — changes icon based on captureText presence */}
           <button className="btn-press flex items-center justify-center rounded-xl"
@@ -847,23 +847,23 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
         <Card mode={mode} style={{ background: `linear-gradient(135deg, ${theme(mode).pattern.dayCard.from} 0%, ${theme(mode).pattern.dayCard.to} 100%)` }}>
           <div className="flex items-start justify-between">
             <div>
-              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: D.accentL, marginBottom: 2 }}>YOUR RECOVERY</div>
+              <div style={{ fontSize: scale.font.size["2xs"], fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: D.accentL, marginBottom: 2 }}>YOUR RECOVERY</div>
               <div style={{ fontSize: 52, fontWeight: 700, lineHeight: 1, color: s(D.text, D.lText, mode) }}>Day 46</div>
-              <div style={{ fontSize: 13, color: s(D.textSec, D.lTextSec, mode), marginTop: 2 }}>Knee rehab · Started Mar 27</div>
+              <div style={{ fontSize: scale.font.size.sm, color: s(D.textSec, D.lTextSec, mode), marginTop: 2 }}>Knee rehab · Started Mar 27</div>
             </div>
             {/* "On track" percentage badge */}
             <div className="flex flex-col items-center justify-center rounded-2xl px-3 py-2" style={{ background: `${D.accent}33`, border: `1px solid ${D.accent}44` }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: D.accentL }}>82%</div>
+              <div style={{ fontSize: scale.font.size["2xs"], fontWeight: 700, color: D.accentL }}>82%</div>
               <div style={{ fontSize: 9, color: s(D.textSec, D.lTextSec, mode) }}>on track</div>
             </div>
           </div>
           {/* Weekly comparison summary — mood/sleep colored inline */}
           <div className="mt-3 rounded-xl px-3 py-2" style={{ background: "#FFFFFF0F", border: `1px solid ${D.accent}33` }}>
-            <div style={{ fontSize: 12, color: s(D.textSec, D.lTextSec, mode), lineHeight: 1.5 }}>
+            <div style={{ fontSize: scale.font.size.xs, color: s(D.textSec, D.lTextSec, mode), lineHeight: 1.5 }}>
               Compared to last week: <span style={{ color: theme(mode).color.category.mood.ink }}>✅ Pain down</span> · <span style={{ color: theme(mode).color.category.sleep.ink }}>✅ Walking improved</span>
             </div>
             {/* C3: Motivational copy, not a performance pressure statement */}
-            <div style={{ fontSize: 12, color: s(D.textMut, D.lTextSec, mode), marginTop: 2, fontStyle: "italic" }}>"Recovery isn't always linear. Keep going."</div>
+            <div style={{ fontSize: scale.font.size.xs, color: s(D.textMut, D.lTextSec, mode), marginTop: 2, fontStyle: "italic" }}>"Recovery isn't always linear. Keep going."</div>
           </div>
         </Card>
 
@@ -872,18 +872,18 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
         <Card mode={mode} style={{ background: `${D.sleep}11`, borderColor: `${D.sleep}44` }}>
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center rounded-xl shrink-0" style={{ width: 38, height: 38, background: `${D.sleep}22` }}>
-              <span style={{ fontSize: 18 }}>📋</span>
+              <span style={{ fontSize: scale.font.size.xl }}>📋</span>
             </div>
             <div className="flex-1">
-              <div style={{ fontSize: 13, fontWeight: 600, color: s(D.text, D.lText, mode) }}>Appointment in 2 days</div>
-              <div style={{ fontSize: 11, color: s(D.textSec, D.lTextSec, mode) }}>Review your report for Dr. Chen?</div>
+              <div style={{ fontSize: scale.font.size.sm, fontWeight: 600, color: s(D.text, D.lText, mode) }}>Appointment in 2 days</div>
+              <div style={{ fontSize: scale.font.size["2xs"], color: s(D.textSec, D.lTextSec, mode) }}>Review your report for Dr. Chen?</div>
             </div>
             {/* BUTTON: "View" → prototype stub.
                 Label is category.sleep.onMark, NOT white. White on this pastel is
                 1.81:1 in both modes — the fill does not change between modes, so
                 neither did the failure. onMark reaches 9.51:1. */}
             <button className="btn-press px-3 rounded-xl font-semibold"
-              style={{ height: 32, background: D.sleep, color: theme(mode).color.category.sleep.onMark, border: "none", cursor: "pointer", fontSize: 12, flexShrink: 0 }}>
+              style={{ height: 32, background: D.sleep, color: theme(mode).color.category.sleep.onMark, border: "none", cursor: "pointer", fontSize: scale.font.size.xs, flexShrink: 0 }}>
               View
             </button>
           </div>
@@ -910,9 +910,9 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
                   className="btn-press flex items-center gap-3 rounded-xl px-3"
                   style={{ height: 52, background: s(D.raised, D.lCard, mode), border: `1px solid ${done ? a.color + "55" : s(D.border, D.lBorder, mode)}`, cursor: "pointer", width: "100%", textAlign: "left" }}>
                   <div className="flex items-center justify-center rounded-xl" style={{ width: 34, height: 34, background: `${a.color}22` }}>
-                    <span style={{ fontSize: 16 }}>{a.icon}</span>
+                    <span style={{ fontSize: scale.font.size.lg }}>{a.icon}</span>
                   </div>
-                  <span style={{ fontSize: 14, fontWeight: 500, flex: 1, color: done ? s(D.textSec, D.lTextSec, mode) : s(D.text, D.lText, mode), textDecoration: done ? "line-through" : "none" }}>{a.label}</span>
+                  <span style={{ fontSize: scale.font.size.base, fontWeight: 500, flex: 1, color: done ? s(D.textSec, D.lTextSec, mode) : s(D.text, D.lText, mode), textDecoration: done ? "line-through" : "none" }}>{a.label}</span>
                   {/* Completion circle: transitions from border-color → action color (200ms) */}
                   <div className="flex items-center justify-center rounded-full" style={{ width: 22, height: 22, background: done ? a.color : s(D.border, D.lBorder, mode), transition: `background ${scale.duration.compact}ms` }}>
                     {done && <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M2 5.5l2.5 2.5 4.5-4.5"/></svg>}
@@ -935,25 +935,25 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
         {!weeklyDismissed && (
           <Card mode={mode} style={{ background: `${D.mood}0E`, borderColor: `${D.mood}44` }}>
             <div className="flex items-start justify-between mb-2">
-              <div style={{ fontSize: 13, fontWeight: 700, color: s(D.text, D.lText, mode) }}>Your week 🌱</div>
+              <div style={{ fontSize: scale.font.size.sm, fontWeight: 700, color: s(D.text, D.lText, mode) }}>Your week 🌱</div>
               {/* BUTTON: dismiss (×) → weeklyDismissed=true → card unmounts */}
               <button onClick={() => setWeeklyDismissed(true)} className="btn-press"
-                style={{ background: "none", border: "none", cursor: "pointer", color: s(D.textMut, D.lTextSec, mode), fontSize: 14, padding: 0, lineHeight: 1 }}>✕</button>
+                style={{ background: "none", border: "none", cursor: "pointer", color: s(D.textMut, D.lTextSec, mode), fontSize: scale.font.size.base, padding: 0, lineHeight: 1 }}>✕</button>
             </div>
             {/* Weekly stats rows — 2 positive (✅) + 1 neutral (–) */}
             <div className="flex flex-col gap-1 mb-3">
-              <div style={{ fontSize: 13, color: s(D.text, D.lText, mode) }}>✅ Pain down from 4.2 to 2.8 avg</div>
-              <div style={{ fontSize: 13, color: s(D.text, D.lText, mode) }}>✅ 5 out of 7 check-ins logged</div>
-              <div style={{ fontSize: 13, color: s(D.textSec, D.lTextSec, mode) }}>– Sleep stayed around 6.5h</div>
+              <div style={{ fontSize: scale.font.size.sm, color: s(D.text, D.lText, mode) }}>✅ Pain down from 4.2 to 2.8 avg</div>
+              <div style={{ fontSize: scale.font.size.sm, color: s(D.text, D.lText, mode) }}>✅ 5 out of 7 check-ins logged</div>
+              <div style={{ fontSize: scale.font.size.sm, color: s(D.textSec, D.lTextSec, mode) }}>– Sleep stayed around 6.5h</div>
             </div>
             {/* Personalized insight (stairs example) */}
             <div className="rounded-xl px-3 py-2 mb-3" style={{ background: `${D.mood}1A` }}>
-              <div style={{ fontSize: 13, color: s(D.text, D.lText, mode), lineHeight: 1.5 }}>
+              <div style={{ fontSize: scale.font.size.sm, color: s(D.text, D.lText, mode), lineHeight: 1.5 }}>
                 You mentioned stairs twice this week — and Friday they felt easier.
               </div>
             </div>
             {/* Motivational closer — C3 compliment, not pressure */}
-            <div style={{ fontSize: 12, color: s(D.textSec, D.lTextSec, mode), marginBottom: 10 }}>
+            <div style={{ fontSize: scale.font.size.xs, color: s(D.textSec, D.lTextSec, mode), marginBottom: 10 }}>
               Showing up for yourself is the work. 🙌
             </div>
             <div className="flex gap-2">
@@ -962,12 +962,12 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
                   in the product, on a button label in the free experience.
                   onMark reaches 10.91:1. */}
               <button className="btn-press flex-1 flex items-center justify-center rounded-xl font-medium"
-                style={{ height: 36, background: D.mood, color: theme(mode).color.category.mood.onMark, border: "none", cursor: "pointer", fontSize: 13 }}>
+                style={{ height: 36, background: D.mood, color: theme(mode).color.category.mood.onMark, border: "none", cursor: "pointer", fontSize: scale.font.size.sm }}>
                 Save to timeline
               </button>
               {/* BUTTON: "Dismiss" → weeklyDismissed=true */}
               <button onClick={() => setWeeklyDismissed(true)} className="btn-press flex-1 flex items-center justify-center rounded-xl font-medium"
-                style={{ height: 36, background: s(D.border, D.lBorder, mode), color: s(D.textSec, D.lTextSec, mode), border: "none", cursor: "pointer", fontSize: 13 }}>
+                style={{ height: 36, background: s(D.border, D.lBorder, mode), color: s(D.textSec, D.lTextSec, mode), border: "none", cursor: "pointer", fontSize: scale.font.size.sm }}>
                 Dismiss
               </button>
             </div>
@@ -986,8 +986,8 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
                 <span style={{ fontSize: 20 }}>🩻</span>
               </div>
               <div className="flex-1">
-                <div style={{ fontSize: 14, fontWeight: 600, color: s(D.text, D.lText, mode) }}>Generate doctor report</div>
-                <div style={{ fontSize: 12, color: s(D.textSec, D.lTextSec, mode) }}>Day 1–46 · Ready to preview</div>
+                <div style={{ fontSize: scale.font.size.base, fontWeight: 600, color: s(D.text, D.lText, mode) }}>Generate doctor report</div>
+                <div style={{ fontSize: scale.font.size.xs, color: s(D.textSec, D.lTextSec, mode) }}>Day 1–46 · Ready to preview</div>
               </div>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke={s(D.textMut, D.lTextSec, mode)} strokeWidth="1.5" strokeLinecap="round"><path d="M6 4l4 4-4 4"/></svg>
             </div>
@@ -1000,8 +1000,8 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
           <SectionLabel label="Insights" mode={mode} />
           <LockedCard mode={mode} onUnlock={onPaywall} hook="See how sleep affects your pain">
             <Card mode={mode}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: s(D.text, D.lText, mode), marginBottom: 4 }}>Sleep ↔ Pain correlation</div>
-              <div style={{ fontSize: 12, color: s(D.textSec, D.lTextSec, mode) }}>Poor sleep (≤6h) correlates with 2× higher next-day pain.</div>
+              <div style={{ fontSize: scale.font.size.sm, fontWeight: 600, color: s(D.text, D.lText, mode), marginBottom: 4 }}>Sleep ↔ Pain correlation</div>
+              <div style={{ fontSize: scale.font.size.xs, color: s(D.textSec, D.lTextSec, mode) }}>Poor sleep (≤6h) correlates with 2× higher next-day pain.</div>
             </Card>
           </LockedCard>
         </div>
@@ -1120,7 +1120,7 @@ function TimelineScreen({ mode, onShareMilestone }: { mode: Mode; onShareMilesto
             <div key={i}>
               {showDate && (
                 // DATE HEADER: uppercase 11px, only shown on first entry of each date group
-                <div style={{ fontSize: 11, fontWeight: 700, color: s(D.textSec, D.lTextSec, mode), letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 8, marginTop: i > 0 ? 14 : 0 }}>{entry.date}</div>
+                <div style={{ fontSize: scale.font.size["2xs"], fontWeight: 700, color: s(D.textSec, D.lTextSec, mode), letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 8, marginTop: i > 0 ? 14 : 0 }}>{entry.date}</div>
               )}
               {isRest
                 ? (
@@ -1133,7 +1133,7 @@ function TimelineScreen({ mode, onShareMilestone }: { mode: Mode; onShareMilesto
                       {i < entries.length - 1 && <div style={{ width: 1, flex: 1, minHeight: 12, background: s(D.border, D.lBorder, mode), marginTop: 4 }} />}
                     </div>
                     <div className="flex items-center flex-1" style={{ opacity: 0.45, marginBottom: 4 }}>
-                      <span style={{ fontSize: 12, color: s(D.textSec, D.lTextSec, mode), fontStyle: "italic" }}>Rest day</span>
+                      <span style={{ fontSize: scale.font.size.xs, color: s(D.textSec, D.lTextSec, mode), fontStyle: "italic" }}>Rest day</span>
                     </div>
                   </div>
                 ) : (
@@ -1143,7 +1143,7 @@ function TimelineScreen({ mode, onShareMilestone }: { mode: Mode; onShareMilesto
                     <div className="flex flex-col items-center" style={{ width: 32, flexShrink: 0 }}>
                       {/* Icon circle: 22% opacity bg of category color */}
                       <div className="flex items-center justify-center rounded-full" style={{ width: 32, height: 32, background: `${cat(mode, entry.cat).mark}22`, border: `1px solid ${cat(mode, entry.cat).mark}55` }}>
-                        <span style={{ fontSize: 14 }}>{entry.icon}</span>
+                        <span style={{ fontSize: scale.font.size.base }}>{entry.icon}</span>
                       </div>
                       {/* Connector line: hidden on last entry */}
                       {i < entries.length - 1 && <div style={{ width: 1, flex: 1, minHeight: 12, background: s(D.border, D.lBorder, mode), marginTop: 4 }} />}
@@ -1152,18 +1152,18 @@ function TimelineScreen({ mode, onShareMilestone }: { mode: Mode; onShareMilesto
                     <div className="flex-1 rounded-2xl p-3 mb-1" style={{ background: s(D.raised, D.lCard, mode), border: `1px solid ${entry.type === "milestone" ? cat(mode, entry.cat).mark + "55" : s(D.border, D.lBorder, mode)}` }}>
                       <div className="flex items-start justify-between">
                         {/* Title: milestone = category color, others = primary text */}
-                        <div style={{ fontSize: 14, fontWeight: 600, color: entry.type === "milestone" ? cat(mode, entry.cat).ink : s(D.text, D.lText, mode), flex: 1 }}>{entry.title}</div>
+                        <div style={{ fontSize: scale.font.size.base, fontWeight: 600, color: entry.type === "milestone" ? cat(mode, entry.cat).ink : s(D.text, D.lText, mode), flex: 1 }}>{entry.title}</div>
                         {/* C7: SHARE BUTTON — milestone only, user-initiated.
                             BUTTON: "Share" text (12px).
                             ACTION: onShareMilestone() → MainApp setShareCard → ShareCardScreen mounts. */}
                         {entry.type === "milestone" && (
                           <button onClick={() => onShareMilestone({ title: entry.title, day: 46, date: entry.date })}
-                            className="btn-press ml-2 shrink-0" style={{ background: "none", border: "none", cursor: "pointer", color: s(D.textMut, D.lTextSec, mode), fontSize: 12, padding: 0 }}>
+                            className="btn-press ml-2 shrink-0" style={{ background: "none", border: "none", cursor: "pointer", color: s(D.textMut, D.lTextSec, mode), fontSize: scale.font.size.xs, padding: 0 }}>
                             Share
                           </button>
                         )}
                       </div>
-                      {entry.body && <div style={{ fontSize: 12, color: s(D.textSec, D.lTextSec, mode), marginTop: 2, lineHeight: 1.4 }}>{entry.body}</div>}
+                      {entry.body && <div style={{ fontSize: scale.font.size.xs, color: s(D.textSec, D.lTextSec, mode), marginTop: 2, lineHeight: 1.4 }}>{entry.body}</div>}
                     </div>
                   </div>
                 )}
@@ -1289,12 +1289,12 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
         {/* ANIMATION: animate-fade-up, delay 80ms */}
         <div className="animate-fade-up text-center" style={{ animationDelay: "80ms" }}>
           <div style={{ fontSize: 22, fontWeight: 700, color: s(D.text, D.lText, mode) }}>Logged ✓</div>
-          <div style={{ fontSize: 14, color: s(D.textSec, D.lTextSec, mode), marginTop: 4 }}>Day 46 · {new Date().toLocaleDateString("en-US",{month:"short",day:"numeric"})}</div>
+          <div style={{ fontSize: scale.font.size.base, color: s(D.textSec, D.lTextSec, mode), marginTop: 4 }}>Day 46 · {new Date().toLocaleDateString("en-US",{month:"short",day:"numeric"})}</div>
         </div>
         {/* ANIMATION: animate-fade-up, delay 160ms
             BUTTON: "Back to home" → onClose() → modal unmounts */}
         <button onClick={onClose} className="btn-press animate-fade-up px-8 rounded-2xl font-semibold"
-          style={{ animationDelay: "160ms", height: 50, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, color: "#fff", border: "none", cursor: "pointer", fontSize: 15, boxShadow: `0 4px 20px ${D.accent}44` }}>
+          style={{ animationDelay: "160ms", height: 50, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, color: "#fff", border: "none", cursor: "pointer", fontSize: scale.font.size.md, boxShadow: `0 4px 20px ${D.accent}44` }}>
           Back to home
         </button>
       </div>
@@ -1310,10 +1310,10 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
         <div style={{ width: 36, height: 4, borderRadius: scale.radius.xxs, background: s(D.border, D.lBorder, mode) }} />
       </div>
       <div className="flex items-center justify-between px-5 pt-2 pb-2 shrink-0">
-        <div style={{ fontSize: 18, fontWeight: 700, color: s(D.text, D.lText, mode) }}>How's today?</div>
+        <div style={{ fontSize: scale.font.size.xl, fontWeight: 700, color: s(D.text, D.lText, mode) }}>How's today?</div>
         {/* BUTTON: Close (×) → onClose() → modal unmounts. PRESS: .btn-press 120ms. */}
         <button onClick={onClose} className="btn-press flex items-center justify-center rounded-full"
-          style={{ width: 30, height: 30, background: s(D.raised, D.lCard, mode), border: `1px solid ${s(D.border, D.lBorder, mode)}`, cursor: "pointer", color: s(D.textSec, D.lTextSec, mode), fontSize: 14 }}>✕</button>
+          style={{ width: 30, height: 30, background: s(D.raised, D.lCard, mode), border: `1px solid ${s(D.border, D.lBorder, mode)}`, cursor: "pointer", color: s(D.textSec, D.lTextSec, mode), fontSize: scale.font.size.base }}>✕</button>
       </div>
 
       <div className="flex-1 overflow-y-auto px-5 pb-4 flex flex-col gap-4">
@@ -1334,15 +1334,15 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
                   cursor: "pointer", transition: `all ${scale.duration.quick}ms`,
                 }}>
                 <span style={{ fontSize: 30, lineHeight: 1 }}>{opt.icon}</span>
-                <span style={{ fontSize: 15, fontWeight: 700, color: sel ? cat(mode, opt.cat).ink : s(D.text, D.lText, mode) }}>{opt.word}</span>
-                <span style={{ fontSize: 10, color: s(D.textSec, D.lTextSec, mode) }}>{opt.desc}</span>
+                <span style={{ fontSize: scale.font.size.md, fontWeight: 700, color: sel ? cat(mode, opt.cat).ink : s(D.text, D.lText, mode) }}>{opt.word}</span>
+                <span style={{ fontSize: scale.font.size["3xs"], color: s(D.textSec, D.lTextSec, mode) }}>{opt.desc}</span>
               </button>
             );
           })}
         </div>
 
         {/* C1: Hint text — communicates speed of fast-path */}
-        <div style={{ fontSize: 12, color: s(D.textSec, D.lTextSec, mode), textAlign: "center" }}>
+        <div style={{ fontSize: scale.font.size.xs, color: s(D.textSec, D.lTextSec, mode), textAlign: "center" }}>
           One tap logs your check-in. Done in &lt;10 seconds.
         </div>
 
@@ -1352,7 +1352,7 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
             INTERACTION: tap → setDetailOpen(o => !o). */}
         <button onClick={() => setDetailOpen(o => !o)} className="btn-press flex items-center justify-between w-full rounded-xl px-4"
           style={{ height: 44, background: s(D.raised, D.lCard, mode), border: `1px solid ${s(D.border, D.lBorder, mode)}`, cursor: "pointer" }}>
-          <span style={{ fontSize: 13, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode) }}>Add detail</span>
+          <span style={{ fontSize: scale.font.size.sm, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode) }}>Add detail</span>
           {/* CHEVRON: 0° closed, 180° open. TRANSITION: transform 200ms ease-out. */}
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke={s(D.textSec, D.lTextSec, mode)} strokeWidth="1.8" strokeLinecap="round"
             style={{ transform: detailOpen ? "rotate(180deg)" : "rotate(0deg)", transition: `transform ${scale.duration.compact}ms` }}>
@@ -1369,7 +1369,7 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
                 TRANSITION: background 200ms. Thumb: scale 1.15 on active (120ms). */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span style={{ fontSize: 13, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode) }}>Pain level</span>
+                <span style={{ fontSize: scale.font.size.sm, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode) }}>Pain level</span>
                 {/* Pain numeral: painStep(mode, pain).ink — INK, because a numeral is text.
                     The mark ramp fills the track below; it fails 3:1 on light as text. */}
                 <span style={{ fontSize: 22, fontWeight: 700, color: painTone.ink, lineHeight: 1 }}>{pain}</span>
@@ -1388,15 +1388,15 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
                ["Sleep quality", sleep, setSleep as (v:number|null)=>void, D.sleep],
                ["Mobility", mobility, setMobility as (v:number|null)=>void, D.mood]] as [string,number|null,(v:number|null)=>void,string][]).map(([label, val, setter, color]) => (
               <div key={label}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode), marginBottom: 8 }}>{label}</div>
+                <div style={{ fontSize: scale.font.size.sm, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode), marginBottom: 8 }}>{label}</div>
                 <div className="flex gap-2">
                   {LEVELS.map((l, i) => {
                     const sel = val === i;
                     return (
                       <button key={i} onClick={() => setter(i)} className="btn-press flex-1 flex items-center justify-center gap-1 rounded-xl"
                         style={{ height: 38, background: sel ? `${color}22` : s(D.raised, D.lCard, mode), border: `1px solid ${sel ? color : s(D.border, D.lBorder, mode)}`, cursor: "pointer", transition: `all ${scale.duration.quick}ms` }}>
-                        <span style={{ fontSize: 13 }}>{l.icon}</span>
-                        <span style={{ fontSize: 12, color: sel ? color : s(D.textSec, D.lTextSec, mode), fontWeight: 500 }}>{l.label}</span>
+                        <span style={{ fontSize: scale.font.size.sm }}>{l.icon}</span>
+                        <span style={{ fontSize: scale.font.size.xs, color: sel ? color : s(D.textSec, D.lTextSec, mode), fontWeight: 500 }}>{l.label}</span>
                       </button>
                     );
                   })}
@@ -1409,7 +1409,7 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
                 ON: accent bg, thumb justified-end.
                 TRANSITION: background 200ms. Thumb moves via justifyContent change. */}
             <div className="flex items-center justify-between">
-              <span style={{ fontSize: 13, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode) }}>Medications taken?</span>
+              <span style={{ fontSize: scale.font.size.sm, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode) }}>Medications taken?</span>
               <button onClick={() => setMeds(!meds)} className="btn-press flex items-center rounded-full"
                 style={{ width: 50, height: 28, background: meds ? D.accent : s(D.border, D.lBorder, mode), padding: "0 3px", border: "none", cursor: "pointer", transition: `background ${scale.duration.compact}ms`, justifyContent: meds ? "flex-end" : "flex-start" }}>
                 <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#fff", boxShadow: "0 1px 4px #00000040", transition: `transform ${scale.duration.compact}ms` }} />
@@ -1418,15 +1418,15 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
 
             {/* QUICK NOTE: optional text input (44px, rounded-xl). */}
             <div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode), marginBottom: 6 }}>Quick note <span style={{ fontWeight: 400, opacity: 0.6 }}>(optional)</span></div>
+              <div style={{ fontSize: scale.font.size.sm, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode), marginBottom: 6 }}>Quick note <span style={{ fontWeight: 400, opacity: 0.6 }}>(optional)</span></div>
               <input type="text" value={note} onChange={e => setNote(e.target.value)} placeholder="How did today feel…"
-                style={{ width: "100%", height: 44, borderRadius: scale.radius.md, padding: "0 14px", background: s(D.raised, D.lCard, mode), border: `1px solid ${s(D.border, D.lBorder, mode)}`, color: s(D.text, D.lText, mode), fontSize: 14, outline: "none", fontFamily: "inherit" }} />
+                style={{ width: "100%", height: 44, borderRadius: scale.radius.md, padding: "0 14px", background: s(D.raised, D.lCard, mode), border: `1px solid ${s(D.border, D.lBorder, mode)}`, color: s(D.text, D.lText, mode), fontSize: scale.font.size.base, outline: "none", fontFamily: "inherit" }} />
             </div>
 
             {/* BUTTON: "Log detailed check-in" → setStep("done").
                 VISUAL: Same gradient as fast-path done button. 50px height. */}
             <button onClick={() => setStep("done")} className="btn-press w-full flex items-center justify-center rounded-2xl font-semibold"
-              style={{ height: 50, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, color: "#fff", border: "none", cursor: "pointer", fontSize: 15, boxShadow: `0 4px 20px ${D.accent}44` }}>
+              style={{ height: 50, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, color: "#fff", border: "none", cursor: "pointer", fontSize: scale.font.size.md, boxShadow: `0 4px 20px ${D.accent}44` }}>
               Log detailed check-in
             </button>
           </div>
@@ -1479,9 +1479,9 @@ function InsightSentence({ text, trend, category, mode }: { text: string; trend:
           very tint sitting behind it. Nothing caught it because no pair
           declared text on a tint of its own mark. */}
       <div className="flex items-center gap-1 px-2 py-0.5 rounded-full shrink-0 mt-0.5" style={{ background: `${k.mark}22`, border: `1px solid ${k.mark}44` }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: k.ink }}>{trendIcon} {trendWord}</span>
+        <span style={{ fontSize: scale.font.size["2xs"], fontWeight: 700, color: k.ink }}>{trendIcon} {trendWord}</span>
       </div>
-      <div style={{ fontSize: 14, fontWeight: 600, color: s(D.text, D.lText, mode), lineHeight: 1.35 }}>{text}</div>
+      <div style={{ fontSize: scale.font.size.base, fontWeight: 600, color: s(D.text, D.lText, mode), lineHeight: 1.35 }}>{text}</div>
     </div>
   );
 }
@@ -1544,7 +1544,7 @@ function PainSparklineWithCorridor({ data, category, mode, height = 64, showCorr
       </svg>
       {/* Corridor label — italic, muted accent, 10px */}
       {showCorridor && corridorLabel && (
-        <div style={{ fontSize: 10, color: mode === "dark" ? "#9B8FE0B3" : "#7C6FCDCC", marginTop: 2, fontStyle: "italic" }}>
+        <div style={{ fontSize: scale.font.size["3xs"], color: mode === "dark" ? "#9B8FE0B3" : "#7C6FCDCC", marginTop: 2, fontStyle: "italic" }}>
           {corridorLabel}
         </div>
       )}
@@ -1568,13 +1568,13 @@ function ProgressScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void
           <PainSparklineWithCorridor data={PAIN_DATA} category="pain" mode={mode} height={64}
             showCorridor corridorLabel="Common range for knee rehab, weeks 4–6 · Everyone heals differently ↗" />
           <div className="flex justify-between mt-1 mb-2">
-            <span style={{ fontSize: 10, color: s(D.textMut, D.lTextSec, mode) }}>Day 1</span>
-            <span style={{ fontSize: 10, color: s(D.textMut, D.lTextSec, mode) }}>Day 30</span>
+            <span style={{ fontSize: scale.font.size["3xs"], color: s(D.textMut, D.lTextSec, mode) }}>Day 1</span>
+            <span style={{ fontSize: scale.font.size["3xs"], color: s(D.textMut, D.lTextSec, mode) }}>Day 30</span>
           </div>
           {/* C4 CORRIDOR PHASE CHIP: descriptive label of current phase */}
           <div className="flex items-center gap-2 mb-3">
             <div className="flex items-center gap-1 px-2 py-1 rounded-full" style={{ background: `${D.accentD}`, border: `1px solid ${D.accent}44` }}>
-              <span style={{ fontSize: 10, fontWeight: 600, color: D.accentL }}>📍 Weight-bearing usually returns</span>
+              <span style={{ fontSize: scale.font.size["3xs"], fontWeight: 600, color: D.accentL }}>📍 Weight-bearing usually returns</span>
             </div>
           </div>
           {/* C8 HISTORY DEPTH GATE: soft gradient fade + pill (not hard modal).
@@ -1585,7 +1585,7 @@ function ProgressScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void
             <button onClick={onPaywall} className="btn-press absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 px-3 py-1 rounded-full"
               style={{ background: D.accentD, border: `1px solid ${D.accent}66`, cursor: "pointer" }}>
               <LockBadge mode={mode} size={14} />
-              <span style={{ fontSize: 11, color: D.accentL, fontWeight: 600 }}>Unlock full history</span>
+              <span style={{ fontSize: scale.font.size["2xs"], color: D.accentL, fontWeight: 600 }}>Unlock full history</span>
             </button>
           </div>
         </Card>
@@ -1602,10 +1602,10 @@ function ProgressScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void
             <div key={row.label} className="flex items-center gap-2 mb-2">
               {/* Colored bar: category identifier (not decorative) */}
               <div style={{ width: 4, height: 28, borderRadius: scale.radius.xxs, background: row.color }} />
-              <div style={{ fontSize: 12, color: s(D.textSec, D.lTextSec, mode), width: 70 }}>{row.label}</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: s(D.text, D.lText, mode) }}>{row.fmt(row.this)}</div>
+              <div style={{ fontSize: scale.font.size.xs, color: s(D.textSec, D.lTextSec, mode), width: 70 }}>{row.label}</div>
+              <div style={{ fontSize: scale.font.size.base, fontWeight: 700, color: s(D.text, D.lText, mode) }}>{row.fmt(row.this)}</div>
               {/* Previous week value: muted, "← " prefix */}
-              <div style={{ fontSize: 11, color: s(D.textSec, D.lTextSec, mode), opacity: 0.7 }}>← {row.fmt(row.last)}</div>
+              <div style={{ fontSize: scale.font.size["2xs"], color: s(D.textSec, D.lTextSec, mode), opacity: 0.7 }}>← {row.fmt(row.last)}</div>
             </div>
           ))}
         </Card>
@@ -1632,14 +1632,14 @@ function ProgressScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void
         <SectionLabel label="Advanced insights" mode={mode} />
         <LockedCard mode={mode} onUnlock={onPaywall} hook="See how sleep affects your pain">
           <Card mode={mode}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: s(D.text, D.lText, mode), marginBottom: 3 }}>Sleep → Pain correlation</div>
-            <div style={{ fontSize: 12, color: s(D.textSec, D.lTextSec, mode) }}>Poor sleep (≤6h) predicts 2× higher next-day pain.</div>
+            <div style={{ fontSize: scale.font.size.sm, fontWeight: 600, color: s(D.text, D.lText, mode), marginBottom: 3 }}>Sleep → Pain correlation</div>
+            <div style={{ fontSize: scale.font.size.xs, color: s(D.textSec, D.lTextSec, mode) }}>Poor sleep (≤6h) predicts 2× higher next-day pain.</div>
           </Card>
         </LockedCard>
         <LockedCard mode={mode} onUnlock={onPaywall} hook="Discover your best recovery patterns">
           <Card mode={mode}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: s(D.text, D.lText, mode), marginBottom: 3 }}>Activity pattern</div>
-            <div style={{ fontSize: 12, color: s(D.textSec, D.lTextSec, mode) }}>Your pain scores are lowest on Tuesdays and Wednesdays.</div>
+            <div style={{ fontSize: scale.font.size.sm, fontWeight: 600, color: s(D.text, D.lText, mode), marginBottom: 3 }}>Activity pattern</div>
+            <div style={{ fontSize: scale.font.size.xs, color: s(D.textSec, D.lTextSec, mode) }}>Your pain scores are lowest on Tuesdays and Wednesdays.</div>
           </Card>
         </LockedCard>
       </div>
@@ -1696,8 +1696,8 @@ function ProfileScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void 
           <div className="flex items-center gap-4">
             <div className="flex items-center justify-center rounded-full" style={{ width: 52, height: 52, background: `linear-gradient(135deg,${D.accentD},${D.accent})`, fontSize: 22 }}>🧑</div>
             <div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: s(D.text, D.lText, mode) }}>Alex Rivera</div>
-              <div style={{ fontSize: 12, color: s(D.textSec, D.lTextSec, mode) }}>Knee rehab · Day 46</div>
+              <div style={{ fontSize: scale.font.size.lg, fontWeight: 700, color: s(D.text, D.lText, mode) }}>Alex Rivera</div>
+              <div style={{ fontSize: scale.font.size.xs, color: s(D.textSec, D.lTextSec, mode) }}>Knee rehab · Day 46</div>
             </div>
             <svg className="ml-auto" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke={s(D.textMut, D.lTextSec, mode)} strokeWidth="1.5" strokeLinecap="round"><path d="M6 4l4 4-4 4"/></svg>
           </div>
@@ -1708,10 +1708,10 @@ function ProfileScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void 
             ACTION: onPaywall() → PaywallSheet (zIndex 50). */}
         <button onClick={onPaywall} className="btn-press w-full flex items-center gap-3 rounded-2xl px-4"
           style={{ height: 52, background: `linear-gradient(135deg,${D.accentD},${D.accent}33)`, border: `1px solid ${D.accent}55`, cursor: "pointer", textAlign: "left" }}>
-          <span style={{ fontSize: 18 }}>✦</span>
+          <span style={{ fontSize: scale.font.size.xl }}>✦</span>
           <div className="flex-1">
-            <div style={{ fontSize: 13, fontWeight: 600, color: D.accentL }}>Free plan</div>
-            <div style={{ fontSize: 11, color: s(D.textSec, D.lTextSec, mode) }}>Upgrade for insights, full history & photo compare</div>
+            <div style={{ fontSize: scale.font.size.sm, fontWeight: 600, color: D.accentL }}>Free plan</div>
+            <div style={{ fontSize: scale.font.size["2xs"], color: s(D.textSec, D.lTextSec, mode) }}>Upgrade for insights, full history & photo compare</div>
           </div>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke={D.accentL} strokeWidth="1.5" strokeLinecap="round"><path d="M6 4l4 4-4 4"/></svg>
         </button>
@@ -1723,15 +1723,15 @@ function ProfileScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void 
             // Each row: 50px height, borderBottom separates items (except last).
             <button key={i} className="btn-press flex items-center gap-3 w-full px-4"
               style={{ height: 50, borderBottom: i < rows.length - 1 ? `1px solid ${s(D.border, D.lBorder, mode)}` : "none", background: "none", border: i < rows.length - 1 ? `1px solid ${s(D.border, D.lBorder, mode)}` : "none", borderLeft: "none", borderRight: "none", borderTop: "none", cursor: "pointer", textAlign: "left" }}>
-              <span style={{ fontSize: 16, width: 24, textAlign: "center" }}>{row.icon}</span>
-              <span style={{ fontSize: 14, fontWeight: 500, color: s(D.text, D.lText, mode), flex: 1 }}>{row.label}</span>
+              <span style={{ fontSize: scale.font.size.lg, width: 24, textAlign: "center" }}>{row.icon}</span>
+              <span style={{ fontSize: scale.font.size.base, fontWeight: 500, color: s(D.text, D.lText, mode), flex: 1 }}>{row.label}</span>
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke={s(D.textMut, D.lTextSec, mode)} strokeWidth="1.5" strokeLinecap="round"><path d="M5 3l4 4-4 4"/></svg>
             </button>
           ))}
         </Card>
 
         {/* Version/disclaimer footer — non-interactive */}
-        <div className="text-center pt-2" style={{ fontSize: 11, color: s(D.textMut, D.lTextMut, mode) }}>
+        <div className="text-center pt-2" style={{ fontSize: scale.font.size["2xs"], color: s(D.textMut, D.lTextMut, mode) }}>
           Recovery Companion v1.0.0 · Not medical advice
         </div>
       </div>
@@ -1796,7 +1796,7 @@ function TabBar({ active, onChange, mode }: { active: Tab; onChange: (t: Tab) =>
                 style={{ width: 52, height: 52, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, boxShadow: `0 4px 16px ${D.accent}55`, marginTop: -20 }}>
                 {tab.icon(true)}
               </div>
-              <span style={{ fontSize: 10, fontWeight: 600, color: D.accent, marginTop: 2 }}>{tab.label}</span>
+              <span style={{ fontSize: scale.font.size["3xs"], fontWeight: 600, color: D.accent, marginTop: 2 }}>{tab.label}</span>
             </button>
           );
         }
@@ -1807,7 +1807,7 @@ function TabBar({ active, onChange, mode }: { active: Tab; onChange: (t: Tab) =>
           <button key={tab.id} onClick={() => onChange(tab.id)} className="btn-press flex-1 flex flex-col items-center justify-center gap-0.5"
             style={{ background: "none", border: "none", cursor: "pointer", color: isActive ? D.accent : s(D.textSec, D.lTextSec, mode) }}>
             {tab.icon(isActive)}
-            <span style={{ fontSize: 10, fontWeight: isActive ? 600 : 400 }}>{tab.label}</span>
+            <span style={{ fontSize: scale.font.size["3xs"], fontWeight: isActive ? 600 : 400 }}>{tab.label}</span>
           </button>
         );
       })}
@@ -1898,7 +1898,7 @@ export default function MainApp({
           VISUAL EFFECT: Page background transitions 400ms. Phone shell colors update. */}
       <div style={{ position: "fixed", top: 16, right: 16, zIndex: scale.z.dev }}>
         <button onClick={() => setMode(m => m === "dark" ? "light" : "dark")} className="btn-press flex items-center justify-center rounded-xl"
-          style={{ width: 40, height: 40, background: mode === "dark" ? "#FFFFFF14" : "#0000000F", border: `1px solid ${mode === "dark" ? "#FFFFFF1F" : "#0000001A"}`, cursor: "pointer", fontSize: 18 }}>
+          style={{ width: 40, height: 40, background: mode === "dark" ? "#FFFFFF14" : "#0000000F", border: `1px solid ${mode === "dark" ? "#FFFFFF1F" : "#0000001A"}`, cursor: "pointer", fontSize: scale.font.size.xl }}>
           {mode === "dark" ? "☀️" : "🌙"}
         </button>
       </div>

@@ -372,7 +372,7 @@ function PhoneShell({ mode, children }: { mode: Mode; children: React.ReactNode 
       }}
     >
       {/* Static iOS-style status bar — decorative, not interactive */}
-      <div className="flex items-center justify-between px-8 pt-4 pb-1 shrink-0" style={{ color: s(D.textSec, D.lTextSec, mode), fontSize: 12 }}>
+      <div className="flex items-center justify-between px-8 pt-4 pb-1 shrink-0" style={{ color: s(D.textSec, D.lTextSec, mode), fontSize: scale.font.size.xs }}>
         <span style={{ fontWeight: 600 }}>9:41</span>
         <div className="flex gap-1 items-center">
           <SignalIcon /><WifiIcon /><BatteryIcon />
@@ -468,7 +468,7 @@ function PrimaryButton({ label, onClick, mode, loading = false, disabled = false
         boxShadow: disabled ? "none" : `0 4px 20px #7C6FCD59`,
         border: "none",
         cursor: disabled ? "default" : "pointer",
-        fontSize: 16,
+        fontSize: scale.font.size.lg,
         letterSpacing: "0.01em",
       }}
     >
@@ -544,8 +544,8 @@ function BackButton({ onClick, mode }: { onClick: () => void; mode: Mode }) {
 function ScreenHeader({ title, subtitle, mode, delay = 0 }: { title: string; subtitle?: string; mode: Mode; delay?: number }) {
   return (
     <div className="animate-fade-up px-6 mb-6" style={{ animationDelay: `${delay}ms` }}>
-      <h1 className="font-semibold mb-1" style={{ fontSize: 24, lineHeight: "1.25", color: s(D.text, D.lText, mode) }}>{title}</h1>
-      {subtitle && <p style={{ fontSize: 15, color: s(D.textSec, D.lTextSec, mode), lineHeight: "1.5" }}>{subtitle}</p>}
+      <h1 className="font-semibold mb-1" style={{ fontSize: scale.font.size["2xl"], lineHeight: "1.25", color: s(D.text, D.lText, mode) }}>{title}</h1>
+      {subtitle && <p style={{ fontSize: scale.font.size.md, color: s(D.textSec, D.lTextSec, mode), lineHeight: "1.5" }}>{subtitle}</p>}
     </div>
   );
 }
@@ -612,13 +612,13 @@ function WelcomeScreen({ mode, onNext }: { mode: Mode; onNext: () => void }) {
 
         {/* ANIMATION: animate-fade-up, delay 80ms — headline block entry */}
         <div className="animate-fade-up text-center" style={{ animationDelay: "80ms" }}>
-          <div className="font-semibold mb-1" style={{ fontSize: 11, letterSpacing: "0.12em", color: D.accent, textTransform: "uppercase" }}>
+          <div className="font-semibold mb-1" style={{ fontSize: scale.font.size["2xs"], letterSpacing: "0.12em", color: D.accent, textTransform: "uppercase" }}>
             Recovery Companion
           </div>
-          <h1 className="font-semibold mb-3" style={{ fontSize: 28, lineHeight: "1.2", color: s(D.text, D.lText, mode) }}>
+          <h1 className="font-semibold mb-3" style={{ fontSize: scale.font.size["3xl"], lineHeight: "1.2", color: s(D.text, D.lText, mode) }}>
             Your recovery,<br />remembered.
           </h1>
-          <p style={{ fontSize: 15, color: s(D.textSec, D.lTextSec, mode), lineHeight: "1.6", maxWidth: 280 }}>
+          <p style={{ fontSize: scale.font.size.md, color: s(D.textSec, D.lTextSec, mode), lineHeight: "1.6", maxWidth: 280 }}>
             A calm personal space to track your healing — day by day, at your own pace.
           </p>
         </div>
@@ -636,8 +636,8 @@ function WelcomeScreen({ mode, onNext }: { mode: Mode; onNext: () => void }) {
               background: s(D.raised, D.lCard, mode),
               border: `1px solid ${s(D.border, D.lBorder, mode)}`,
             }}>
-              <span style={{ fontSize: 18 }}>{item.icon}</span>
-              <span style={{ fontSize: 14, color: s(D.text, D.lText, mode), fontWeight: 500 }}>{item.text}</span>
+              <span style={{ fontSize: scale.font.size.xl }}>{item.icon}</span>
+              <span style={{ fontSize: scale.font.size.base, color: s(D.text, D.lText, mode), fontWeight: 500 }}>{item.text}</span>
             </div>
           ))}
         </div>
@@ -730,8 +730,8 @@ function RecoveryTypeScreen({ mode, value, onChange, onNext, onBack }: {
             >
               <span style={{ fontSize: 26, width: 36, textAlign: "center" }}>{t.icon}</span>
               <div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: selected ? D.accentL : s(D.text, D.lText, mode) }}>{t.label}</div>
-                <div style={{ fontSize: 12, color: s(D.textSec, D.lTextSec, mode), marginTop: 1 }}>{t.desc}</div>
+                <div style={{ fontSize: scale.font.size.md, fontWeight: 600, color: selected ? D.accentL : s(D.text, D.lText, mode) }}>{t.label}</div>
+                <div style={{ fontSize: scale.font.size.xs, color: s(D.textSec, D.lTextSec, mode), marginTop: 1 }}>{t.desc}</div>
               </div>
               {/* Check indicator — only visible when this option is selected */}
               {selected && (
@@ -791,7 +791,7 @@ function ConditionScreen({ mode, condition, bodyPart, onCondition, onBodyPart, o
       <ScreenHeader title="Tell us about your condition" subtitle="This helps us personalise your timeline." mode={mode} />
       <div className="flex flex-col gap-5 flex-1">
         <div>
-          <div className="mb-2" style={{ fontSize: 13, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode), letterSpacing: "0.06em", textTransform: "uppercase" }}>Body area</div>
+          <div className="mb-2" style={{ fontSize: scale.font.size.sm, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode), letterSpacing: "0.06em", textTransform: "uppercase" }}>Body area</div>
           <div className="flex flex-wrap gap-2">
             {BODY_PARTS.map(p => {
               const sel = bodyPart === p;
@@ -811,7 +811,7 @@ function ConditionScreen({ mode, condition, bodyPart, onCondition, onBodyPart, o
           </div>
         </div>
         <div>
-          <div className="mb-2" style={{ fontSize: 13, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode), letterSpacing: "0.06em", textTransform: "uppercase" }}>Condition (optional)</div>
+          <div className="mb-2" style={{ fontSize: scale.font.size.sm, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode), letterSpacing: "0.06em", textTransform: "uppercase" }}>Condition (optional)</div>
           <div className="flex flex-wrap gap-2">
             {CONDITIONS.map(c => {
               const sel = condition === c;
@@ -913,7 +913,7 @@ function StartDateScreen({ mode, value, onChange, onNext, onBack }: {
                 background: s(D.card, D.lBase, mode),
                 color: value ? s(D.text, D.lText, mode) : s(D.textMut, D.lTextSec, mode),
                 border: `1.5px solid ${value ? D.accent : s(D.border, D.lBorder, mode)}`,
-                fontSize: 18,
+                fontSize: scale.font.size.xl,
                 outline: "none",
                 colorScheme: mode === "dark" ? "dark" : "light",
               }}
@@ -923,7 +923,7 @@ function StartDateScreen({ mode, value, onChange, onNext, onBack }: {
                 ANIMATION: animate-fade-in — opacity 0→1, 300ms ease-out.
                 CONTENT: Calculates days since start date dynamically. */}
             {value && (
-              <div className="animate-fade-in" style={{ fontSize: 14, color: D.accentL, fontWeight: 500 }}>
+              <div className="animate-fade-in" style={{ fontSize: scale.font.size.base, color: D.accentL, fontWeight: 500 }}>
                 Day {Math.max(1, Math.floor((Date.now() - new Date(value).getTime()) / 86400000) + 1)} of your recovery
               </div>
             )}
@@ -997,7 +997,7 @@ function SymptomsScreen({ mode, selected, onToggle, onNext, onBack }: {
             <div className="flex items-center gap-2 mb-2">
               {/* Colored dot: identifies the category (color + label, never color alone) */}
               <div className="w-2 h-2 rounded-full" style={{ background: g.color }} />
-              <span style={{ fontSize: 12, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode), letterSpacing: "0.07em", textTransform: "uppercase" }}>{g.label}</span>
+              <span style={{ fontSize: scale.font.size.xs, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode), letterSpacing: "0.07em", textTransform: "uppercase" }}>{g.label}</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {g.items.map(item => {
@@ -1094,7 +1094,7 @@ function PainScreen({ mode, value, onChange, onNext, onBack }: {
           {/* REACTIVE: color transitions 200ms as slider moves.
               INK, not mark — this is an 80px numeral, which is text. */}
           <div style={{ fontSize: 80, fontWeight: 600, lineHeight: 1, color: step.ink, transition: `color ${scale.duration.compact}ms` }}>{value}</div>
-          <div style={{ fontSize: 16, fontWeight: 500, color: s(D.textSec, D.lTextSec, mode), transition: `all ${scale.duration.quick}ms` }}>{PAIN_LABELS[value]}</div>
+          <div style={{ fontSize: scale.font.size.lg, fontWeight: 500, color: s(D.textSec, D.lTextSec, mode), transition: `all ${scale.duration.quick}ms` }}>{PAIN_LABELS[value]}</div>
         </div>
 
         {/* ANIMATION: animate-fade-up, delay 140ms — slider entry */}
@@ -1114,7 +1114,7 @@ function PainScreen({ mode, value, onChange, onNext, onBack }: {
           />
           <div className="flex justify-between mt-2">
             {[0, 5, 10].map(n => (
-              <span key={n} style={{ fontSize: 11, color: s(D.textMut, D.lTextSec, mode) }}>{n}</span>
+              <span key={n} style={{ fontSize: scale.font.size["2xs"], color: s(D.textMut, D.lTextSec, mode) }}>{n}</span>
             ))}
           </div>
         </div>
@@ -1192,7 +1192,7 @@ function GoalScreen({ mode, value, onChange, onNext, onBack }: {
                 cursor: "pointer", transition: `all ${scale.duration.quick}ms`,
               }}>
               <span style={{ fontSize: 22 }}>{g.icon}</span>
-              <span style={{ fontSize: 15, fontWeight: 500, color: sel ? D.accentL : s(D.text, D.lText, mode) }}>{g.label}</span>
+              <span style={{ fontSize: scale.font.size.md, fontWeight: 500, color: sel ? D.accentL : s(D.text, D.lText, mode) }}>{g.label}</span>
               {sel && (
                 <div className="ml-auto flex items-center justify-center rounded-full" style={{ width: 22, height: 22, background: D.accent }}>
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M2 6l3 3 5-5"/></svg>
@@ -1263,8 +1263,8 @@ function NotificationsScreen({ mode, onNext, onBack }: { mode: Mode; onNext: (al
         </div>
         {/* ANIMATION: animate-fade-up, delay 80ms */}
         <div className="animate-fade-up text-center" style={{ animationDelay: "80ms" }}>
-          <h1 className="font-semibold mb-2" style={{ fontSize: 24, color: s(D.text, D.lText, mode) }}>Stay on track</h1>
-          <p style={{ fontSize: 15, color: s(D.textSec, D.lTextSec, mode), lineHeight: 1.6 }}>
+          <h1 className="font-semibold mb-2" style={{ fontSize: scale.font.size["2xl"], color: s(D.text, D.lText, mode) }}>Stay on track</h1>
+          <p style={{ fontSize: scale.font.size.md, color: s(D.textSec, D.lTextSec, mode), lineHeight: 1.6 }}>
             Gentle daily reminders help you log consistently — research shows consistent logging speeds recovery.
           </p>
         </div>
@@ -1277,7 +1277,7 @@ function NotificationsScreen({ mode, onNext, onBack }: { mode: Mode; onNext: (al
               border: `1px solid ${s(D.border, D.lBorder, mode)}`,
             }}>
               <div className="w-2 h-2 rounded-full" style={{ background: D.accent }} />
-              <span style={{ fontSize: 14, color: s(D.text, D.lText, mode) }}>{item}</span>
+              <span style={{ fontSize: scale.font.size.base, color: s(D.text, D.lText, mode) }}>{item}</span>
             </div>
           ))}
         </div>
@@ -1404,7 +1404,7 @@ function PlanLoadingScreen({ mode, onNext }: { mode: Mode; onNext: () => void })
                     : <div className="w-2 h-2 rounded-full" style={{ background: s(D.textMut, D.lTextSec, mode) }} />
                   }
                 </div>
-                <span style={{ fontSize: 14, color: step.done ? s(D.text, D.lText, mode) : s(D.textMut, D.lTextSec, mode), transition: `color ${scale.duration.screen}ms` }}>{step.label}</span>
+                <span style={{ fontSize: scale.font.size.base, color: step.done ? s(D.text, D.lText, mode) : s(D.textMut, D.lTextSec, mode), transition: `color ${scale.duration.screen}ms` }}>{step.label}</span>
               </div>
             ))}
           </div>
@@ -1430,17 +1430,17 @@ function PlanLoadingScreen({ mode, onNext }: { mode: Mode; onNext: () => void })
         {/* ANIMATION: animate-fade-up, delay 80ms */}
         <div className="animate-fade-up text-center" style={{ animationDelay: "80ms" }}>
           <h1 className="font-semibold mb-2" style={{ fontSize: 26, color: s(D.text, D.lText, mode) }}>Your timeline is ready</h1>
-          <p style={{ fontSize: 15, color: s(D.textSec, D.lTextSec, mode) }}>Personalised to your recovery</p>
+          <p style={{ fontSize: scale.font.size.md, color: s(D.textSec, D.lTextSec, mode) }}>Personalised to your recovery</p>
         </div>
 
         {/* ANIMATION: animate-fade-up, delay 160ms — corridor preview card */}
         <div className="w-full animate-fade-up" style={{ animationDelay: "160ms" }}>
           <div className="rounded-2xl p-4" style={{ background: s(D.raised, D.lCard, mode), border: `1px solid ${s(D.border, D.lBorder, mode)}` }}>
             <div className="flex justify-between items-center mb-1">
-              <span style={{ fontSize: 13, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode) }}>RECOVERY TIMELINE</span>
-              <span style={{ fontSize: 13, fontWeight: 600, color: D.accent }}>Day 1</span>
+              <span style={{ fontSize: scale.font.size.sm, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode) }}>RECOVERY TIMELINE</span>
+              <span style={{ fontSize: scale.font.size.sm, fontWeight: 600, color: D.accent }}>Day 1</span>
             </div>
-            <div style={{ fontSize: 11, color: s(D.textMut, D.lTextSec, mode), marginBottom: 10, fontStyle: "italic" }}>
+            <div style={{ fontSize: scale.font.size["2xs"], color: s(D.textMut, D.lTextSec, mode), marginBottom: 10, fontStyle: "italic" }}>
               Here's what the coming weeks commonly look like
             </div>
             {[
@@ -1451,8 +1451,8 @@ function PlanLoadingScreen({ mode, onNext }: { mode: Mode; onNext: () => void })
             ].map((row, i) => (
               <div key={i} className="mb-2">
                 <div className="flex justify-between mb-1">
-                  <span style={{ fontSize: 11, color: s(D.textSec, D.lTextSec, mode) }}>{row.week}</span>
-                  <span style={{ fontSize: 11, color: s(D.textMut, D.lTextSec, mode) }}>{row.label}</span>
+                  <span style={{ fontSize: scale.font.size["2xs"], color: s(D.textSec, D.lTextSec, mode) }}>{row.week}</span>
+                  <span style={{ fontSize: scale.font.size["2xs"], color: s(D.textMut, D.lTextSec, mode) }}>{row.label}</span>
                 </div>
                 <div className="rounded-full overflow-hidden" style={{ height: 6, background: s(D.border, D.lBorder, mode) }}>
                   {/* ANIMATION: Each bar uses animate-fade-in with staggered delays:
@@ -1469,12 +1469,12 @@ function PlanLoadingScreen({ mode, onNext }: { mode: Mode; onNext: () => void })
                 { label: "💪 Strength phase", color: D.energy },
               ].map(chip => (
                 <div key={chip.label} className="px-2 py-0.5 rounded-full" style={{ background: `${chip.color}22`, border: `1px solid ${chip.color}44` }}>
-                  <span style={{ fontSize: 10, fontWeight: 600, color: chip.color }}>{chip.label}</span>
+                  <span style={{ fontSize: scale.font.size["3xs"], fontWeight: 600, color: chip.color }}>{chip.label}</span>
                 </div>
               ))}
             </div>
             {/* Disclaimer — tone: common range, not a target */}
-            <div style={{ fontSize: 10, color: s(D.textMut, D.lTextSec, mode), marginTop: 8, fontStyle: "italic" }}>
+            <div style={{ fontSize: scale.font.size["3xs"], color: s(D.textMut, D.lTextSec, mode), marginTop: 8, fontStyle: "italic" }}>
               Everyone heals differently — this is a common range, not a target.
             </div>
           </div>
@@ -1534,10 +1534,10 @@ function FreePlanScreen({ mode, onNext }: { mode: Mode; onNext: () => void }) {
           <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full mb-3" style={{
             background: `${D.mood}22`, border: `1px solid ${D.mood}66`,
           }}>
-            <span style={{ fontSize: 12, fontWeight: 600, color: theme(mode).color.category.mood.ink, letterSpacing: "0.06em" }}>FREE PLAN UNLOCKED</span>
+            <span style={{ fontSize: scale.font.size.xs, fontWeight: 600, color: theme(mode).color.category.mood.ink, letterSpacing: "0.06em" }}>FREE PLAN UNLOCKED</span>
           </div>
-          <h1 className="font-semibold mb-2" style={{ fontSize: 24, color: s(D.text, D.lText, mode) }}>You already have everything you need</h1>
-          <p style={{ fontSize: 15, color: s(D.textSec, D.lTextSec, mode), lineHeight: 1.6 }}>Your free plan includes all the essentials to track your recovery.</p>
+          <h1 className="font-semibold mb-2" style={{ fontSize: scale.font.size["2xl"], color: s(D.text, D.lText, mode) }}>You already have everything you need</h1>
+          <p style={{ fontSize: scale.font.size.md, color: s(D.textSec, D.lTextSec, mode), lineHeight: 1.6 }}>Your free plan includes all the essentials to track your recovery.</p>
         </div>
         {/* ANIMATION: animate-fade-up, delay 100ms — feature rows */}
         <div className="w-full animate-fade-up flex flex-col gap-2" style={{ animationDelay: "100ms" }}>
@@ -1548,9 +1548,9 @@ function FreePlanScreen({ mode, onNext }: { mode: Mode; onNext: () => void }) {
               border: `1px solid ${s(D.border, D.lBorder, mode)}`,
             }}>
               <div className="flex items-center justify-center rounded-xl" style={{ width: 34, height: 34, background: `${f.color}22` }}>
-                <span style={{ fontSize: 18 }}>{f.icon}</span>
+                <span style={{ fontSize: scale.font.size.xl }}>{f.icon}</span>
               </div>
-              <span style={{ fontSize: 14, fontWeight: 500, color: s(D.text, D.lText, mode) }}>{f.label}</span>
+              <span style={{ fontSize: scale.font.size.base, fontWeight: 500, color: s(D.text, D.lText, mode) }}>{f.label}</span>
               {/* Green check indicator — always present, not interactive */}
               <div className="ml-auto flex items-center justify-center rounded-full" style={{ width: 20, height: 20, background: `${D.mood}33` }}>
                 <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke={D.mood} strokeWidth="2" strokeLinecap="round"><path d="M2 5.5l2.5 2.5 4.5-4.5"/></svg>
@@ -1617,10 +1617,10 @@ function PremiumTeaserScreen({ mode, onNext, onSkip }: { mode: Mode; onNext: () 
             background: `linear-gradient(135deg, ${D.accentD}, ${D.accent}55)`,
             border: `1px solid ${D.accent}66`,
           }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: D.accentL, letterSpacing: "0.08em" }}>✦ PREMIUM</span>
+            <span style={{ fontSize: scale.font.size.xs, fontWeight: 700, color: D.accentL, letterSpacing: "0.08em" }}>✦ PREMIUM</span>
           </div>
-          <h1 className="font-semibold mb-2" style={{ fontSize: 24, color: s(D.text, D.lText, mode) }}>Go deeper with Premium</h1>
-          <p style={{ fontSize: 15, color: s(D.textSec, D.lTextSec, mode), lineHeight: 1.6 }}>Unlock advanced tools for faster, smarter recovery.</p>
+          <h1 className="font-semibold mb-2" style={{ fontSize: scale.font.size["2xl"], color: s(D.text, D.lText, mode) }}>Go deeper with Premium</h1>
+          <p style={{ fontSize: scale.font.size.md, color: s(D.textSec, D.lTextSec, mode), lineHeight: 1.6 }}>Unlock advanced tools for faster, smarter recovery.</p>
         </div>
         {/* ANIMATION: animate-fade-up, delay 100ms — feature rows */}
         <div className="w-full animate-fade-up flex flex-col gap-2" style={{ animationDelay: "100ms" }}>
@@ -1633,9 +1633,9 @@ function PremiumTeaserScreen({ mode, onNext, onSkip }: { mode: Mode; onNext: () 
               opacity: 0.7,
             }}>
               <div className="flex items-center justify-center rounded-xl" style={{ width: 34, height: 34, background: `${f.color}22` }}>
-                <span style={{ fontSize: 18 }}>{f.icon}</span>
+                <span style={{ fontSize: scale.font.size.xl }}>{f.icon}</span>
               </div>
-              <span style={{ fontSize: 14, fontWeight: 500, color: s(D.textSec, D.lTextSec, mode) }}>{f.label}</span>
+              <span style={{ fontSize: scale.font.size.base, fontWeight: 500, color: s(D.textSec, D.lTextSec, mode) }}>{f.label}</span>
               {/* Lock badge. Was drawn inline here AND separately in MainApp,
                   with different sizes and fills — the exact drift the shared
                   pattern component exists to prevent. */}
@@ -1702,10 +1702,10 @@ function PaywallScreen({ mode, onNext, onSkip }: { mode: Mode; onNext: () => voi
         {/* ANIMATION: animate-fade-up — header entry, no delay */}
         <div className="animate-fade-up text-center pt-2">
           <div style={{ fontSize: 40, lineHeight: 1, marginBottom: 8 }}>✦</div>
-          <h1 className="font-semibold mb-1" style={{ fontSize: 24, color: s(D.text, D.lText, mode) }}>
+          <h1 className="font-semibold mb-1" style={{ fontSize: scale.font.size["2xl"], color: s(D.text, D.lText, mode) }}>
             14 days free,<br />then cancel anytime.
           </h1>
-          <p style={{ fontSize: 14, color: s(D.textSec, D.lTextSec, mode) }}>No charge today.</p>
+          <p style={{ fontSize: scale.font.size.base, color: s(D.textSec, D.lTextSec, mode) }}>No charge today.</p>
         </div>
 
         {/* ANIMATION: animate-fade-up, delay 80ms — plan selector */}
@@ -1722,12 +1722,12 @@ function PaywallScreen({ mode, onNext, onSkip }: { mode: Mode; onNext: () => voi
                   cursor: "pointer", transition: `all ${scale.duration.quick}ms`,
                 }}>
                 {plan === "annual" && (
-                  <div className="inline-flex px-2 py-0.5 rounded-full mb-2" style={{ background: `${D.mood}33`, fontSize: 10, fontWeight: 700, color: theme(mode).color.category.mood.ink, letterSpacing: "0.06em" }}>SAVE 40%</div>
+                  <div className="inline-flex px-2 py-0.5 rounded-full mb-2" style={{ background: `${D.mood}33`, fontSize: scale.font.size["3xs"], fontWeight: 700, color: theme(mode).color.category.mood.ink, letterSpacing: "0.06em" }}>SAVE 40%</div>
                 )}
-                <div style={{ fontSize: 15, fontWeight: 600, color: sel ? D.accentL : s(D.text, D.lText, mode) }}>
+                <div style={{ fontSize: scale.font.size.md, fontWeight: 600, color: sel ? D.accentL : s(D.text, D.lText, mode) }}>
                   {plan === "annual" ? "Annual" : "Monthly"}
                 </div>
-                <div style={{ fontSize: 13, color: s(D.textSec, D.lTextSec, mode) }}>
+                <div style={{ fontSize: scale.font.size.sm, color: s(D.textSec, D.lTextSec, mode) }}>
                   {plan === "annual" ? "$4.99/mo · $59.99/yr" : "$8.99/mo"}
                 </div>
               </button>
@@ -1746,9 +1746,9 @@ function PaywallScreen({ mode, onNext, onSkip }: { mode: Mode; onNext: () => voi
           ].map((f, i) => (
             <div key={i} className="flex items-center gap-3">
               <div className="flex items-center justify-center rounded-lg" style={{ width: 28, height: 28, background: `${f.color}22` }}>
-                <span style={{ fontSize: 14 }}>{f.icon}</span>
+                <span style={{ fontSize: scale.font.size.base }}>{f.icon}</span>
               </div>
-              <span style={{ fontSize: 14, color: s(D.text, D.lText, mode) }}>{f.label}</span>
+              <span style={{ fontSize: scale.font.size.base, color: s(D.text, D.lText, mode) }}>{f.label}</span>
               <div className="ml-auto">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke={D.accent} strokeWidth="2" strokeLinecap="round"><path d="M2 7l3.5 3.5L12 3"/></svg>
               </div>
@@ -1765,7 +1765,7 @@ function PaywallScreen({ mode, onNext, onSkip }: { mode: Mode; onNext: () => voi
         <SecondaryButton label="Continue free" onClick={onSkip} mode={mode} />
         <div className="text-center pt-1">
           {/* Legal/utility link — no-op in this prototype */}
-          <button style={{ fontSize: 11, color: s(D.textMut, D.lTextSec, mode), background: "none", border: "none", cursor: "pointer" }}>
+          <button style={{ fontSize: scale.font.size["2xs"], color: s(D.textMut, D.lTextSec, mode), background: "none", border: "none", cursor: "pointer" }}>
             Restore purchases · Terms · Privacy
           </button>
         </div>
@@ -1893,7 +1893,7 @@ export default function Onboarding({ onComplete, initialMode, initialScreen }: {
             width: 40, height: 40,
             background: mode === "dark" ? "#FFFFFF14" : "#0000000F",
             border: `1px solid ${mode === "dark" ? "#FFFFFF1F" : "#0000001A"}`,
-            cursor: "pointer", fontSize: 18,
+            cursor: "pointer", fontSize: scale.font.size.xl,
           }}>
           {mode === "dark" ? "☀️" : "🌙"}
         </button>
