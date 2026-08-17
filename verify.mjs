@@ -30,6 +30,7 @@
 // ============================================================
 
 import { spawnSync } from "node:child_process";
+import { existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -38,16 +39,33 @@ const FAST = process.argv.includes("--fast");
 const APP = resolve(ROOT, "Onboarding Flow");
 const PNPM = "corepack pnpm@10.34.3";
 
+// The design-system gates are dependency-free Node; the prototype's two are not.
+// On a fresh clone `tsc` simply is not there, and pnpm reports that as
+// "Command tsc not found" — which reads like a broken toolchain rather than a
+// missing install. Say the actual thing instead of letting two real gates fail
+// for a reason that is not a defect.
+const INSTALLED = existsSync(resolve(APP, "node_modules"));
+if (!INSTALLED) {
+  console.error(
+    "\nDependencies are not installed, so the typecheck and visual gates cannot run.\n" +
+    "  cd \"Onboarding Flow\" && corepack pnpm@10.34.3 install\n" +
+    "  corepack pnpm@10.34.3 exec playwright install chromium\n" +
+    "\nThe token-layer gates below need nothing installed and are running now.\n"
+  );
+}
+
 const GATES = [
   { name: "drift",      cmd: "node design-system/build/build.mjs --check",     cwd: ROOT, why: "generated artifacts match the token source" },
   { name: "docs",       cmd: "node design-system/build/emit-docs.mjs --check", cwd: ROOT, why: "DESIGN_CRITERIA appendix matches the tokens" },
   { name: "contrast",   cmd: "node design-system/checks/contrast.mjs",         cwd: ROOT, why: "WCAG AA over the declared pair manifest, both modes" },
   { name: "restricted", cmd: "node design-system/checks/restricted.mjs",       cwd: ROOT, why: "non-negotiables N1-N5 in consumer code" },
   { name: "coverage",   cmd: "node design-system/checks/coverage.mjs",         cwd: ROOT, why: "raw-literal ratchet" },
-  { name: "typecheck",  cmd: `${PNPM} exec tsc --noEmit`,                      cwd: APP,  why: "token name typos" },
-  ...(FAST ? [] : [
-    { name: "visual",   cmd: `${PNPM} exec playwright test`,                   cwd: APP,  why: "36 baselines, 18 screens x 2 modes" },
-  ]),
+  ...(INSTALLED ? [
+    { name: "typecheck", cmd: `${PNPM} exec tsc --noEmit`,                     cwd: APP,  why: "token name typos" },
+    ...(FAST ? [] : [
+      { name: "visual",  cmd: `${PNPM} exec playwright test`,                  cwd: APP,  why: "36 baselines, 18 screens x 2 modes" },
+    ]),
+  ] : []),
 ];
 
 const results = [];
@@ -65,10 +83,14 @@ for (const r of results) {
   console.log(`  ${r.ok ? "PASS" : "FAIL"}  ${r.name.padEnd(12)} ${(r.ms / 1000).toFixed(1)}s`);
 }
 if (FAST) console.log("\n  (--fast: the visual suite was skipped)");
+if (!INSTALLED) console.log("\n  SKIPPED typecheck and visual — dependencies not installed.");
 console.log("=".repeat(64));
 
 if (failed) {
   console.error(`\n${failed} gate(s) failed.\n`);
   process.exit(1);
 }
-console.log("\nAll gates green.\n");
+// Not "all gates green" when two of them never ran. A verify script that
+// reports success for work it skipped is the same class of lie as a check that
+// passes because it measured nothing.
+console.log(INSTALLED ? "\nAll gates green.\n" : "\nToken-layer gates green. Two gates were skipped — see above.\n");
