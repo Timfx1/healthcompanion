@@ -573,7 +573,7 @@ function PaywallSheet({ mode, onClose }: { mode: Mode; onClose: () => void }) {
             return (
               <button key={p} onClick={() => setPlan(p)} className="btn-press flex-1 rounded-xl p-3 text-left"
                 style={{ background: sel ? `linear-gradient(135deg,${D.accentD},${D.accent}44)` : s(D.card, D.lBase, mode), border: `1.5px solid ${sel ? D.accent : s(D.border, D.lBorder, mode)}`, cursor: "pointer" }}>
-                {p === "annual" && <div style={{ fontSize: 9, fontWeight: 700, color: D.mood, letterSpacing: "0.06em", marginBottom: 2 }}>SAVE 40%</div>}
+                {p === "annual" && <div style={{ fontSize: 9, fontWeight: 700, color: theme(mode).color.category.mood.ink, letterSpacing: "0.06em", marginBottom: 2 }}>SAVE 40%</div>}
                 <div style={{ fontSize: 13, fontWeight: 600, color: sel ? D.accentL : s(D.text, D.lText, mode) }}>{p === "annual" ? "Annual" : "Monthly"}</div>
                 <div style={{ fontSize: 11, color: s(D.textSec, D.lTextSec, mode) }}>{p === "annual" ? "$4.99/mo · $59.99/yr" : "$8.99/mo"}</div>
               </button>
@@ -838,7 +838,7 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
           {/* Weekly comparison summary — mood/sleep colored inline */}
           <div className="mt-3 rounded-xl px-3 py-2" style={{ background: "#FFFFFF0F", border: `1px solid ${D.accent}33` }}>
             <div style={{ fontSize: 12, color: s(D.textSec, D.lTextSec, mode), lineHeight: 1.5 }}>
-              Compared to last week: <span style={{ color: D.mood }}>✅ Pain down</span> · <span style={{ color: D.sleep }}>✅ Walking improved</span>
+              Compared to last week: <span style={{ color: theme(mode).color.category.mood.ink }}>✅ Pain down</span> · <span style={{ color: theme(mode).color.category.sleep.ink }}>✅ Walking improved</span>
             </div>
             {/* C3: Motivational copy, not a performance pressure statement */}
             <div style={{ fontSize: 12, color: s(D.textMut, D.lTextSec, mode), marginTop: 2, fontStyle: "italic" }}>"Recovery isn't always linear. Keep going."</div>

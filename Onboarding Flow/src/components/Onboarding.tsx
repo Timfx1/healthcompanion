@@ -1523,7 +1523,7 @@ function FreePlanScreen({ mode, onNext }: { mode: Mode; onNext: () => void }) {
           <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full mb-3" style={{
             background: `${D.mood}22`, border: `1px solid ${D.mood}66`,
           }}>
-            <span style={{ fontSize: 12, fontWeight: 600, color: D.mood, letterSpacing: "0.06em" }}>FREE PLAN UNLOCKED</span>
+            <span style={{ fontSize: 12, fontWeight: 600, color: theme(mode).color.category.mood.ink, letterSpacing: "0.06em" }}>FREE PLAN UNLOCKED</span>
           </div>
           <h1 className="font-semibold mb-2" style={{ fontSize: 24, color: s(D.text, D.lText, mode) }}>You already have everything you need</h1>
           <p style={{ fontSize: 15, color: s(D.textSec, D.lTextSec, mode), lineHeight: 1.6 }}>Your free plan includes all the essentials to track your recovery.</p>
@@ -1711,7 +1711,7 @@ function PaywallScreen({ mode, onNext, onSkip }: { mode: Mode; onNext: () => voi
                   cursor: "pointer", transition: "all 150ms",
                 }}>
                 {plan === "annual" && (
-                  <div className="inline-flex px-2 py-0.5 rounded-full mb-2" style={{ background: `${D.mood}33`, fontSize: 10, fontWeight: 700, color: D.mood, letterSpacing: "0.06em" }}>SAVE 40%</div>
+                  <div className="inline-flex px-2 py-0.5 rounded-full mb-2" style={{ background: `${D.mood}33`, fontSize: 10, fontWeight: 700, color: theme(mode).color.category.mood.ink, letterSpacing: "0.06em" }}>SAVE 40%</div>
                 )}
                 <div style={{ fontSize: 15, fontWeight: 600, color: sel ? D.accentL : s(D.text, D.lText, mode) }}>
                   {plan === "annual" ? "Annual" : "Monthly"}
