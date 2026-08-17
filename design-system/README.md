@@ -20,9 +20,20 @@ Onboarding Flow/src/tokens.generated.css
 Nothing here has dependencies — the build and the checks are plain Node, no
 install step. Only the prototype needs `pnpm install`.
 
+**One command runs every gate:**
+
+```bash
+node verify.mjs          # from the repo root; --fast skips the visual suite
+```
+
+That is what CI calls (`.github/workflows/verify.yml`) and what to run before
+pushing. The individual gates:
+
 ```bash
 node design-system/build/build.mjs           # rebuild all artifacts
 node design-system/build/build.mjs --check   # fail if dist/ is stale  (drift gate)
+node design-system/build/emit-docs.mjs       # regenerate the DESIGN_CRITERIA appendix
+node design-system/build/emit-docs.mjs --check
 node design-system/checks/contrast.mjs       # WCAG AA audit, both modes
 node design-system/checks/contrast.mjs --all # include passing pairs
 node design-system/checks/restricted.mjs     # non-negotiables N1-N5 in consumer code

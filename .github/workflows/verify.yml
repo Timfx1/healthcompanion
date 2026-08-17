@@ -1,0 +1,75 @@
+# ============================================================
+# Every gate in this repository, on every push and pull request.
+#
+# Before this, all of them were manual, which meant the guarantees they provide
+# held exactly as often as someone remembered to type the command.
+#
+# THE VISUAL JOB IS DELIBERATELY NON-BLOCKING. There is an open intermittent
+# failure in the screenshot harness (~1 run in 8-20, not reproduced in 15
+# consecutive runs, see playwright.config.ts). A gate that fails at random
+# teaches people to re-run until green, and a gate everyone re-runs is worse
+# than no gate at all — it launders real regressions behind a habit.
+#
+# So it runs, it reports, and it uploads its trace, but it does not fail the
+# build. Flip `continue-on-error` to false the moment one failure is captured
+# and explained. That is the ONLY thing keeping it advisory.
+# ============================================================
+
+name: verify
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Enable corepack
+        run: corepack enable
+
+      # The token layer, its checks and the docs are dependency-free Node — they
+      # run before any install so a broken lockfile cannot mask a token failure.
+      - name: Gates (no browser)
+        run: node verify.mjs --fast
+
+      - name: Install prototype dependencies
+        working-directory: "Onboarding Flow"
+        run: corepack pnpm@10.34.3 install --frozen-lockfile
+
+      - name: Install Chromium
+        working-directory: "Onboarding Flow"
+        run: corepack pnpm@10.34.3 exec playwright install --with-deps chromium
+
+      # Advisory until the flake is closed — see the note at the top.
+      - name: Visual parity (advisory)
+        id: visual
+        continue-on-error: true
+        working-directory: "Onboarding Flow"
+        run: corepack pnpm@10.34.3 exec playwright test
+
+      # Retained on failure by playwright.config.ts. With retries at 0, the
+      # failing run is the only chance to record anything, so getting the trace
+      # off the runner is the whole point of running this in CI at all.
+      - name: Upload traces
+        if: steps.visual.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-trace
+          path: "Onboarding Flow/test-results/"
+          retention-days: 14
+
+      - name: Flag the advisory failure
+        if: steps.visual.outcome == 'failure'
+        run: |
+          echo "::warning title=Visual parity failed::Advisory only. Download the playwright-trace artifact — a captured failure is exactly what the open flake investigation needs."
