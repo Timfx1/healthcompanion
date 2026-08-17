@@ -56,6 +56,16 @@ export default defineConfig({
       // measured tolerance.
       maxDiffPixels: 12,
       threshold: 0,
+
+      // RESIDUAL FLAKE, ~1 run in 20. Failing runs emit no pixel-diff count,
+      // which points at the capture timing out rather than the image differing
+      // — so the fix is more time, not more tolerance. The default 5s can be
+      // tight when the dev server is cold or has just restarted, which is
+      // exactly when the flake was observed (immediately after re-baselining).
+      //
+      // Recorded rather than hidden: if a failure ever DOES report a pixel
+      // count, this is not the cause and the diff is real.
+      timeout: 15_000,
       animations: "disabled",
       caret: "hide",
       scale: "css",
