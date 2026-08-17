@@ -19,11 +19,12 @@
 //      MainApp renders `new Date().toLocaleDateString(...)` in the check-in
 //      confirmation, and Onboarding derives "Day N" from Date.now(); without
 //      pinning, those baselines would rot after one day.
-//   4. Webfont loading           -> Inter is fetched from Google Fonts, so the
-//      first paint can land before the font does. We await document.fonts.ready
-//      and additionally assert Inter actually resolved, because a silent
-//      fallback to system sans would produce a plausible-looking but wrong
-//      baseline that then locks in the wrong metrics.
+//   4. Webfont loading           -> Inter is now SELF-HOSTED (src/fonts/), which
+//      took the network off the critical path but did NOT make the font
+//      synchronous: a face the layout has not demanded yet is still never
+//      requested. So every weight is loaded explicitly below, then asserted —
+//      a silent fallback to system sans would produce a plausible-looking but
+//      wrong baseline that locks in the wrong text metrics.
 // ============================================================
 
 import { test, expect, type Page } from "@playwright/test";

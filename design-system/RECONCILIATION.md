@@ -84,20 +84,30 @@ This narrows "Figma is the visual source of truth" to **colour**, which is the o
 
 ---
 
-## Accepted debt — contrast
+## Contrast — the 25 accepted-debt pairs, and how they closed
 
-25 pairs fail WCAG AA and are **not** being fixed in v1, per decision. Each is tracked with its measured ratio (alpha composited over its declared backdrop, evaluated per mode) and a fix direction.
+All 25 were resolved in v1. `contrast.mjs` now reports **0 regressions and 0 debt
+across 90 pair-mode combinations.** Kept here as the record of what each was and
+what actually fixed it, because the fix directions are the reason several
+primitives exist and would otherwise look arbitrary.
 
-| Pair group | Ratio | Fix direction |
+| Pair group | Was | Resolution |
 |---|---|---|
-| 5 category hues as `ink` on light | 1.47–1.96 | The `mark`/`ink` split exists for this. `ink` gets darkened variants; `mark` keeps the pastel. |
-| 5 category hues as `mark` on light (3:1 non-text) | 1.47–1.96 | Darken, or pair with a stroke. Note the `mark`/`ink` split alone does **not** fix this — the fills fail too. |
-| `text.muted` on all 3 dark surfaces | 2.25–2.71 | Lighten. It is documented for placeholders and fine print, which is body-text usage. |
-| `text.muted` on light | 2.04–2.18 | Darken. Also the token missing from the `@theme` block — see below. |
-| accent / accent-light as text on light | 3.93 / 2.84 | Needs a dedicated on-light accent text value. |
-| 27%-alpha tint border, both modes (13 uses) | 1.40 / 1.38 | Either strengthen, or reclassify as decorative — only honest if the border is never the sole affordance. |
+| 5 category hues as `ink` on light | 1.47–1.96 | `color.pastelInk.*` added — dedicated darkened values at 4.51–4.54:1. `mark` keeps the pastel. |
+| 5 category hues as `mark` on light (3:1 non-text) | 1.47–1.96 | **Reclassified to `decorative`, not darkened.** A mark is a fill that never carries meaning alone — a chip always has a label, an icon tile always has a glyph — so 1.4.11 does not apply. This is the one resolution that changed the question rather than the value, and it is only honest while that premise holds. |
+| `text.muted` on all 3 dark surfaces | 2.25–2.71 | `ink.400` (`#8D89A8`) replaced `ink.500`; 4.52–5.45:1. The old value is retained for non-text use only. |
+| `text.muted` on light | 2.04–2.18 | `paper.500` (`#716AA9`) replaced `paper.400`; 4.54–4.84:1. |
+| accent / accent-light as text on light | 3.93 / 2.84 | `lavender.650` added as the on-light accent text step; 4.55:1. |
+| 27%-alpha tint border, both modes (13 uses) | 1.40 / 1.38 | **Reclassified to `decorative`**, on the recorded grounds that selection is carried by three simultaneous signals (tinted fill, border, trailing check — Figma node 1:222). Reverts to `ui-boundary` the moment a selected state drops the fill or the check. |
 
-**Fixed in v1** (the two severe failures): white on the CTA gradient (4.19 at the dark stop, **2.84** at the light stop, and the label is 16px/600 = body text) and the safety colour on light surfaces (3.78 / 3.54). Both are recorded in `DESIGN_CRITERIA.md` §11.
+Two of the six groups closed by reclassification rather than by changing a
+value. That is legitimate under WCAG — both 1.4.11 and the decorative exemption
+turn on whether the presentation is *essential* to conveying the meaning — but it
+means those two carry a standing premise that can silently expire. Both premises
+are written into `pairs.manifest.json` at the pair, next to the value they
+excuse, rather than only here.
+
+**Also fixed in v1** (the two severe failures): white on the CTA gradient (4.19 at the dark stop, **2.84** at the light stop, and the label is 16px/600 = body text) and the safety colour on light surfaces (3.78 / 3.54). Both are recorded in `DESIGN_CRITERIA.md` §11.
 
 ---
 

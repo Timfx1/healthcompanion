@@ -178,9 +178,9 @@ Recorded rather than hidden, per the rule at the top of this document. All figur
 | White label on the primary CTA gradient | **4.19:1** at the dark stop, **2.84:1** at the light stop | The label is 16px/600 — body text, so 4.5:1 applies. This is the primary action on every screen, in both modes, and the lighter half of the gradient fails even the 3:1 floor. |
 | Safety colour on light surfaces | **3.78:1** on card, **3.54:1** on base | This is the red-flag surface. It is the one thing in a health app that must be legible. |
 
-**Accepted as debt (25 pairs), tracked in `RECONCILIATION.md`:** all five category hues fail as both `ink` and `mark` on light surfaces (1.47–1.96:1); muted text fails on all three dark surfaces (2.25–2.71:1) and on light (2.04–2.18:1); accent-as-text fails on light (3.93 / 2.84:1); the 27%-alpha tint border fails the 3:1 non-text threshold in both modes (1.40 / 1.38:1) across 13 uses.
+**The 25 pairs originally accepted as debt are all closed.** `contrast.mjs` now measures **0 regressions and 0 debt across 90 pair-mode combinations.** The per-group resolutions are in `RECONCILIATION.md`; two of the six groups closed by reclassifying the usage class rather than by changing a value, and both carry a standing premise recorded at the pair in `pairs.manifest.json`.
 
-These are debt, not acceptance: each carries its ratio and a fix direction. The `mark`/`ink` split in §2 exists specifically so the category-hue failures can be resolved without changing the fills the design depends on.
+**What the zero does not cover.** The audit measures declared pairs, not rendered ones. A combination that was never written into the manifest is not failing — it is unmeasured, and it is indistinguishable from a passing one in the summary line. So the number is a claim about the manifest's coverage as much as about the palette, and "add the pair when you add the colour" is the whole mechanism rather than a formality.
 
 **Structural gap:** the design file has no light-mode frames at all, so light mode has never been visually reviewed against a design — only implemented. That is the most likely explanation for why the light-mode failures cluster so heavily, and it is why the code is canonical for light mode by decision rather than by preference.
 
@@ -192,9 +192,11 @@ These are debt, not acceptance: each carries its ratio and a fix direction. The 
 |---|---|
 | `checks/contrast.mjs` | Any approved pair falling below its threshold, per mode, alpha-composited |
 | `checks/restricted.mjs` | Safety colour escaping its family; incomplete `category.*` families; primitives referenced from screens; forbidden token names (`target`, `streak`, `missed`) |
-| `checks/coverage.mjs` | New raw hex, `rgba()`, `box-shadow` or numeric radius/size in consumer code. The allowlist may only shrink. |
-| `checks/drift.mjs` | Generated artifacts diverging from the token source |
-| `tests/visual.spec.ts` | Any rendered pixel changing, at zero tolerance, across 18 screens × 2 modes |
+| `checks/coverage.mjs` | New raw hex, `rgba()`, duration, z-index, radius or font size in consumer code. The budget may only shrink. |
+| `build/build.mjs --check` | Generated artifacts diverging from the token source. (This is the drift gate; there is no separate `drift.mjs`.) |
+| `tests/visual.spec.ts` | Any rendered pixel changing, across 18 screens × 2 modes, above a measured 12-pixel noise floor |
 | `tsc --noEmit` | Token name typos, via `as const` union types |
+
+None of these run automatically. There is no CI configuration in the repository, so every gate above is a gate somebody has to remember.
 
 **Appendix — generated token tables:** produced by `design-system/build/emit-docs.mjs` once the token files are authored, and appended below this line. Do not hand-edit them.

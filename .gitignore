@@ -10,12 +10,26 @@ build/
 vite.config.*.timestamp-*
 
 # NOTE: design-system/dist/ is deliberately NOT ignored. Generated token
-# artifacts are committed so consumers need no build step, and so drift.mjs can
-# byte-compare a regenerated build against the committed copy. That comparison
-# is the mechanism that makes token drift impossible; ignoring dist/ would
-# silently disable it.
+# artifacts are committed so consumers need no build step, and so the drift gate
+# (`build.mjs --check`) can byte-compare a regenerated build against the
+# committed copy. That comparison is the mechanism that makes token drift
+# impossible; ignoring dist/ would silently disable it.
 !design-system/dist/
 !design-system/dist/**
+
+# NOR is design-system/build/. It is not build OUTPUT — it is the token
+# generator itself, the single program that produces everything in dist/ and the
+# two vendored consumer copies.
+#
+# The `build/` rule above swallowed it. The symptom was invisible from inside a
+# working tree: dist/ was committed and every check passed, while the tool that
+# produces dist/ existed only on one machine. A fresh clone got four generated
+# artifacts each carrying the banner "Rebuild: node design-system/build/build.mjs"
+# and no such file, so the drift gate could not run, the tokens could not be
+# regenerated, and the committed artifacts became unfalsifiable — exactly the
+# "second source of truth nobody can check" that this system was built to end.
+!design-system/build/
+!design-system/build/**
 
 # ── Test / verification output ────────────────────────────────────────────────
 # Baselines are committed (they are the parity contract); only failure diffs

@@ -1,17 +1,17 @@
 /* ============================================================
    FILE: index.css
    PURPOSE: Global CSS for Recovery Companion.
-     1. Loads Inter font from Google Fonts (weights 400, 500, 600).
-     2. Imports Tailwind CSS v4.
-     3. Defines Tailwind theme tokens (mapped to D tokens in tokens.ts).
+     1. Imports Tailwind CSS v4.
+     2. Declares Inter as a self-hosted variable face (see below).
+     3. Imports the GENERATED token stylesheet.
      4. Defines all keyframe animations used across the app.
      5. Defines animation utility classes (applied via className in JSX).
      6. Defines stagger-delay utility classes for sequential entry animations.
      7. Styles the range input thumb (used by the pain slider in check-in).
      8. Defines .btn-press — the universal press-feedback class.
+     9. Defines .no-motion — harness-only motion suppression.
    ============================================================ */
 
-/* FONT: Inter loaded from Google Fonts. Weights: 400 (regular), 500 (medium), 600 (semibold). */
 @import 'tailwindcss';
 
 /* ── Inter, self-hosted ───────────────────────────────────────────────────────

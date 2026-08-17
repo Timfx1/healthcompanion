@@ -17,18 +17,30 @@ Onboarding Flow/src/tokens.generated.css
 
 ## Commands
 
+Nothing here has dependencies — the build and the checks are plain Node, no
+install step. Only the prototype needs `pnpm install`.
+
 ```bash
 node design-system/build/build.mjs           # rebuild all artifacts
 node design-system/build/build.mjs --check   # fail if dist/ is stale  (drift gate)
 node design-system/checks/contrast.mjs       # WCAG AA audit, both modes
 node design-system/checks/contrast.mjs --all # include passing pairs
+node design-system/checks/restricted.mjs     # non-negotiables N1-N5 in consumer code
+node design-system/checks/coverage.mjs       # the literal ratchet
+node design-system/checks/coverage.mjs --list   # ... and what is still hardcoded
 node design-system/extraction/harvest.mjs    # re-inventory hardcoded literals
 
 cd "Onboarding Flow"
+pnpm install
+pnpm exec playwright install chromium        # once, before the first visual run
 pnpm typecheck                               # token name typos, via as-const unions
-pnpm test:visual                             # 36 baselines, zero tolerance
+pnpm test:visual                             # 36 baselines
 pnpm test:visual:update                      # re-approve after an INTENDED change
 ```
+
+There is no CI configuration and no single `verify` entry point; the gates above
+are run by hand. Recorded as a gap rather than implied — a gate nobody runs is
+not a gate.
 
 ## The three layers
 
@@ -84,7 +96,15 @@ They exist separately because the same pastel that reads comfortably on a dark s
 
 Failures are split into **regressions** (fail the build) and **debt** (known, tracked in `RECONCILIATION.md` with a fix direction, reported every run). Debt is scoped per mode, because most known failures fail on light only — flagging the whole pair would exempt the dark side too.
 
-Current state: **0 regressions, 25 tracked debt.**
+Current state: **90 pair-mode combinations, 0 regressions, 0 debt.** The 25 pairs
+originally accepted as debt were all resolved in v1; the mechanism is retained
+because the next colour added will need it.
+
+**What this number does not mean.** It measures the pairs the manifest declares,
+not the pairs the app renders. A combination nobody wrote down is not audited and
+does not appear in the count — so "0 debt" is a statement about the manifest's
+contents, and it is only as good as the manifest's coverage. Adding a pair when
+you add a colour is not bookkeeping; it is the entire mechanism.
 
 ## Provenance
 
