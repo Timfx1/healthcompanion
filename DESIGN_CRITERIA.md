@@ -182,6 +182,24 @@ Recorded rather than hidden, per the rule at the top of this document. All figur
 
 **What the zero does not cover.** The audit measures declared pairs, not rendered ones. A combination that was never written into the manifest is not failing — it is unmeasured, and it is indistinguishable from a passing one in the summary line. So the number is a claim about the manifest's coverage as much as about the palette, and "add the pair when you add the colour" is the whole mechanism rather than a formality.
 
+That is not hypothetical. A read-through of the screens found **six rendered combinations that had never been declared, five of which failed** — including white on a category fill at **1.58:1**, in both modes, on a button label in the free experience: worse than anything the original audit had tracked as debt. All six are now declared and fixed; the count is 110 pair-mode combinations, 0 regressions, 0 debt. The full table and the three structural lessons are in `RECONCILIATION.md`.
+
+### Open — found, measured, not yet fixed
+
+**The pain numeral fails the large-text threshold on light, for most of its range.** The 80px score on the onboarding baseline screen and in the check-in sheet takes its colour from an 11-step ramp (`PAIN_COLORS`) that is hardcoded — and *duplicated verbatim* in `Onboarding.tsx` and `MainApp.tsx`. The ramp has no light-mode counterpart, so on the light page background:
+
+| Score | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Ratio | 1.48 | 1.48 | 1.41 | 1.37 | 1.38 | 1.56 | 1.85 | 1.91 | 2.80 | 3.41 | 4.54 |
+
+At 80px this is large text, so the threshold is 3:1 — **nine of the eleven steps fail**, and the captured baseline sits at score 5 (1.56:1). It is dark mode that carries this design: the same ramp clears 3.77–12.46 there.
+
+This is the mark/ink split again, unapplied: the ramp is a set of *marks* (it fills the slider track, which is legitimate) being reused as *text*. The fix is an ink counterpart for the ramp, authored once as a token family so the two copies collapse into one. Not attempted here because it is 11 mode-paired values plus a re-baseline of two more screens, and it deserves its own pass rather than being appended to this one.
+
+**The manifest is still hand-maintained.** Nothing verifies it covers what the screens render. The sweep above was done by reading code; the next undeclared combination will be exactly as invisible as these six were.
+
+**The fast-path fix is unbaselined.** `app-checkin` captures the fast path with nothing selected, so the selected-word contrast fix is not exercised by any baseline — it falls in the coverage gap already recorded in `tests/visual.spec.ts`.
+
 **Structural gap:** the design file has no light-mode frames at all, so light mode has never been visually reviewed against a design — only implemented. That is the most likely explanation for why the light-mode failures cluster so heavily, and it is why the code is canonical for light mode by decision rather than by preference.
 
 ---

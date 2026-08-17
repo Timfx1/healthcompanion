@@ -111,6 +111,55 @@ excuse, rather than only here.
 
 ---
 
+## The blind spot behind the zero
+
+Reaching 0 debt did not mean the palette was clean. It meant every **declared**
+pair passed. A sweep of what the screens actually render found six combinations
+that were never declared, so the audit had never looked at them — and five of the
+six failed, two of them worse than anything that had ever been tracked as debt.
+
+| Site | Combination | Was | Now |
+|---|---|---|---|
+| "View", pre-appointment nudge | white on the sleep **mark** fill | **1.81** both modes | 9.51 via `onMark` |
+| "Save to timeline", weekly card | white on the mood **mark** fill | **1.58** both modes | 10.91 via `onMark` |
+| Trend badge word, every chart | **mark** as text on a 13% tint of itself | 1.40–1.80 light | 4.83–4.96 via `ink` |
+| Fast-path selected word (C1) | **mark** as text on a 27% tint of itself | 1.41–1.65 light | 4.55–4.59 via `ink` |
+| Milestone title, Timeline | **mark** as text on the card | 1.81 light | 4.51–4.54 via `ink` |
+| Sparkline data line | **mark** as a data stroke | 1.47–1.96 light | 4.80–4.84 via `ink` |
+
+Three things this says, none of them about the palette:
+
+**1. The two worst were mode-invariant, which is why mode-pairing did not catch
+them.** Every mechanism in this system is built around the dark/light split. A
+pastel fill is the same colour in both modes, so white on it fails identically in
+both — and a failure that does not differ between modes is invisible to a system
+whose whole shape is "compare the modes". `onMark` exists because there was no
+approved answer to "what colour is a label on a category fill", so two call sites
+invented `#fff`.
+
+**2. The ink values were solved against the wrong backdrop.** They were
+calibrated on plain white and cleared 4.51–4.54 there, but category ink almost
+never sits on plain white — it sits inside a chip or a selected card filled with
+a tint of its own mark, which lifts the backdrop toward the text. On the real
+backdrops the original values gave 4.44–4.61 at 13% and 4.08–4.36 at 27%. This is
+the same error as the dayCard gradient: a pair measured against a surface the
+text does not actually sit on. Both the 13% and 27% backdrops are now declared.
+
+**3. Every one of them arrived through a `color: string` prop or field.** Not one
+came from a direct token reference. A call site that knows "this row is about
+sleep" cannot correctly choose mark-vs-ink, because that depends on whether the
+value will be painted as a fill or a stroke — which only the component knows. The
+components now take a category NAME and resolve the role themselves, so the call
+site has nothing left to get wrong. That is the durable fix; recalibrating the
+values was only the arithmetic.
+
+**Still open.** The manifest is still hand-maintained, and nothing verifies that
+it covers what the screens render — this sweep was done by reading the code, and
+the next undeclared combination will be just as invisible. See the open items in
+`DESIGN_CRITERIA.md` §11.
+
+---
+
 ## The drift bug this work closes
 
 `tokens.ts` and `index.css` both declared themselves the source of truth and both carried a "keep in sync" comment. They were already out of sync: `lTextMut` (`#B0ACCF`) and `safety` (`#E05548`) exist in `tokens.ts` and are absent from the `@theme` block.

@@ -41,6 +41,24 @@
     { "id": "category/mood mark on raised",   "fg": "color.category.mood.mark",   "bg": "color.surface.raised", "usage": "decorative" },
     { "id": "category/meds mark on raised",   "fg": "color.category.meds.mark",   "bg": "color.surface.raised", "usage": "decorative" },
 
+    { "id": "category/pain ink on 13% pain tint",   "fg": "color.category.pain.ink",   "bg": "#FDF3F2", "modes": ["light"], "usage": "body-text", "note": "THE BACKDROP CATEGORY INK ACTUALLY SITS ON. Chips, badges and trend pills fill with a 13% tint of their OWN mark, which lifts the backdrop toward the text and eats the margin. The ink was originally solved against plain white and reached only 4.44:1 here. Backdrops are the composited result (pastel.pain at 13% over white), because a background spec must be opaque. Light only: on dark, ink resolves to the pastel and clears 6.5-8.1:1 on the same tint." },
+    { "id": "category/sleep ink on 13% sleep tint", "fg": "color.category.sleep.ink",  "bg": "#F2F7FE", "modes": ["light"], "usage": "body-text", "note": "Was 4.49:1 before recalibration." },
+    { "id": "category/energy ink on 13% energy tint","fg": "color.category.energy.ink","bg": "#FEF9EF", "modes": ["light"], "usage": "body-text" },
+    { "id": "category/mood ink on 13% mood tint",   "fg": "color.category.mood.ink",   "bg": "#F3FAF6", "modes": ["light"], "usage": "body-text" },
+    { "id": "category/meds ink on 13% meds tint",   "fg": "color.category.meds.ink",   "bg": "#F8F6FD", "modes": ["light"], "usage": "body-text" },
+
+    { "id": "category/pain ink on 27% pain tint",   "fg": "color.category.pain.ink",   "bg": "#FCE7E5", "modes": ["light"], "usage": "body-text", "note": "THE WORST REAL BACKDROP, and the one the ink is now solved against. The fast-path check-in fills its SELECTED option with a 27% tint and renders the word in the category colour at 15px/700 — body text, because only >=18.66px BOLD qualifies as large. All five reached 4.08-4.36:1 before recalibration, and all five were undeclared." },
+    { "id": "category/sleep ink on 27% sleep tint", "fg": "color.category.sleep.ink",  "bg": "#E5EFFC", "modes": ["light"], "usage": "body-text" },
+    { "id": "category/energy ink on 27% energy tint","fg": "color.category.energy.ink","bg": "#FCF2E0", "modes": ["light"], "usage": "body-text" },
+    { "id": "category/mood ink on 27% mood tint",   "fg": "color.category.mood.ink",   "bg": "#E8F5EC", "modes": ["light"], "usage": "body-text" },
+    { "id": "category/meds ink on 27% meds tint",   "fg": "color.category.meds.ink",   "bg": "#F1ECFB", "modes": ["light"], "usage": "body-text" },
+
+    { "id": "category/pain onMark on pain fill",   "fg": "color.category.pain.onMark",   "bg": "color.category.pain.mark",   "usage": "body-text", "note": "TEXT ON A FULL-STRENGTH CATEGORY FILL. This combination existed in the product with no token and no declared pair: two buttons answered `#fff`, giving 1.81:1 and 1.58:1 in BOTH modes — worse than anything ever tracked as debt, on a button label in the free experience. The mark is mode-invariant, so one declaration covers both modes." },
+    { "id": "category/sleep onMark on sleep fill", "fg": "color.category.sleep.onMark",  "bg": "color.category.sleep.mark",  "usage": "body-text" },
+    { "id": "category/energy onMark on energy fill","fg": "color.category.energy.onMark","bg": "color.category.energy.mark", "usage": "body-text" },
+    { "id": "category/mood onMark on mood fill",   "fg": "color.category.mood.onMark",   "bg": "color.category.mood.mark",   "usage": "body-text" },
+    { "id": "category/meds onMark on meds fill",   "fg": "color.category.meds.onMark",   "bg": "color.category.meds.mark",   "usage": "body-text" },
+
     { "id": "safety/ink on base",   "fg": "color.safety.ink",  "bg": "color.surface.base",   "usage": "body-text", "note": "FIXED in v1 and mode-paired. Red-flag copy — the one thing a health app must not get wrong." },
     { "id": "safety/ink on raised", "fg": "color.safety.ink",  "bg": "color.surface.raised", "usage": "body-text", "note": "FIXED in v1. Was 4.38:1 dark and 3.78:1 light." },
     { "id": "safety/ink on card",   "fg": "color.safety.ink",  "bg": "color.surface.card",   "usage": "body-text" },

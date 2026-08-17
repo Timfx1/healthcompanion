@@ -44,6 +44,28 @@ import { D, c as s, theme, scale, type Mode } from "./tokens";
 import LockBadge from "./patterns/LockBadge";
 
 // ============================================================
+// CATEGORY COLOUR ACCESS
+//
+// Components below take a category NAME, never a colour string, and resolve
+// mark/ink/onMark themselves at the point of use.
+//
+// That is not a style preference — it is the fix for a whole class of bug this
+// system is supposed to prevent. When a component takes `color: string`, the
+// call site has to decide mark-vs-ink, and the call site is exactly where that
+// knowledge is absent: it knows "this row is about sleep", not "this value will
+// be painted as a 2px data stroke". Every mark-as-text and mark-as-stroke defect
+// found in the contrast sweep came through a `color` prop or a `color` field on
+// a data object — the trend badge word, the sparkline stroke, the fast-path
+// selected word, the milestone title. None came from a direct token reference.
+//
+// Passing the name moves the decision inside the component that does the
+// painting, which is the only place that can get it right, and leaves the call
+// site with nothing to get wrong.
+// ============================================================
+type Category = "pain" | "sleep" | "energy" | "mood" | "meds";
+const cat = (mode: Mode, c: Category) => theme(mode).color.category[c];
+
+// ============================================================
 // LIGHT MODE vs DARK MODE — VISUAL COMPARISON GUIDE (MAIN APP)
 //
 // This section describes how every tab, card, overlay, and component
@@ -856,9 +878,12 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
               <div style={{ fontSize: 13, fontWeight: 600, color: s(D.text, D.lText, mode) }}>Appointment in 2 days</div>
               <div style={{ fontSize: 11, color: s(D.textSec, D.lTextSec, mode) }}>Review your report for Dr. Chen?</div>
             </div>
-            {/* BUTTON: "View" → prototype stub */}
+            {/* BUTTON: "View" → prototype stub.
+                Label is category.sleep.onMark, NOT white. White on this pastel is
+                1.81:1 in both modes — the fill does not change between modes, so
+                neither did the failure. onMark reaches 9.51:1. */}
             <button className="btn-press px-3 rounded-xl font-semibold"
-              style={{ height: 32, background: D.sleep, color: "#fff", border: "none", cursor: "pointer", fontSize: 12, flexShrink: 0 }}>
+              style={{ height: 32, background: D.sleep, color: theme(mode).color.category.sleep.onMark, border: "none", cursor: "pointer", fontSize: 12, flexShrink: 0 }}>
               View
             </button>
           </div>
@@ -932,9 +957,12 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
               Showing up for yourself is the work. 🙌
             </div>
             <div className="flex gap-2">
-              {/* BUTTON: "Save to timeline" → prototype stub */}
+              {/* BUTTON: "Save to timeline" → prototype stub.
+                  Was white on the mood pastel at 1.58:1 — the worst measured pair
+                  in the product, on a button label in the free experience.
+                  onMark reaches 10.91:1. */}
               <button className="btn-press flex-1 flex items-center justify-center rounded-xl font-medium"
-                style={{ height: 36, background: D.mood, color: "#fff", border: "none", cursor: "pointer", fontSize: 13 }}>
+                style={{ height: 36, background: D.mood, color: theme(mode).color.category.mood.onMark, border: "none", cursor: "pointer", fontSize: 13 }}>
                 Save to timeline
               </button>
               {/* BUTTON: "Dismiss" → weeklyDismissed=true */}
@@ -1028,17 +1056,27 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
 //   SIZE: 52×52px circle. Gradient accent. Shadow: 0 4px 20px accent55.
 //   ACTION: Prototype stub (no action wired).
 // ============================================================
-const TIMELINE_ENTRIES = [
-  { date: "Today",  type: "checkin",   icon: "📋", color: D.mood,  title: "Check-in",                body: "Pain: 3/10 · Mood: good · Sleep: 7h" },
-  { date: "Today",  type: "milestone", icon: "🎉", color: D.meds,  title: "Walked without crutches!", body: "First time since surgery — 50m without support" },
-  { date: "Jun 15", type: "photo",     icon: "📷", color: D.sleep, title: "Progress photo",           body: "Swelling comparison — Day 40 vs Day 46" },
-  { date: "Jun 14", type: "medication",icon: "💊", color: D.meds,  title: "Naproxen — taken",         body: "500mg · 8:00 AM" },
-  { date: "Jun 14", type: "checkin",   icon: "📋", color: D.mood,  title: "Check-in",                body: "Pain: 4/10 · Mood: okay · Sleep: 5.5h" },
-  { date: "Jun 13", type: "rest",      icon: "•",  color: "",      title: "Rest day",                 body: "" }, // C3 — neutral rest, not "missed"
-  { date: "Jun 12", type: "appt",      icon: "🏥", color: D.sleep, title: "Dr. Chen — Follow-up",    body: "Cleared for light cycling ✅" },
-  { date: "Jun 10", type: "note",      icon: "📝", color: D.energy,title: "Journal entry",            body: "Feeling frustrated today. Tried to walk to the mailbox and had to stop." },
-  { date: "Jun 8",  type: "milestone", icon: "🎯", color: D.meds,  title: "Milestone: Bend to 90°",  body: "Full ROM target reached — physio confirmed" },
-  { date: "Jun 5",  type: "checkin",   icon: "📋", color: D.mood,  title: "Check-in",                body: "Pain: 6/10 · Mood: low · Sleep: 4h" },
+// A rest day carries NO category, and the type says so rather than carrying a
+// blank placeholder. That is the N2 rule ("gaps are rest, never failure")
+// expressed in the shape of the data: a rest row renders in neutral surface and
+// muted text, and there is no category field for a later edit to colour it with.
+// It also makes the narrowing honest — the branch that paints a category is the
+// only branch where one exists.
+type TimelineEntry =
+  | { date: string; type: "rest"; icon: string; title: string; body: string }
+  | { date: string; type: "checkin" | "milestone" | "photo" | "medication" | "appt" | "note"; icon: string; cat: Category; title: string; body: string };
+
+const TIMELINE_ENTRIES: TimelineEntry[] = [
+  { date: "Today",  type: "checkin",   icon: "📋", cat: "mood" as Category,  title: "Check-in",                body: "Pain: 3/10 · Mood: good · Sleep: 7h" },
+  { date: "Today",  type: "milestone", icon: "🎉", cat: "meds" as Category,  title: "Walked without crutches!", body: "First time since surgery — 50m without support" },
+  { date: "Jun 15", type: "photo",     icon: "📷", cat: "sleep" as Category, title: "Progress photo",           body: "Swelling comparison — Day 40 vs Day 46" },
+  { date: "Jun 14", type: "medication",icon: "💊", cat: "meds" as Category,  title: "Naproxen — taken",         body: "500mg · 8:00 AM" },
+  { date: "Jun 14", type: "checkin",   icon: "📋", cat: "mood" as Category,  title: "Check-in",                body: "Pain: 4/10 · Mood: okay · Sleep: 5.5h" },
+  { date: "Jun 13", type: "rest",      icon: "•",  title: "Rest day",                 body: "" }, // C3 — neutral rest, not "missed"
+  { date: "Jun 12", type: "appt",      icon: "🏥", cat: "sleep" as Category, title: "Dr. Chen — Follow-up",    body: "Cleared for light cycling ✅" },
+  { date: "Jun 10", type: "note",      icon: "📝", cat: "energy" as Category,title: "Journal entry",            body: "Feeling frustrated today. Tried to walk to the mailbox and had to stop." },
+  { date: "Jun 8",  type: "milestone", icon: "🎯", cat: "meds" as Category,  title: "Milestone: Bend to 90°",  body: "Full ROM target reached — physio confirmed" },
+  { date: "Jun 5",  type: "checkin",   icon: "📋", cat: "mood" as Category,  title: "Check-in",                body: "Pain: 6/10 · Mood: low · Sleep: 4h" },
 ];
 const FILTER_CHIPS = ["All","Check-ins","Milestones","Meds","Photos","Notes"];
 
@@ -1104,17 +1142,17 @@ function TimelineScreen({ mode, onShareMilestone }: { mode: Mode; onShareMilesto
                   <div className="flex gap-3 mb-3 animate-fade-up" style={{ animationDelay: `${i * 35}ms` }}>
                     <div className="flex flex-col items-center" style={{ width: 32, flexShrink: 0 }}>
                       {/* Icon circle: 22% opacity bg of category color */}
-                      <div className="flex items-center justify-center rounded-full" style={{ width: 32, height: 32, background: `${entry.color}22`, border: `1px solid ${entry.color}55` }}>
+                      <div className="flex items-center justify-center rounded-full" style={{ width: 32, height: 32, background: `${cat(mode, entry.cat).mark}22`, border: `1px solid ${cat(mode, entry.cat).mark}55` }}>
                         <span style={{ fontSize: 14 }}>{entry.icon}</span>
                       </div>
                       {/* Connector line: hidden on last entry */}
                       {i < entries.length - 1 && <div style={{ width: 1, flex: 1, minHeight: 12, background: s(D.border, D.lBorder, mode), marginTop: 4 }} />}
                     </div>
                     {/* Entry card: milestone gets category-colored border */}
-                    <div className="flex-1 rounded-2xl p-3 mb-1" style={{ background: s(D.raised, D.lCard, mode), border: `1px solid ${entry.type === "milestone" ? entry.color + "55" : s(D.border, D.lBorder, mode)}` }}>
+                    <div className="flex-1 rounded-2xl p-3 mb-1" style={{ background: s(D.raised, D.lCard, mode), border: `1px solid ${entry.type === "milestone" ? cat(mode, entry.cat).mark + "55" : s(D.border, D.lBorder, mode)}` }}>
                       <div className="flex items-start justify-between">
                         {/* Title: milestone = category color, others = primary text */}
-                        <div style={{ fontSize: 14, fontWeight: 600, color: entry.type === "milestone" ? entry.color : s(D.text, D.lText, mode), flex: 1 }}>{entry.title}</div>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: entry.type === "milestone" ? cat(mode, entry.cat).ink : s(D.text, D.lText, mode), flex: 1 }}>{entry.title}</div>
                         {/* C7: SHARE BUTTON — milestone only, user-initiated.
                             BUTTON: "Share" text (12px).
                             ACTION: onShareMilestone() → MainApp setShareCard → ShareCardScreen mounts. */}
@@ -1223,9 +1261,9 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
 
   // C1: Icon + word label for each fast-path option. NEVER color-only (accessibility).
   const FAST_OPTIONS = [
-    { icon: "📈", word: "Better",  desc: "Improving", color: D.mood },
-    { icon: "➡️", word: "Same",    desc: "Stable",    color: D.sleep },
-    { icon: "📉", word: "Worse",   desc: "Harder day", color: D.pain },
+    { icon: "📈", word: "Better",  desc: "Improving",  cat: "mood" as Category },
+    { icon: "➡️", word: "Same",    desc: "Stable",     cat: "sleep" as Category },
+    { icon: "📉", word: "Worse",   desc: "Harder day", cat: "pain" as Category },
   ];
 
   // C1 FAST-PATH HANDLER:
@@ -1288,12 +1326,12 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
                 className="btn-press flex-1 flex flex-col items-center justify-center gap-1.5 rounded-2xl"
                 style={{
                   height: 100,
-                  background: sel ? `${opt.color}44` : s(D.raised, D.lCard, mode),
-                  border: `2px solid ${sel ? opt.color : s(D.border, D.lBorder, mode)}`,
+                  background: sel ? `${cat(mode, opt.cat).mark}44` : s(D.raised, D.lCard, mode),
+                  border: `2px solid ${sel ? cat(mode, opt.cat).mark : s(D.border, D.lBorder, mode)}`,
                   cursor: "pointer", transition: `all ${scale.duration.quick}ms`,
                 }}>
                 <span style={{ fontSize: 30, lineHeight: 1 }}>{opt.icon}</span>
-                <span style={{ fontSize: 15, fontWeight: 700, color: sel ? opt.color : s(D.text, D.lText, mode) }}>{opt.word}</span>
+                <span style={{ fontSize: 15, fontWeight: 700, color: sel ? cat(mode, opt.cat).ink : s(D.text, D.lText, mode) }}>{opt.word}</span>
                 <span style={{ fontSize: 10, color: s(D.textSec, D.lTextSec, mode) }}>{opt.desc}</span>
               </button>
             );
@@ -1424,14 +1462,20 @@ const PAIN_DATA = [6,7,5,5,4,6,4,3,5,4,3,4,3,4,3,2,4,3,3,2,3,3,2,3,2,3,2,3,3,2];
 //   Text: 14px semibold, primary text color, 1.35 line-height.
 //   marginBottom: 8px (above chart).
 // ============================================================
-function InsightSentence({ text, trend, color, mode }: { text: string; trend: "up" | "down" | "stable"; color: string; mode: Mode }) {
+function InsightSentence({ text, trend, category, mode }: { text: string; trend: "up" | "down" | "stable"; category: Category; mode: Mode }) {
   const trendIcon = trend === "down" ? "↓" : trend === "up" ? "↑" : "→";
   const trendWord = trend === "down" ? "Decreasing" : trend === "up" ? "Increasing" : "Stable";
+  const k = cat(mode, category);
   return (
     <div className="flex items-start gap-2 mb-2">
-      {/* Trend badge: icon + word. Color provided by caller (never color alone). */}
-      <div className="flex items-center gap-1 px-2 py-0.5 rounded-full shrink-0 mt-0.5" style={{ background: `${color}22`, border: `1px solid ${color}44` }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color }}>{trendIcon} {trendWord}</span>
+      {/* Trend badge: icon + word — never colour alone.
+          The FILL and BORDER are mark (decorative tints of the category hue);
+          the WORD is ink, because it carries the meaning and must be readable.
+          It used to be mark too, which on light gave 1.40-1.80:1 against the
+          very tint sitting behind it. Nothing caught it because no pair
+          declared text on a tint of its own mark. */}
+      <div className="flex items-center gap-1 px-2 py-0.5 rounded-full shrink-0 mt-0.5" style={{ background: `${k.mark}22`, border: `1px solid ${k.mark}44` }}>
+        <span style={{ fontSize: 11, fontWeight: 700, color: k.ink }}>{trendIcon} {trendWord}</span>
       </div>
       <div style={{ fontSize: 14, fontWeight: 600, color: s(D.text, D.lText, mode), lineHeight: 1.35 }}>{text}</div>
     </div>
@@ -1462,9 +1506,10 @@ function InsightSentence({ text, trend, color, mode }: { text: string; trend: "u
 //   This is a soft gate — never a hard modal block.
 //   BUTTON: "Unlock full history" pill → onPaywall() → PaywallSheet opens.
 // ============================================================
-function PainSparklineWithCorridor({ data, color, mode, height = 64, showCorridor = false, corridorLabel = "" }: {
-  data: number[]; color: string; mode: Mode; height?: number; showCorridor?: boolean; corridorLabel?: string;
+function PainSparklineWithCorridor({ data, category, mode, height = 64, showCorridor = false, corridorLabel = "" }: {
+  data: number[]; category: Category; mode: Mode; height?: number; showCorridor?: boolean; corridorLabel?: string;
 }) {
+  const k = cat(mode, category);
   const max = Math.max(...data) + 1;
   const w = 300; const h = height;
   const pts = data.map((v, i) => `${(i / (data.length - 1)) * w},${h - (v / max) * h}`).join(" ");
@@ -1485,10 +1530,13 @@ function PainSparklineWithCorridor({ data, color, mode, height = 64, showCorrido
             <line x1="0" y1={corridorBot} x2={w} y2={corridorBot} stroke={bandBorder} strokeWidth="1" strokeDasharray="4 3"/>
           </>
         )}
-        {/* Area fill (below line to baseline) */}
-        <polyline points={`0,${h} ${pts} ${w},${h}`} fill={`${color}22`} stroke="none"/>
-        {/* Line */}
-        <polyline points={pts} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        {/* Area fill: MARK. Decorative wash under the line, carries no meaning
+            on its own — the exact case the mark role exists for. */}
+        <polyline points={`0,${h} ${pts} ${w},${h}`} fill={`${k.mark}22`} stroke="none"/>
+        {/* Line: INK. This is the data. The token docs name a chart line as the
+            canonical thing that must NOT use mark, and it was using mark —
+            1.47-1.96:1 on light against a 3:1 non-text threshold. Now 4.80-4.84. */}
+        <polyline points={pts} fill="none" stroke={k.ink} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
       {/* Corridor label — italic, muted accent, 10px */}
       {showCorridor && corridorLabel && (
@@ -1511,9 +1559,9 @@ function ProgressScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void
         {/* PAIN TREND CARD: C5 insight sentence above chart + C4 corridor */}
         <Card mode={mode}>
           {/* C5: InsightSentence comes FIRST (above chart), not below */}
-          <InsightSentence text="Pain trending down over the last 30 days." trend="down" color={D.pain} mode={mode} />
+          <InsightSentence text="Pain trending down over the last 30 days." trend="down" category="pain" mode={mode} />
           {/* C4: Corridor band (pain 2–5, common knee rehab range) */}
-          <PainSparklineWithCorridor data={PAIN_DATA} color={D.pain} mode={mode} height={64}
+          <PainSparklineWithCorridor data={PAIN_DATA} category="pain" mode={mode} height={64}
             showCorridor corridorLabel="Common range for knee rehab, weeks 4–6 · Everyone heals differently ↗" />
           <div className="flex justify-between mt-1 mb-2">
             <span style={{ fontSize: 10, color: s(D.textMut, D.lTextSec, mode) }}>Day 1</span>
@@ -1562,13 +1610,13 @@ function ProgressScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void
             C5: InsightSentence above each chart.
             No corridor band (corridor only on main pain chart). */}
         {[
-          { label: "Sleep quality", insight: "Sleep averaging 7.1h — up from 6.2h last week.", color: D.sleep,  trend: "up"     as const, data: [5,6,7,6,7,7,8,7,7,8] },
-          { label: "Energy",        insight: "Energy gradually improving over the past 10 days.", color: D.energy, trend: "up"     as const, data: [2,3,3,4,3,4,5,4,5,5] },
-          { label: "Mobility",      insight: "Mobility scores climbing steadily since week 5.",   color: D.mood,   trend: "up"     as const, data: [3,3,4,4,5,4,5,6,5,6] },
+          { label: "Sleep quality", insight: "Sleep averaging 7.1h — up from 6.2h last week.", cat: "sleep" as Category,  trend: "up" as const, data: [5,6,7,6,7,7,8,7,7,8] },
+          { label: "Energy",        insight: "Energy gradually improving over the past 10 days.", cat: "energy" as Category, trend: "up" as const, data: [2,3,3,4,3,4,5,4,5,5] },
+          { label: "Mobility",      insight: "Mobility scores climbing steadily since week 5.",   cat: "mood" as Category,   trend: "up" as const, data: [3,3,4,4,5,4,5,6,5,6] },
         ].map(chart => (
           <Card key={chart.label} mode={mode} style={{ paddingBottom: 8 }}>
-            <InsightSentence text={chart.insight} trend={chart.trend} color={chart.color} mode={mode} />
-            <PainSparklineWithCorridor data={chart.data} color={chart.color} mode={mode} height={44} />
+            <InsightSentence text={chart.insight} trend={chart.trend} category={chart.cat} mode={mode} />
+            <PainSparklineWithCorridor data={chart.data} category={chart.cat} mode={mode} height={44} />
           </Card>
         ))}
 

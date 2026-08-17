@@ -96,15 +96,19 @@ They exist separately because the same pastel that reads comfortably on a dark s
 
 Failures are split into **regressions** (fail the build) and **debt** (known, tracked in `RECONCILIATION.md` with a fix direction, reported every run). Debt is scoped per mode, because most known failures fail on light only — flagging the whole pair would exempt the dark side too.
 
-Current state: **90 pair-mode combinations, 0 regressions, 0 debt.** The 25 pairs
+Current state: **110 pair-mode combinations, 0 regressions, 0 debt.** The 25 pairs
 originally accepted as debt were all resolved in v1; the mechanism is retained
 because the next colour added will need it.
 
 **What this number does not mean.** It measures the pairs the manifest declares,
 not the pairs the app renders. A combination nobody wrote down is not audited and
 does not appear in the count — so "0 debt" is a statement about the manifest's
-contents, and it is only as good as the manifest's coverage. Adding a pair when
-you add a colour is not bookkeeping; it is the entire mechanism.
+contents, and it is only as good as the manifest's coverage.
+
+The count went 90 → 110 because a read-through of the screens found six rendered
+combinations that had never been declared, and **five of them failed** — one at
+1.58:1, in both modes, on a button label. Adding a pair when you add a colour is
+not bookkeeping; it is the entire mechanism. `RECONCILIATION.md` has the table.
 
 ## Provenance
 
