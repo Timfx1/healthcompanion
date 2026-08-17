@@ -1721,7 +1721,7 @@ function ProfileScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void 
 //
 // PRESS FEEDBACK: .btn-press on all buttons (scale 0.97, 120ms ease-out).
 // ============================================================
-type Tab = "home" | "timeline" | "checkin" | "progress" | "profile";
+export type Tab = "home" | "timeline" | "checkin" | "progress" | "profile";
 
 const TABS: { id: Tab; label: string; icon: (active: boolean) => React.ReactNode }[] = [
   { id: "home",     label: "Home",     icon: (a) => <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth={a?2:1.6} strokeLinecap="round" strokeLinejoin="round"><path d="M3 9.5L11 3l8 6.5V19a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M8 20v-8h6v8"/></svg> },
@@ -1816,11 +1816,20 @@ function TabBar({ active, onChange, mode }: { active: Tab; onChange: (t: Tab) =>
 //   showPaywall: boolean — PaywallSheet visibility.
 //   shareCard: { title, day, date } | null — ShareCardScreen data.
 // ============================================================
-export default function MainApp({ initialMode = "dark" as Mode }: { initialMode?: Mode }) {
+export default function MainApp({
+  initialMode = "dark" as Mode,
+  // TEST HOOKS (visual-parity harness). Both default to the shipped behaviour —
+  // Home tab, no overlay — so omitting them leaves MainApp byte-identical in
+  // normal use. They exist so the harness can address an overlay directly
+  // instead of clicking through to it, which would make baselines depend on
+  // interaction timing.
+  initialTab = "home" as Tab,
+  initialOverlay = null as "checkin" | "paywall" | null,
+}: { initialMode?: Mode; initialTab?: Tab; initialOverlay?: "checkin" | "paywall" | null }) {
   const [mode, setMode] = useState<Mode>(initialMode);
-  const [tab, setTab] = useState<Tab>("home");
-  const [showCheckIn, setShowCheckIn] = useState(false);
-  const [showPaywall, setShowPaywall] = useState(false);
+  const [tab, setTab] = useState<Tab>(initialTab);
+  const [showCheckIn, setShowCheckIn] = useState(initialOverlay === "checkin");
+  const [showPaywall, setShowPaywall] = useState(initialOverlay === "paywall");
   const [shareCard, setShareCard] = useState<{ title: string; day: number; date: string } | null>(null);
 
   // ROUTING: "checkin" tap opens modal instead of switching tab.

@@ -1805,11 +1805,15 @@ function PaywallScreen({ mode, onNext, onSkip }: { mode: Mode; onNext: () => voi
 //   TRANSITION: width and background — 250ms ease-out — on screen change.
 //   Not interactive (purely informational).
 // ============================================================
-export default function Onboarding({ onComplete, initialMode }: { onComplete?: (mode: Mode) => void; initialMode?: Mode } = {}) {
+export default function Onboarding({ onComplete, initialMode, initialScreen }: { onComplete?: (mode: Mode) => void; initialMode?: Mode; initialScreen?: number } = {}) {
   const [_mode, toggleMode] = useMode();
   // If initialMode is provided (from App.tsx), it overrides internal toggle.
   const mode: Mode = initialMode ?? _mode;
-  const [screen, setScreen] = useState(0);
+  // initialScreen is a TEST HOOK for the visual-parity harness: it lets the
+  // runner open any wizard step directly rather than clicking through eleven
+  // screens to reach the paywall. Undefined in normal use, so the flow still
+  // starts at the welcome screen.
+  const [screen, setScreen] = useState(initialScreen ?? 0);
   const [data, setData] = useState<UserData>({
     recoveryType: "", condition: "", bodyPart: "",
     startDate: "", symptoms: [], painScore: 3,

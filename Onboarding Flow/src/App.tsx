@@ -24,8 +24,57 @@
 
 import { useState } from "react";
 import Onboarding from "./components/Onboarding";
-import MainApp from "./components/MainApp";
+import MainApp, { type Tab } from "./components/MainApp";
 import type { Mode } from "./components/tokens";
+
+// ============================================================
+// DEV/TEST ROUTE — visual-parity harness support
+//
+// Reads optional URL query params so the screenshot runner can address any
+// screen directly. With no ?screen= param this parser returns null and App
+// behaves exactly as it always has: onboarding from step 0, dark mode.
+//
+//   ?screen=ob:<0-11>                 a specific onboarding wizard step
+//   ?screen=app:home|timeline|progress|profile
+//   ?screen=app:checkin               MainApp with the check-in overlay open
+//   ?screen=app:paywall               MainApp with the paywall sheet open
+//   &mode=dark|light                  forces colour mode (default dark)
+//   &motion=off                       suppresses animations via .no-motion
+//
+// WHY ADDRESS SCREENS DIRECTLY rather than clicking through: a baseline
+// reached by simulated interaction encodes interaction timing into the image.
+// Any later change to a transition duration would then register as a visual
+// regression on every downstream screen. Addressing the state directly keeps
+// each baseline a statement about one screen only.
+// ============================================================
+type Route = { kind: "onboarding"; step: number } | { kind: "app"; tab: Tab; overlay: "checkin" | "paywall" | null };
+
+function parseRoute(): { route: Route | null; mode: Mode } {
+  const q = new URLSearchParams(window.location.search);
+  const mode: Mode = q.get("mode") === "light" ? "light" : "dark";
+
+  // Motion suppression is applied at module scope (before first paint) rather
+  // than in an effect, so the very first rendered frame is already settled.
+  if (q.get("motion") === "off") document.documentElement.classList.add("no-motion");
+
+  const screen = q.get("screen");
+  if (!screen) return { route: null, mode };
+
+  if (screen.startsWith("ob:")) {
+    const step = Number.parseInt(screen.slice(3), 10);
+    return { route: Number.isFinite(step) ? { kind: "onboarding", step } : null, mode };
+  }
+  if (screen.startsWith("app:")) {
+    const target = screen.slice(4);
+    if (target === "checkin") return { route: { kind: "app", tab: "home", overlay: "checkin" }, mode };
+    if (target === "paywall") return { route: { kind: "app", tab: "home", overlay: "paywall" }, mode };
+    const tabs: Tab[] = ["home", "timeline", "progress", "profile"];
+    if ((tabs as string[]).includes(target)) return { route: { kind: "app", tab: target as Tab, overlay: null }, mode };
+  }
+  return { route: null, mode };
+}
+
+const { route: DEV_ROUTE, mode: DEV_MODE } = parseRoute();
 
 export default function App() {
   // phase controls which top-level view is rendered.
@@ -35,6 +84,13 @@ export default function App() {
   // mode is captured from Onboarding on completion so MainApp launches
   // in the same dark/light state the user left onboarding in.
   const [mode, setMode] = useState<Mode>("dark");
+
+  // DEV/TEST ROUTE short-circuit. Only ever non-null when ?screen= is present.
+  if (DEV_ROUTE) {
+    return DEV_ROUTE.kind === "onboarding"
+      ? <Onboarding initialMode={DEV_MODE} initialScreen={DEV_ROUTE.step} />
+      : <MainApp initialMode={DEV_MODE} initialTab={DEV_ROUTE.tab} initialOverlay={DEV_ROUTE.overlay} />;
+  }
 
   if (phase === "onboarding") {
     // SCREEN: Onboarding flow (12 screens)
