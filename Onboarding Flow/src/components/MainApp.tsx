@@ -41,6 +41,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { D, c as s, theme, scale, type Mode } from "./tokens";
+import LockBadge from "./patterns/LockBadge";
 
 // ============================================================
 // LIGHT MODE vs DARK MODE — VISUAL COMPARISON GUIDE (MAIN APP)
@@ -445,17 +446,6 @@ function SectionLabel({ label, mode }: { label: string; mode: Mode }) {
 //   SIZE: Default 18px circle. Customizable via size prop.
 //   APPEARANCE: #5C58788C bg, blur(4px), white SVG padlock.
 // ============================================================
-function LockBadge({ size = 18 }: { size?: number }) {
-  return (
-    <div className="inline-flex items-center justify-center rounded-full shrink-0"
-      style={{ width: size, height: size, background: "#5C58788C", backdropFilter: "blur(4px)" }}>
-      <svg width={size * 0.55} height={size * 0.55} viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="1.8">
-        <rect x="2" y="5.5" width="8" height="5.5" rx="1.2"/>
-        <path d="M4 5.5V4a2 2 0 014 0v1.5" strokeLinecap="round"/>
-      </svg>
-    </div>
-  );
-}
 
 // ============================================================
 // COMPONENT: LockedCard
@@ -480,7 +470,7 @@ function LockedCard({ mode, children, onUnlock, hook }: { mode: Mode; children: 
       {children}
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-2xl"
         style={{ background: "#15141F8C", backdropFilter: "blur(2px)" }}>
-        <LockBadge size={28} />
+        <LockBadge mode={mode} size={28} />
         <span style={{ fontSize: 11, color: "#FFFFFFD9", fontWeight: 600, textAlign: "center", maxWidth: 140, lineHeight: 1.3 }}>{hook}</span>
       </div>
     </div>
@@ -1542,7 +1532,7 @@ function ProgressScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void
             <div className="absolute inset-0 rounded-xl" style={{ background: `linear-gradient(to right, transparent 0%, ${s(D.raised, D.lCard, mode)} 55%)` }} />
             <button onClick={onPaywall} className="btn-press absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 px-3 py-1 rounded-full"
               style={{ background: D.accentD, border: `1px solid ${D.accent}66`, cursor: "pointer" }}>
-              <LockBadge size={14} />
+              <LockBadge mode={mode} size={14} />
               <span style={{ fontSize: 11, color: D.accentL, fontWeight: 600 }}>Unlock full history</span>
             </button>
           </div>

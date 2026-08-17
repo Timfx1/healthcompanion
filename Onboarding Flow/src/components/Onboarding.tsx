@@ -54,6 +54,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { D, c as s2, theme, scale, type Mode } from "./tokens";
+import LockBadge from "./patterns/LockBadge";
 
 // ============================================================
 // LIGHT MODE vs DARK MODE — VISUAL COMPARISON GUIDE (ONBOARDING)
@@ -1624,15 +1625,11 @@ function PremiumTeaserScreen({ mode, onNext, onSkip }: { mode: Mode; onNext: () 
                 <span style={{ fontSize: 18 }}>{f.icon}</span>
               </div>
               <span style={{ fontSize: 14, fontWeight: 500, color: s(D.textSec, D.lTextSec, mode) }}>{f.label}</span>
-              {/* Lock badge — indicates premium-locked feature */}
-              <div className="ml-auto flex items-center justify-center rounded-full" style={{
-                width: 24, height: 24,
-                background: s(D.border, D.lBorder, mode),
-              }}>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke={s(D.textMut, D.lTextSec, mode)} strokeWidth="1.5">
-                  <rect x="2" y="5" width="8" height="6" rx="1.5"/>
-                  <path d="M4 5V4a2 2 0 014 0v1" strokeLinecap="round"/>
-                </svg>
+              {/* Lock badge. Was drawn inline here AND separately in MainApp,
+                  with different sizes and fills — the exact drift the shared
+                  pattern component exists to prevent. */}
+              <div className="ml-auto flex">
+                <LockBadge mode={mode} />
               </div>
             </div>
           ))}
