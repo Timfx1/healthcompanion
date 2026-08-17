@@ -89,6 +89,7 @@
   },
 
   "radius": {
+    "xxs":  { "$type": "dimension", "$value": 2,  "$description": "Tightest radius: hairline pills and small bar caps." },
     "xs":   { "$type": "dimension", "$value": 3,  "$description": "Progress-bar and dot-nav caps." },
     "sm":   { "$type": "dimension", "$value": 8 },
     "md":   { "$type": "dimension", "$value": 12, "$description": "Icon tiles, small controls." },

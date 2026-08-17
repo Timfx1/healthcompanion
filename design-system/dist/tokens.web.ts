@@ -754,6 +754,7 @@ export const scale = {
     "12": 48
   },
   "radius": {
+    "xxs": 2,
     "xs": 3,
     "sm": 8,
     "md": 12,

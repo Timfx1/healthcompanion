@@ -45,6 +45,7 @@
    cannot redefine a Tailwind utility scale. Reference material for CSS
    authors; the typed `scale` export is the real consumer. */
 :root {
+  --rc-radius-xxs: 2px;
   --rc-radius-xs: 3px;
   --rc-radius-sm: 8px;
   --rc-radius-md: 12px;

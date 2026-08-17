@@ -53,7 +53,7 @@
 // ============================================================
 
 import { useState, useEffect, useRef } from "react";
-import { D, c as s2, theme, type Mode } from "./tokens";
+import { D, c as s2, theme, scale, type Mode } from "./tokens";
 
 // ============================================================
 // LIGHT MODE vs DARK MODE — VISUAL COMPARISON GUIDE (ONBOARDING)
@@ -80,24 +80,24 @@ import { D, c as s2, theme, type Mode } from "./tokens";
 //   Page gradient  radial from #23204A → #0D0C16       radial from #EAE6F8 → #F8F7FC
 //
 // ── PHONE SHELL SHADOW ──────────────────────────────────────
-//   DARK:  Heavy dramatic drop shadow (0 32px 80px rgba(0,0,0,0.72)) +
-//          a 1px "glow rim" in faint white (rgba(255,255,255,0.06)).
+//   DARK:  Heavy dramatic drop shadow (0 32px 80px #000000B8) +
+//          a 1px "glow rim" in faint white (#FFFFFF0F).
 //          The phone feels like it's floating in darkness.
-//   LIGHT: Soft lavender lift shadow (0 24px 64px rgba(100,90,180,0.18)) +
-//          a 1px violet-tinted rim (rgba(120,110,200,0.12)).
+//   LIGHT: Soft lavender lift shadow (0 24px 64px #645AB42E) +
+//          a 1px violet-tinted rim (#786EC81F).
 //          The phone looks like a clean frosted glass panel.
 //
 // ── SCREEN 0: WELCOME ───────────────────────────────────────
 //   DARK:
 //     - Page background: deep indigo-black radial gradient.
 //     - Illustration circle: rich purple radial gradient (#9B8FE0 → #7C6FCD → #3D3668).
-//       Outer glow ring visible: rgba(124,111,205,0.27).
+//       Outer glow ring visible: #7C6FCD45.
 //     - "Recovery Companion" wordmark: D.accent (#7C6FCD), vibrant against dark.
 //     - Headline: near-white (#F0EFFE) on dark — very high contrast.
 //     - Body paragraph: muted lavender (#9B97B8) — softer, clearly secondary.
 //     - Value prop rows: deep raised surface (#1E1D2E) with subtle plum border.
 //       Feels like dark-glass tiles.
-//     - Mode toggle button: dark frosted glass look (rgba(255,255,255,0.08) bg).
+//     - Mode toggle button: dark frosted glass look (#FFFFFF14 bg).
 //
 //   LIGHT:
 //     - Page background: pale icy-lavender radial gradient (almost white).
@@ -108,14 +108,14 @@ import { D, c as s2, theme, type Mode } from "./tokens";
 //     - Body paragraph: medium slate-purple (#6B6890) — slightly darker secondary tone.
 //     - Value prop rows: pure white (#FFFFFF) cards — crisp, clinical, clean.
 //       Border is soft lilac (#E4E1F5) — barely visible, very refined.
-//     - Mode toggle button: subtle dark-on-light frosted look (rgba(0,0,0,0.06) bg).
+//     - Mode toggle button: subtle dark-on-light frosted look (#0000000F bg).
 //     - OVERALL FEEL: Clean, optimistic, airy. Like a medical wellness app.
 //
 // ── SCREEN 1: RECOVERY TYPE ─────────────────────────────────
 //   DARK:
 //     - Back button: #1E1D2E bg, #2E2C45 border. Looks like a dark floating button.
 //     - Option cards (72px): #1E1D2E bg, #2E2C45 border.
-//       SELECTED: gradient from #3D3668 → rgba(124,111,205,0.2) + #7C6FCD border.
+//       SELECTED: gradient from #3D3668 → #7C6FCD33 + #7C6FCD border.
 //       Selected title text: #9B8FE0 (bright lavender). Check circle: #7C6FCD.
 //       The selected card glows subtly against the dark background.
 //     - Emoji icons at 26px feel luminous against dark.
@@ -124,7 +124,7 @@ import { D, c as s2, theme, type Mode } from "./tokens";
 //   LIGHT:
 //     - Back button: pure white bg, #E4E1F5 lilac border.
 //     - Option cards: white bg, very subtle lilac border.
-//       SELECTED: gradient from deep-indigo (#3D3668) to rgba(124,111,205,0.2) —
+//       SELECTED: gradient from deep-indigo (#3D3668) to #7C6FCD33 —
 //       this gradient looks richer in light mode because the unselected cards are
 //       stark white, making the colored selected state really stand out.
 //       Selected border: same #7C6FCD accent — vivid violet line on white bg.
@@ -172,7 +172,7 @@ import { D, c as s2, theme, type Mode } from "./tokens";
 //     - Category colored dots (Pain/Mobility/Energy/Mood) glow visibly against dark bg.
 //     - Unselected chips: dark pill, barely visible border.
 //     - Selected chips: category color at 13% opacity bg + category-colored text.
-//       e.g. Pain chip selected: rgba(242,166,158,0.13) bg + #F2A69E text.
+//       e.g. Pain chip selected: #F2A69E21 bg + #F2A69E text.
 //       Subtle, warm-tinted on dark — elegant, not garish.
 //
 //   LIGHT:
@@ -210,7 +210,7 @@ import { D, c as s2, theme, type Mode } from "./tokens";
 // ── SCREEN 7: NOTIFICATIONS ─────────────────────────────────
 //   DARK:
 //     - Bell illustration: deep indigo radial gradient (accentD) + outer glow ring.
-//       The glow rgba(124,111,205,0.2) is only visible in dark mode.
+//       The glow #7C6FCD33 is only visible in dark mode.
 //     - Benefit rows: #1E1D2E raised tiles — dark glass.
 //     - Primary button: gradient accent, glow shadow visible against dark bg.
 //
@@ -218,7 +218,7 @@ import { D, c as s2, theme, type Mode } from "./tokens";
 //     - Bell: same purple gradient — pops strongly against pale lavender bg.
 //       The glow ring is invisible (lost against light).
 //     - Benefit rows: white cards with lilac border — lighter and airier.
-//     - Primary button: same gradient — glow shadow (rgba(124,111,205,0.35)) less
+//     - Primary button: same gradient — glow shadow (#7C6FCD59) less
 //       dramatic on light bg but still visible as a soft purple lift.
 //
 // ── SCREEN 8: PLAN LOADING ──────────────────────────────────
@@ -237,7 +237,7 @@ import { D, c as s2, theme, type Mode } from "./tokens";
 //     - Text: #B0ACCF → #1A1830 — pale lavender becoming near-black.
 //
 //   DARK (ready phase):
-//     - Checkmark circle: accent gradient glow (0 8px 32px rgba(124,111,205,0.33)).
+//     - Checkmark circle: accent gradient glow (0 8px 32px #7C6FCD54).
 //       Glowing green circle on black. Feels like a success signal in a dark cockpit.
 //     - Timeline bars (staggered): each color (pain/sleep/energy/mood) glows against
 //       the #1E1D2E card background. Very rich and colorful.
@@ -251,14 +251,14 @@ import { D, c as s2, theme, type Mode } from "./tokens";
 //
 // ── SCREEN 9: FREE PLAN ─────────────────────────────────────
 //   DARK:
-//     - "FREE PLAN UNLOCKED" badge: rgba(168,217,184,0.13) bg + #A8D9B8 border text.
+//     - "FREE PLAN UNLOCKED" badge: #A8D9B821 bg + #A8D9B8 border text.
 //       Soft mint chip against dark. Celebratory but not harsh.
 //     - Feature rows: dark raised tiles (#1E1D2E) with colored icon tiles inside.
 //       Each icon area: category color at 13% opacity — glowing tint on dark.
-//     - Green check circles: rgba(168,217,184,0.2) bg — mint glow on dark surface.
+//     - Green check circles: #A8D9B833 bg — mint glow on dark surface.
 //
 //   LIGHT:
-//     - Badge: same rgba(168,217,184,0.13) — on white bg this appears as a very pale
+//     - Badge: same #A8D9B821 — on white bg this appears as a very pale
 //       mint tint. #A8D9B8 text is clearly green but the bg is almost invisible.
 //     - Feature rows: white cards, lilac borders. Category icon areas: same pale tints
 //       — on white they look like pastel watercolor splashes.
@@ -285,7 +285,7 @@ import { D, c as s2, theme, type Mode } from "./tokens";
 //     - Plan toggle cards (annual/monthly): dark card bg vs gradient-selected state.
 //       Selected card: deep indigo gradient — subtle difference from unselected.
 //       Selected title: #9B8FE0 (lavender) — warm glow.
-//     - "SAVE 40%" badge: rgba(168,217,184,0.2) bg + #A8D9B8 text — mint on dark.
+//     - "SAVE 40%" badge: #A8D9B833 bg + #A8D9B8 text — mint on dark.
 //     - Benefit checkmarks: #7C6FCD accent marks — bright violet on dark.
 //     - "Continue free" secondary: transparent, #2E2C45 border — dim on dark.
 //
@@ -303,9 +303,9 @@ import { D, c as s2, theme, type Mode } from "./tokens";
 //          The fill is MORE visible in light mode because the track is lighter.
 //
 // ── MODE TOGGLE BUTTON ───────────────────────────────────────
-//   DARK:  rgba(255,255,255,0.08) bg — barely-there frosted white circle.
+//   DARK:  #FFFFFF14 bg — barely-there frosted white circle.
 //          Shows ☀️ emoji. Fixed top-right, subtle.
-//   LIGHT: rgba(0,0,0,0.06) bg — barely-there frosted dark circle.
+//   LIGHT: #0000000F bg — barely-there frosted dark circle.
 //          Shows 🌙 emoji. Same size, same subtlety.
 // ============================================================
 
@@ -352,8 +352,8 @@ function s(dark: string, light: string, mode: Mode) {
 //   Width: 390px (iPhone 14 logical width). minHeight: 844px.
 //   Border radius: 44px (approximates iOS device corner radius).
 //   Includes a static fake status bar (time "9:41", signal/wifi/battery icons).
-// DARK shadow: 0 32px 80px rgba(0,0,0,0.72) + 1px white rim (0.06 opacity).
-// LIGHT shadow: 0 24px 64px rgba(100,90,180,0.18) + 1px violet rim.
+// DARK shadow: 0 32px 80px #000000B8 + 1px white rim (0.06 opacity).
+// LIGHT shadow: 0 24px 64px #645AB42E + 1px violet rim.
 // ============================================================
 function PhoneShell({ mode, children }: { mode: Mode; children: React.ReactNode }) {
   return (
@@ -362,11 +362,11 @@ function PhoneShell({ mode, children }: { mode: Mode; children: React.ReactNode 
       style={{
         width: 390,
         minHeight: 844,
-        borderRadius: 44,
+        borderRadius: scale.radius.shell,
         background: s(D.base, D.lBase, mode),
         boxShadow: mode === "dark"
-          ? "0 32px 80px rgba(0,0,0,0.72), 0 0 0 1px rgba(255,255,255,0.06)"
-          : "0 24px 64px rgba(100,90,180,0.18), 0 0 0 1px rgba(120,110,200,0.12)",
+          ? "0 32px 80px #000000B8, 0 0 0 1px #FFFFFF0F"
+          : "0 24px 64px #645AB42E, 0 0 0 1px #786EC81F",
         fontFamily: "Inter, ui-sans-serif, sans-serif",
       }}
     >
@@ -446,7 +446,7 @@ function ProgressBar({ step, total, mode }: { step: number; total: number; mode:
 //
 // STATES:
 //   DEFAULT: Gradient background linear-gradient(135deg, #7C6FCD, #9B8FE0).
-//     Box shadow: 0 4px 20px rgba(124,111,205,0.35). White text.
+//     Box shadow: 0 4px 20px #7C6FCD59. White text.
 //   DISABLED: Solid border-color background. Muted text. No shadow. cursor:default.
 //   LOADING: Gradient preserved. Label replaced with spinning circle.
 //     ANIMATION: .animate-spin-slow — 1.8s linear infinite rotation.
@@ -464,7 +464,7 @@ function PrimaryButton({ label, onClick, mode, loading = false, disabled = false
         height: 56,
         background: disabled ? s(D.border, D.lBorder, mode) : `linear-gradient(135deg, ${theme(mode).color.cta.from} 0%, ${theme(mode).color.cta.to} 100%)`,
         color: disabled ? s(D.textMut, D.lTextSec, mode) : "#fff",
-        boxShadow: disabled ? "none" : `0 4px 20px rgba(124,111,205,0.35)`,
+        boxShadow: disabled ? "none" : `0 4px 20px #7C6FCD59`,
         border: "none",
         cursor: disabled ? "default" : "pointer",
         fontSize: 16,
@@ -1095,7 +1095,7 @@ function PainScreen({ mode, value, onChange, onNext, onBack }: {
             onChange={e => onChange(Number(e.target.value))}
             className="w-full"
             style={{
-              appearance: "none", height: 8, borderRadius: 8, outline: "none",
+              appearance: "none", height: 8, borderRadius: scale.radius.sm, outline: "none",
               background: `linear-gradient(to right, ${color} 0%, ${color} ${value * 10}%, ${s(D.border, D.lBorder, mode)} ${value * 10}%, ${s(D.border, D.lBorder, mode)} 100%)`,
               transition: "background 200ms",
             }}
@@ -1879,12 +1879,12 @@ export default function Onboarding({ onComplete, initialMode, initialScreen }: {
     }}>
       {/* MODE TOGGLE: Fixed top-right. Switches dark ↔ light.
           INTERACTION: .btn-press (scale 0.97, 120ms) + mode change (bg 400ms). */}
-      <div style={{ position: "fixed", top: 16, right: 16, zIndex: 100 }}>
+      <div style={{ position: "fixed", top: 16, right: 16, zIndex: scale.z.dev }}>
         <button onClick={toggleMode} className="btn-press flex items-center justify-center rounded-xl"
           style={{
             width: 40, height: 40,
-            background: mode === "dark" ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
-            border: `1px solid ${mode === "dark" ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.1)"}`,
+            background: mode === "dark" ? "#FFFFFF14" : "#0000000F",
+            border: `1px solid ${mode === "dark" ? "#FFFFFF1F" : "#0000001A"}`,
             cursor: "pointer", fontSize: 18,
           }}>
           {mode === "dark" ? "☀️" : "🌙"}
@@ -1908,8 +1908,8 @@ export default function Onboarding({ onComplete, initialMode, initialScreen }: {
       <div className="flex gap-1.5 mt-5">
         {Array.from({ length: TOTAL_SCREENS }).map((_, i) => (
           <div key={i} style={{
-            width: i === screen ? 16 : 6, height: 6, borderRadius: 3,
-            background: i === screen ? D.accent : (mode === "dark" ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.15)"),
+            width: i === screen ? 16 : 6, height: 6, borderRadius: scale.radius.xs,
+            background: i === screen ? D.accent : (mode === "dark" ? "#FFFFFF33" : "#00000026"),
             transition: "all 250ms ease-out",
           }} />
         ))}

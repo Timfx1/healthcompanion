@@ -40,7 +40,7 @@
 // ============================================================
 
 import { useState, useRef, useEffect } from "react";
-import { D, c as s, theme, type Mode } from "./tokens";
+import { D, c as s, theme, scale, type Mode } from "./tokens";
 
 // ============================================================
 // LIGHT MODE vs DARK MODE — VISUAL COMPARISON GUIDE (MAIN APP)
@@ -64,11 +64,11 @@ import { D, c as s, theme, type Mode } from "./tokens";
 //   Active tab           #7C6FCD accent                #7C6FCD accent (SAME)
 //   Inactive tab         #9B97B8                       #6B6890
 //   Log button           Gradient #7C6FCD→#9B8FE0      SAME gradient
-//                        Glow shadow rgba(124,111,205,0.33)  same shadow, less dramatic
+//                        Glow shadow #7C6FCD54  same shadow, less dramatic
 //   Dot nav (active)     16×6px #7C6FCD pill           16×6px #7C6FCD pill (SAME)
-//   Dot nav (inactive)   rgba(255,255,255,0.2) white    rgba(0,0,0,0.15) near-black
+//   Dot nav (inactive)   #FFFFFF33 white    #00000026 near-black
 //                        Faint white dots on black      Faint dark dots on pale bg
-//   Mode toggle button   rgba(255,255,255,0.08) frosted  rgba(0,0,0,0.06) frosted
+//   Mode toggle button   #FFFFFF14 frosted  #0000000F frosted
 //                        ☀️ emoji                       🌙 emoji
 //
 // ── HOME TAB ────────────────────────────────────────────────
@@ -76,7 +76,7 @@ import { D, c as s, theme, type Mode } from "./tokens";
 //   Header area:
 //   DARK:  Greeting "Good morning 👋" in #9B97B8 (muted, lavender-gray).
 //          Name "Alex" in #F0EFFE (near-white, prominent).
-//          Check-in counter pill: rgba(124,111,205,0.13) bg + rgba(124,111,205,0.27) border.
+//          Check-in counter pill: #7C6FCD21 bg + #7C6FCD45 border.
 //          Very subtle purple glow pill on dark surface.
 //   LIGHT: Greeting in #6B6890 (slightly darker secondary). Name in #1A1830 (near-black).
 //          Counter pill: same rgba values — on white bg the tint is barely visible.
@@ -93,18 +93,18 @@ import { D, c as s, theme, type Mode } from "./tokens";
 //   Day counter card:
 //   DARK:  Gradient from #3D3668 (deep indigo-violet) → #1E1D2E (dark surface).
 //          Large "Day 46" numeral: #F0EFFE near-white — luminous on the gradient.
-//          "82% on track" badge: rgba(124,111,205,0.2) bg — soft purple glow.
-//          Inner comparison box: rgba(255,255,255,0.06) — barely-there frosted panel.
+//          "82% on track" badge: #7C6FCD33 bg — soft purple glow.
+//          Inner comparison box: #FFFFFF0F — barely-there frosted panel.
 //          Feels rich, like a deep-space instrument panel.
 //   LIGHT: Gradient from #3D3668 → #EDE9FA (pale lavender-white).
 //          The gradient goes from a deep indigo at top to nearly-white at bottom.
 //          "Day 46" numeral: #1A1830 near-black — bold and grounded.
 //          Badge: same rgba — near-invisible tint on light end of gradient.
-//          Inner comparison box: rgba(255,255,255,0.06) — invisible (same as bg).
+//          Inner comparison box: #FFFFFF0F — invisible (same as bg).
 //          Feels more like a printed card than a cockpit panel.
 //
 //   Pre-appointment nudge (C9):
-//   DARK:  rgba(158,195,245,0.07) bg (nearly invisible blue tint) + rgba(#9EC3F5,0.27) border.
+//   DARK:  #9EC3F512 bg (nearly invisible blue tint) + rgba(#9EC3F5,0.27) border.
 //          Subtle blue-tinted card on dark. Easy to miss if not looking.
 //   LIGHT: Same tint values on white bg — the blue border is slightly more visible.
 //          But the card is still very quiet in both modes (intentional — it's a nudge).
@@ -121,16 +121,16 @@ import { D, c as s, theme, type Mode } from "./tokens";
 //          feels like a doctor's appointment checklist.
 //
 //   Weekly give-back card (C6):
-//   DARK:  rgba(168,217,184,0.055) bg — just a whisper of mint on dark surface.
-//          rgba(168,217,184,0.27) border — faint green outline.
+//   DARK:  #A8D9B80E bg — just a whisper of mint on dark surface.
+//          #A8D9B845 border — faint green outline.
 //          Feels like a soft mint frost panel in dark.
-//          Inner insight box: rgba(168,217,184,0.10) tint — barely visible.
+//          Inner insight box: #A8D9B81A tint — barely visible.
 //   LIGHT: Same rgba values on white bg — the mint tint is very faint,
 //          mostly defined by the mint-green border which reads as a clear
 //          thin green stroke on white. Airy and calm.
 //
 //   Doctor report row (C9, Reports section):
-//   DARK:  Standard Card (#1E1D2E bg). Icon area: rgba(201,184,240,0.13) — soft meds purple.
+//   DARK:  Standard Card (#1E1D2E bg). Icon area: #C9B8F021 — soft meds purple.
 //          The 🩻 emoji glows slightly against the dark tile.
 //   LIGHT: White card. Icon area: same pale purple tint — just a watercolor square.
 //          The chevron → is clearly visible in both modes (muted gray).
@@ -138,10 +138,10 @@ import { D, c as s, theme, type Mode } from "./tokens";
 //   Locked insight card (LockedCard):
 //   DARK:  filter: saturate(0.55) opacity(0.75). The card is desaturated AND dimmed.
 //          On dark background: the card gets even darker — feels very suppressed.
-//          Blur overlay: rgba(21,20,31,0.55) — near-black. Lock badge: #2E2C45 circle.
+//          Blur overlay: #15141F8C — near-black. Lock badge: #2E2C45 circle.
 //          The blur layer creates a dark smoky glass effect.
 //   LIGHT: Same filter values on light bg. The card fades toward white/gray.
-//          Blur overlay: same rgba(21,20,31,0.55) — this is always dark regardless of mode.
+//          Blur overlay: same #15141F8C — this is always dark regardless of mode.
 //          The dark overlay on a light card creates a strong contrast — the lock
 //          state is MORE obvious in light mode than in dark mode.
 //
@@ -158,7 +158,7 @@ import { D, c as s, theme, type Mode } from "./tokens";
 //          On dark surface these glow faintly — e.g. mood icon circle glows green.
 //          Entry cards: #1E1D2E bg, subtle borders. Deep, layered panels.
 //          Connector lines: #2E2C45 — barely visible vertical threads.
-//          Milestone cards: category-colored border e.g. rgba(201,184,240,0.33) — soft glow.
+//          Milestone cards: category-colored border e.g. #C9B8F054 — soft glow.
 //          Milestone title: category color text glows (e.g. #C9B8F0 lavender text).
 //   LIGHT: Icon circles: same rgba tints on white — watercolor spots.
 //          Entry cards: white bg with #E4E1F5 border — clean paper-like tiles.
@@ -177,7 +177,7 @@ import { D, c as s, theme, type Mode } from "./tokens";
 //   LIGHT: #6B6890 (slightly stronger slate-purple). More definition between sections.
 //
 //   FAB (+ button):
-//   DARK:  Gradient accent circle + rgba(124,111,205,0.33) glow shadow.
+//   DARK:  Gradient accent circle + #7C6FCD54 glow shadow.
 //          Hovers dramatically against dark background — very prominent.
 //   LIGHT: Same gradient, same shadow. Less dramatic pop but still clearly visible.
 //
@@ -193,7 +193,7 @@ import { D, c as s, theme, type Mode } from "./tokens";
 //
 //   Fast-path buttons (C1, 100px):
 //   DARK:  Unselected: #1E1D2E bg, 2px #2E2C45 border. Dark tiles in thumb zone.
-//          Selected (e.g. Better): rgba(168,217,184,0.27) bg + 2px #A8D9B8 border.
+//          Selected (e.g. Better): #A8D9B845 bg + 2px #A8D9B8 border.
 //          The category color wash on dark background is warm and expressive.
 //          Selected icon emoji looks lit up, selected word text glows in category color.
 //   LIGHT: Unselected: white bg, 2px #E4E1F5 border. Clean blank tiles.
@@ -228,17 +228,17 @@ import { D, c as s, theme, type Mode } from "./tokens";
 // ── PROGRESS TAB ────────────────────────────────────────────
 //
 //   Pain trend card:
-//   DARK:  Card: #1E1D2E bg. InsightSentence badge: rgba(242,166,158,0.13) pain tint.
+//   DARK:  Card: #1E1D2E bg. InsightSentence badge: #F2A69E21 pain tint.
 //          Sparkline line: #F2A69E coral on dark — warm and clearly visible.
-//          Area fill: rgba(242,166,158,0.13) — subtle warm glow under the line.
-//          Corridor band: rgba(155,143,224,0.13) lavender fill — quiet on dark.
-//          Dashed corridor lines: rgba(155,143,224,0.3) — subtle but clear.
+//          Area fill: #F2A69E21 — subtle warm glow under the line.
+//          Corridor band: #9B8FE021 lavender fill — quiet on dark.
+//          Dashed corridor lines: #9B8FE04D — subtle but clear.
 //          History gate gradient: transparent → #1E1D2E. Perfectly invisible join.
 //   LIGHT: Card: white. InsightSentence badge: same rgba tint — nearly invisible bg.
 //          Sparkline: same #F2A69E coral on white — appears brighter, more saturated.
 //          Area fill: faint blush on white — very subtle.
-//          Corridor band: rgba(124,111,205,0.10) — whisper of lavender on white card.
-//          Dashed lines: rgba(124,111,205,0.25) — visible but restrained.
+//          Corridor band: #7C6FCD1A — whisper of lavender on white card.
+//          Dashed lines: #7C6FCD40 — visible but restrained.
 //          History gate gradient: transparent → #FFFFFF (white). Same clean blend.
 //
 //   Week comparison card:
@@ -262,9 +262,9 @@ import { D, c as s, theme, type Mode } from "./tokens";
 // ── PAYWALL SHEET ───────────────────────────────────────────
 //
 //   Backdrop:
-//   DARK:  rgba(0,0,0,0.55) + blur(4px). Deep smoky overlay over dark phone shell.
+//   DARK:  #0000008C + blur(4px). Deep smoky overlay over dark phone shell.
 //          Makes the underlying content feel very distant and dim.
-//   LIGHT: Same rgba(0,0,0,0.55). On a light phone shell this overlay is MORE
+//   LIGHT: Same #0000008C. On a light phone shell this overlay is MORE
 //          visually impactful — the light underlying content disappears dramatically.
 //
 //   Bottom sheet:
@@ -272,7 +272,7 @@ import { D, c as s, theme, type Mode } from "./tokens";
 //          Premium badge: gradient accentD→accent33 — glowing gradient chip on dark.
 //          Plan toggle: unselected = #252438 (card surface). Selected = accent gradient.
 //          The gradient difference between unselected and selected is subtle on dark.
-//          "SAVE 40%" badge: rgba(168,217,184,0.2) bg, #A8D9B8 text — mint glow.
+//          "SAVE 40%" badge: #A8D9B833 bg, #A8D9B8 text — mint glow.
 //   LIGHT: White sheet. The rounded-t-3xl sheet against pale lavender bg creates
 //          a visible white panel edge.
 //          Premium badge: same gradient — the deep-indigo start looks dark/bold on white.
@@ -357,18 +357,18 @@ import { D, c as s, theme, type Mode } from "./tokens";
 //   Dimensions: 390×844px (height FIXED — not min-height like Onboarding).
 //   The fixed height ensures the main app doesn't grow beyond the device frame.
 //   Contains: status bar + all screen content + absolute overlays.
-// DARK shadow: 0 32px 80px rgba(0,0,0,0.72) + 1px white rim (0.06 opacity).
-// LIGHT shadow: 0 24px 64px rgba(100,90,180,0.18) + 1px violet rim.
+// DARK shadow: 0 32px 80px #000000B8 + 1px white rim (0.06 opacity).
+// LIGHT shadow: 0 24px 64px #645AB42E + 1px violet rim.
 // ============================================================
 function PhoneShell({ mode, children }: { mode: Mode; children: React.ReactNode }) {
   return (
     <div className="relative flex flex-col overflow-hidden select-none"
       style={{
-        width: 390, height: 844, borderRadius: 44,
+        width: 390, height: 844, borderRadius: scale.radius.shell,
         background: s(D.base, D.lBase, mode),
         boxShadow: mode === "dark"
-          ? "0 32px 80px rgba(0,0,0,0.72), 0 0 0 1px rgba(255,255,255,0.06)"
-          : "0 24px 64px rgba(100,90,180,0.18), 0 0 0 1px rgba(120,110,200,0.12)",
+          ? "0 32px 80px #000000B8, 0 0 0 1px #FFFFFF0F"
+          : "0 24px 64px #645AB42E, 0 0 0 1px #786EC81F",
         fontFamily: "Inter, ui-sans-serif, sans-serif",
         fontSize: 14,
         color: s(D.text, D.lText, mode),
@@ -391,8 +391,8 @@ function PhoneShell({ mode, children }: { mode: Mode; children: React.ReactNode 
 // COMPONENT: Card
 // PURPOSE: Standard content card surface. Used across all tabs.
 //   borderRadius: 16px. Padding: 14px 16px.
-//   DARK shadow: 0 2px 12px rgba(0,0,0,0.25).
-//   LIGHT shadow: 0 2px 12px rgba(100,90,180,0.07).
+//   DARK shadow: 0 2px 12px #00000040.
+//   LIGHT shadow: 0 2px 12px #645AB412.
 //   INTERACTIVE: When onClick is provided, adds .btn-press (scale 0.97, 120ms)
 //   and cursor: pointer. Otherwise non-interactive.
 // ============================================================
@@ -402,8 +402,8 @@ function Card({ mode, children, style, onClick }: { mode: Mode; children: React.
       style={{
         background: s(D.raised, D.lCard, mode),
         border: `1px solid ${s(D.border, D.lBorder, mode)}`,
-        borderRadius: 16, padding: "14px 16px",
-        boxShadow: mode === "dark" ? "0 2px 12px rgba(0,0,0,0.25)" : "0 2px 12px rgba(100,90,180,0.07)",
+        borderRadius: scale.radius.lg, padding: "14px 16px",
+        boxShadow: mode === "dark" ? "0 2px 12px #00000040" : "0 2px 12px #645AB412",
         cursor: onClick ? "pointer" : undefined,
         ...style,
       }}>
@@ -443,12 +443,12 @@ function SectionLabel({ label, mode }: { label: string; mode: Mode }) {
 //     - Appointments
 //     - Doctor report
 //   SIZE: Default 18px circle. Customizable via size prop.
-//   APPEARANCE: rgba(92,88,120,0.55) bg, blur(4px), white SVG padlock.
+//   APPEARANCE: #5C58788C bg, blur(4px), white SVG padlock.
 // ============================================================
 function LockBadge({ size = 18 }: { size?: number }) {
   return (
     <div className="inline-flex items-center justify-center rounded-full shrink-0"
-      style={{ width: size, height: size, background: "rgba(92,88,120,0.55)", backdropFilter: "blur(4px)" }}>
+      style={{ width: size, height: size, background: "#5C58788C", backdropFilter: "blur(4px)" }}>
       <svg width={size * 0.55} height={size * 0.55} viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="1.8">
         <rect x="2" y="5.5" width="8" height="5.5" rx="1.2"/>
         <path d="M4 5.5V4a2 2 0 014 0v1.5" strokeLinecap="round"/>
@@ -464,7 +464,7 @@ function LockBadge({ size = 18 }: { size?: number }) {
 //
 // VISUAL EFFECT:
 //   Container: filter: saturate(0.55) opacity(0.75) — desaturates underlying content.
-//   Overlay: absolute inset-0, rgba(21,20,31,0.55) bg + blur(2px).
+//   Overlay: absolute inset-0, #15141F8C bg + blur(2px).
 //   Center: LockBadge (28px) + hook text (11px semibold, max-width 140px).
 //
 // INTERACTION:
@@ -479,9 +479,9 @@ function LockedCard({ mode, children, onUnlock, hook }: { mode: Mode; children: 
       style={{ border: `1px solid ${s(D.border, D.lBorder, mode)}`, filter: "saturate(0.55) opacity(0.75)" }}>
       {children}
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-2xl"
-        style={{ background: "rgba(21,20,31,0.55)", backdropFilter: "blur(2px)" }}>
+        style={{ background: "#15141F8C", backdropFilter: "blur(2px)" }}>
         <LockBadge size={28} />
-        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.85)", fontWeight: 600, textAlign: "center", maxWidth: 140, lineHeight: 1.3 }}>{hook}</span>
+        <span style={{ fontSize: 11, color: "#FFFFFFD9", fontWeight: 600, textAlign: "center", maxWidth: 140, lineHeight: 1.3 }}>{hook}</span>
       </div>
     </div>
   );
@@ -507,9 +507,9 @@ function Toast({ message, visible }: { message: string; visible: boolean }) {
   return (
     <div className="absolute flex items-center gap-2 px-4 rounded-full"
       style={{
-        top: 52, left: "50%", transform: "translateX(-50%)", height: 36, zIndex: 60,
+        top: 52, left: "50%", transform: "translateX(-50%)", height: 36, zIndex: scale.z.toast,
         background: s(D.card, "#333", "dark"),
-        boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+        boxShadow: "0 4px 20px #0000004D",
         opacity: visible ? 1 : 0,
         transition: "opacity 250ms ease-out",
         pointerEvents: "none",
@@ -528,7 +528,7 @@ function Toast({ message, visible }: { message: string; visible: boolean }) {
 //   Triggered from: LockedCard taps (Progress), Profile upgrade row, Home insight card.
 //
 // OVERLAY STRUCTURE:
-//   Backdrop: absolute inset-0, rgba(0,0,0,0.55), blur(4px), zIndex 50.
+//   Backdrop: absolute inset-0, #0000008C, blur(4px), zIndex 50.
 //   INTERACTION: Tap backdrop → onClose() (dismiss without upgrading).
 //   Content sheet: rounded-t-3xl, stops propagation of taps.
 //   ANIMATION: .animate-fade-up — fadeUp 350ms ease-out on mount.
@@ -555,7 +555,7 @@ function PaywallSheet({ mode, onClose }: { mode: Mode; onClose: () => void }) {
   const [plan, setPlan] = useState<"annual" | "monthly">("annual");
   return (
     // BACKDROP: semi-transparent. Tap to dismiss (onClose).
-    <div className="absolute inset-0 flex flex-col justify-end" style={{ zIndex: 50, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }} onClick={onClose}>
+    <div className="absolute inset-0 flex flex-col justify-end" style={{ zIndex: scale.z.sheet, background: "#0000008C", backdropFilter: "blur(4px)" }} onClick={onClose}>
       {/* CONTENT SHEET: Stops propagation so tapping sheet doesn't close.
           ANIMATION: animate-fade-up — fadeUp 350ms ease-out on mount. */}
       <div onClick={e => e.stopPropagation()} className="animate-fade-up rounded-t-3xl flex flex-col"
@@ -650,7 +650,7 @@ function PaywallSheet({ mode, onClose }: { mode: Mode; onClose: () => void }) {
 // ============================================================
 function ShareCardScreen({ mode, milestone, onClose }: { mode: Mode; milestone: { title: string; day: number; date: string }; onClose: () => void }) {
   return (
-    <div className="absolute inset-0 flex flex-col" style={{ zIndex: 45, background: s(D.base, D.lBase, mode) }}>
+    <div className="absolute inset-0 flex flex-col" style={{ zIndex: scale.z.feature, background: s(D.base, D.lBase, mode) }}>
       <div className="flex items-center justify-between px-5 pt-4 pb-3 shrink-0">
         {/* BUTTON: "← Back" → onClose() → ShareCardScreen unmounts */}
         <button onClick={onClose} className="btn-press flex items-center gap-2" style={{ background: "none", border: "none", cursor: "pointer", color: s(D.textSec, D.lTextSec, mode) }}>
@@ -676,7 +676,7 @@ function ShareCardScreen({ mode, milestone, onClose }: { mode: Mode; milestone: 
               <div className="px-3 py-1 rounded-full" style={{ background: `${D.accent}44`, border: `1px solid ${D.accent}66` }}>
                 <span style={{ fontSize: 13, fontWeight: 700, color: D.accentL }}>Day {milestone.day}</span>
               </div>
-              <span style={{ fontSize: 13, color: s(D.textSec, "rgba(255,255,255,0.5)", mode) }}>{milestone.date}</span>
+              <span style={{ fontSize: 13, color: s(D.textSec, "#FFFFFF80", mode) }}>{milestone.date}</span>
             </div>
           </div>
           {/* Footer quote — fixed copy */}
@@ -846,7 +846,7 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false }: { mod
             </div>
           </div>
           {/* Weekly comparison summary — mood/sleep colored inline */}
-          <div className="mt-3 rounded-xl px-3 py-2" style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${D.accent}33` }}>
+          <div className="mt-3 rounded-xl px-3 py-2" style={{ background: "#FFFFFF0F", border: `1px solid ${D.accent}33` }}>
             <div style={{ fontSize: 12, color: s(D.textSec, D.lTextSec, mode), lineHeight: 1.5 }}>
               Compared to last week: <span style={{ color: D.mood }}>✅ Pain down</span> · <span style={{ color: D.sleep }}>✅ Walking improved</span>
             </div>
@@ -1146,7 +1146,7 @@ function TimelineScreen({ mode, onShareMilestone }: { mode: Mode; onShareMilesto
       {/* FAB: "+" button — add new entry.
           POSITION: absolute bottom-right, zIndex 10.
           BUTTON: 52×52px gradient circle. ACTION: Prototype stub (no wired action). */}
-      <div className="absolute" style={{ bottom: 100, right: 20, zIndex: 10 }}>
+      <div className="absolute" style={{ bottom: 100, right: 20, zIndex: scale.z.raised }}>
         <button className="btn-press flex items-center justify-center rounded-full"
           style={{ width: 52, height: 52, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, border: "none", cursor: "pointer", boxShadow: `0 4px 20px ${D.accent}55` }}>
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round"><path d="M11 4v14M4 11h14"/></svg>
@@ -1250,7 +1250,7 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
   if (step === "done") {
     return (
       // ANIMATION: animate-fade-in — full screen, opacity 0→1, 300ms ease-out
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 animate-fade-in" style={{ background: s(D.base, D.lBase, mode), zIndex: 40 }}>
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 animate-fade-in" style={{ background: s(D.base, D.lBase, mode), zIndex: scale.z.overlay }}>
         {/* ANIMATION: animate-fade-up — checkmark circle, no delay */}
         <div className="animate-fade-up flex items-center justify-center rounded-full" style={{ width: 80, height: 80, background: `linear-gradient(135deg,${D.accentD},${D.accent})`, boxShadow: `0 8px 32px ${D.accent}55` }}>
           <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><path d="M6 20l8 8L34 8" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -1273,10 +1273,10 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
   // ── Form phase ────────────────────────────────────────────────────────────
   return (
     // ANIMATION: animate-fade-in — modal entry, 300ms ease-out
-    <div className="absolute inset-0 flex flex-col animate-fade-in" style={{ zIndex: 40, background: s(D.base, D.lBase, mode) }}>
+    <div className="absolute inset-0 flex flex-col animate-fade-in" style={{ zIndex: scale.z.overlay, background: s(D.base, D.lBase, mode) }}>
       {/* Drag handle — decorative, not functional */}
       <div className="flex justify-center pt-3 pb-0 shrink-0">
-        <div style={{ width: 36, height: 4, borderRadius: 2, background: s(D.border, D.lBorder, mode) }} />
+        <div style={{ width: 36, height: 4, borderRadius: scale.radius.xxs, background: s(D.border, D.lBorder, mode) }} />
       </div>
       <div className="flex items-center justify-between px-5 pt-2 pb-2 shrink-0">
         <div style={{ fontSize: 18, fontWeight: 700, color: s(D.text, D.lText, mode) }}>How's today?</div>
@@ -1344,7 +1344,7 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
               </div>
               <input type="range" min={0} max={10} step={1} value={pain} onChange={e => setPain(Number(e.target.value))}
                 className="w-full"
-                style={{ appearance: "none", height: 8, borderRadius: 8, outline: "none",
+                style={{ appearance: "none", height: 8, borderRadius: scale.radius.sm, outline: "none",
                   background: `linear-gradient(to right, ${PAIN_COLORS[pain]} 0%, ${PAIN_COLORS[pain]} ${pain * 10}%, ${s(D.border, D.lBorder, mode)} ${pain * 10}%, ${s(D.border, D.lBorder, mode)} 100%)`,
                   transition: "background 200ms" }} />
             </div>
@@ -1380,7 +1380,7 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
               <span style={{ fontSize: 13, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode) }}>Medications taken?</span>
               <button onClick={() => setMeds(!meds)} className="btn-press flex items-center rounded-full"
                 style={{ width: 50, height: 28, background: meds ? D.accent : s(D.border, D.lBorder, mode), padding: "0 3px", border: "none", cursor: "pointer", transition: "background 200ms", justifyContent: meds ? "flex-end" : "flex-start" }}>
-                <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#fff", boxShadow: "0 1px 4px rgba(0,0,0,0.25)", transition: "transform 200ms" }} />
+                <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#fff", boxShadow: "0 1px 4px #00000040", transition: "transform 200ms" }} />
               </button>
             </div>
 
@@ -1388,7 +1388,7 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
             <div>
               <div style={{ fontSize: 13, fontWeight: 600, color: s(D.textSec, D.lTextSec, mode), marginBottom: 6 }}>Quick note <span style={{ fontWeight: 400, opacity: 0.6 }}>(optional)</span></div>
               <input type="text" value={note} onChange={e => setNote(e.target.value)} placeholder="How did today feel…"
-                style={{ width: "100%", height: 44, borderRadius: 12, padding: "0 14px", background: s(D.raised, D.lCard, mode), border: `1px solid ${s(D.border, D.lBorder, mode)}`, color: s(D.text, D.lText, mode), fontSize: 14, outline: "none", fontFamily: "inherit" }} />
+                style={{ width: "100%", height: 44, borderRadius: scale.radius.md, padding: "0 14px", background: s(D.raised, D.lCard, mode), border: `1px solid ${s(D.border, D.lBorder, mode)}`, color: s(D.text, D.lText, mode), fontSize: 14, outline: "none", fontFamily: "inherit" }} />
             </div>
 
             {/* BUTTON: "Log detailed check-in" → setStep("done").
@@ -1461,7 +1461,7 @@ function InsightSentence({ text, trend, color, mode }: { text: string; trend: "u
 //
 // CORRIDOR BAND (when showCorridor=true):
 //   rect: fills from corridorTop (pain=5) to corridorBot (pain=2).
-//   Fill: rgba(155,143,224,0.13) dark / rgba(124,111,205,0.10) light.
+//   Fill: #9B8FE021 dark / #7C6FCD1A light.
 //   Top dashed line: 1px, strokeDasharray "4 3", bandBorder color.
 //   Bottom dashed line: same. Both indicate RANGE boundaries.
 //   corridorLabel (below chart): 10px italic, muted accent color.
@@ -1481,8 +1481,8 @@ function PainSparklineWithCorridor({ data, color, mode, height = 64, showCorrido
   // C4: corridor = common range for knee rehab weeks 4–6 = pain 2–5
   const corridorTop = h - (5 / max) * h;
   const corridorBot = h - (2 / max) * h;
-  const bandColor = mode === "dark" ? "rgba(155,143,224,0.13)" : "rgba(124,111,205,0.10)";
-  const bandBorder = mode === "dark" ? "rgba(155,143,224,0.3)" : "rgba(124,111,205,0.25)";
+  const bandColor = mode === "dark" ? "#9B8FE021" : "#7C6FCD1A";
+  const bandBorder = mode === "dark" ? "#9B8FE04D" : "#7C6FCD40";
   return (
     <div style={{ position: "relative" }}>
       <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
@@ -1502,7 +1502,7 @@ function PainSparklineWithCorridor({ data, color, mode, height = 64, showCorrido
       </svg>
       {/* Corridor label — italic, muted accent, 10px */}
       {showCorridor && corridorLabel && (
-        <div style={{ fontSize: 10, color: mode === "dark" ? "rgba(155,143,224,0.7)" : "rgba(124,111,205,0.8)", marginTop: 2, fontStyle: "italic" }}>
+        <div style={{ fontSize: 10, color: mode === "dark" ? "#9B8FE0B3" : "#7C6FCDCC", marginTop: 2, fontStyle: "italic" }}>
           {corridorLabel}
         </div>
       )}
@@ -1559,7 +1559,7 @@ function ProgressScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void
           ].map(row => (
             <div key={row.label} className="flex items-center gap-2 mb-2">
               {/* Colored bar: category identifier (not decorative) */}
-              <div style={{ width: 4, height: 28, borderRadius: 2, background: row.color }} />
+              <div style={{ width: 4, height: 28, borderRadius: scale.radius.xxs, background: row.color }} />
               <div style={{ fontSize: 12, color: s(D.textSec, D.lTextSec, mode), width: 70 }}>{row.label}</div>
               <div style={{ fontSize: 14, fontWeight: 700, color: s(D.text, D.lText, mode) }}>{row.fmt(row.this)}</div>
               {/* Previous week value: muted, "← " prefix */}
@@ -1854,9 +1854,9 @@ export default function MainApp({
       {/* MODE TOGGLE: fixed top-right, always visible, zIndex 100.
           INTERACTION: Tap → toggles mode dark ↔ light.
           VISUAL EFFECT: Page background transitions 400ms. Phone shell colors update. */}
-      <div style={{ position: "fixed", top: 16, right: 16, zIndex: 100 }}>
+      <div style={{ position: "fixed", top: 16, right: 16, zIndex: scale.z.dev }}>
         <button onClick={() => setMode(m => m === "dark" ? "light" : "dark")} className="btn-press flex items-center justify-center rounded-xl"
-          style={{ width: 40, height: 40, background: mode === "dark" ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)", border: `1px solid ${mode === "dark" ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.1)"}`, cursor: "pointer", fontSize: 18 }}>
+          style={{ width: 40, height: 40, background: mode === "dark" ? "#FFFFFF14" : "#0000000F", border: `1px solid ${mode === "dark" ? "#FFFFFF1F" : "#0000001A"}`, cursor: "pointer", fontSize: 18 }}>
           {mode === "dark" ? "☀️" : "🌙"}
         </button>
       </div>
@@ -1889,7 +1889,7 @@ export default function MainApp({
           INTERACTION: Tap dot → setTab(t) directly (bypasses handleTab check-in logic). */}
       <div className="flex gap-2 mt-4 items-center">
         {(["home","timeline","progress","profile"] as Tab[]).map(t => (
-          <div key={t} onClick={() => setTab(t)} style={{ width: tab === t ? 16 : 6, height: 6, borderRadius: 3, background: tab === t ? D.accent : (mode === "dark" ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.15)"), transition: "all 250ms", cursor: "pointer" }} />
+          <div key={t} onClick={() => setTab(t)} style={{ width: tab === t ? 16 : 6, height: 6, borderRadius: scale.radius.xs, background: tab === t ? D.accent : (mode === "dark" ? "#FFFFFF33" : "#00000026"), transition: "all 250ms", cursor: "pointer" }} />
         ))}
       </div>
     </div>
