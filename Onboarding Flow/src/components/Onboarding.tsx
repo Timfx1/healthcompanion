@@ -1068,7 +1068,7 @@ function SymptomsScreen({ mode, selected, onToggle, onNext, onBack }: {
 //   Emoji row: animate-fade-up, delay 180ms.
 // ============================================================
 const PAIN_LABELS = ["None", "Mild", "Mild", "Mild", "Moderate", "Moderate", "Moderate", "Severe", "Severe", "Intense", "Unbearable"];
-const PAIN_COLORS = ["#A8D9B8","#A8D9B8","#B8DDA8","#D9DA8A","#F5D08A","#F5C070","#F5A860","#F2A09E","#F2806E","#E05548","#CC2222"];
+const PAIN_COLORS = ["#A8D9B8","#A8D9B8","#B8DDA8","#D9DA8A","#F5D08A","#F5C070","#F5A860","#F2A09E","#E0748A","#D4607F","#BA4A79"];
 
 function PainScreen({ mode, value, onChange, onNext, onBack }: {
   mode: Mode; value: number; onChange: (v: number) => void; onNext: () => void; onBack: () => void;
