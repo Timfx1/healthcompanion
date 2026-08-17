@@ -12,8 +12,39 @@
    ============================================================ */
 
 /* FONT: Inter loaded from Google Fonts. Weights: 400 (regular), 500 (medium), 600 (semibold). */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 @import 'tailwindcss';
+
+/* ── Inter, self-hosted ───────────────────────────────────────────────────────
+   Replaces the Google Fonts @import. Two reasons, one practical and one
+   product:
+
+   PRACTICAL: the visual-parity harness asserts that Inter actually loaded
+   before it captures, because a silent fallback to a system sans would bake
+   wrong text metrics into every baseline. With the font arriving over the
+   network that assertion failed intermittently — the suite returned 34, 35 and
+   36 passes across three consecutive runs of unchanged code. A flaky parity
+   gate is worse than none, because it teaches everyone to re-run until green.
+   Serving the font from the bundle removes the network from the critical path.
+
+   PRODUCT: the app positions on radical privacy — local-first, no cross-app
+   tracking. A webfont request tells a third party the IP of every user on every
+   launch. Self-hosting is the same posture applied to the font.
+
+   This is the LATIN subset of the v20 variable file: one 48KB face covering the
+   whole 100–900 range, so the three weights the app uses cost one request
+   rather than three. Cyrillic and Greek subsets are omitted deliberately — the
+   product ships English copy and shipping them would triple the payload for
+   glyphs that never render. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('./fonts/Inter-latin-var.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
 /* ── Design tokens ────────────────────────────────────────────────────────────
    The @theme block that used to sit here is now GENERATED. Rebuild with:

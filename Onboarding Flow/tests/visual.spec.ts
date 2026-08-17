@@ -84,11 +84,30 @@ async function gotoScreen(page: Page, route: string, mode: string) {
   // Drive every pending timer to completion deterministically.
   await page.clock.runFor(SETTLE_MS);
 
-  // Fonts: wait, then verify. A silent fallback would bake wrong text metrics
-  // into the baseline and every later comparison would inherit the error.
-  await page.evaluate(() => document.fonts.ready);
-  const interLoaded = await page.evaluate(() => document.fonts.check("400 16px Inter"));
-  expect(interLoaded, "Inter webfont must be loaded before capture — a system-font fallback would bake wrong metrics into the baseline").toBe(true);
+  // Fonts: actively LOAD each weight, then verify.
+  //
+  // `document.fonts.ready` alone is not sufficient and was intermittently
+  // failing this assertion. It resolves once font loading is idle, but a face
+  // the layout has not demanded yet is never requested at all — so "idle" can
+  // mean "never started". document.fonts.load() requests the face and resolves
+  // when it is actually usable.
+  //
+  // Every weight the app renders is loaded explicitly, because checking only
+  // 400 would pass while 600 was still missing and the headings silently fell
+  // back.
+  await page.evaluate(async () => {
+    await Promise.all([
+      document.fonts.load("400 16px Inter"),
+      document.fonts.load("500 16px Inter"),
+      document.fonts.load("600 16px Inter"),
+    ]);
+    await document.fonts.ready;
+  });
+
+  const missing = await page.evaluate(() =>
+    ["400", "500", "600"].filter((w) => !document.fonts.check(`${w} 16px Inter`))
+  );
+  expect(missing, `Inter weight(s) ${missing.join(", ")} failed to load — capturing with a system-font fallback would bake wrong text metrics into the baseline`).toEqual([]);
 
   // Confirm motion suppression actually applied, rather than trusting the URL.
   await expect(page.locator("html")).toHaveClass(/no-motion/);
