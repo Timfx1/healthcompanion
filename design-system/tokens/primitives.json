@@ -15,7 +15,7 @@
       "750": { "$type": "color", "$value": "#332C55", "$description": "Deeper accent tint for gradient starts that CARRY TEXT. Secondary clears 4.60:1 and primary 11.32:1. Exists because the Day-N card puts both text roles over its gradient start." },
       "600": { "$type": "color", "$value": "#6A5CB5", "$description": "AA-safe CTA gradient start. Added in v1 so white body text clears 4.5:1 — see the note on lavender.500." },
       "550": { "$type": "color", "$value": "#7365C6", "$description": "AA-safe CTA gradient end. White reaches 4.77:1 here, against 2.84:1 on the original light stop." },
-      "650": { "$type": "color", "$value": "#7163C9", "$description": "Accent TEXT on light surfaces. 4.55:1 on the light page, 4.85:1 on card. The brand accent reaches only 4.19:1 there." },
+      "650": { "$type": "color", "$value": "#6B5DBE", "$description": "Accent TEXT on light surfaces. 5.01:1 on the light page, 5.34:1 on card, 4.57:1 on a 13% accent tint. RE-SOLVED against the tint rather than against white: accent text most often sits inside an accent-tinted pill (the corridor phase chip, the unlock pill, the accumulation counter), and the previous #7163C9 was solved on plain white — it cleared 4.85 there and only 4.15 on the tint it actually sits on. Same error as the category inks, same fix. Strictly better on every backdrop, so nothing regressed to buy it." },
       "500": { "$type": "color", "$value": "#7C6FCD", "$description": "Brand accent. Primary for non-text use: active tab, progress fill, selected outline, focus. NOT safe behind white body text — white reaches only 4.19:1." },
       "400": { "$type": "color", "$value": "#9B8FE0", "$description": "Lighter accent, for accent-coloured text on dark surfaces. 5.82:1 on raised." }
     },

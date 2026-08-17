@@ -333,7 +333,7 @@ const THEMES = {
     "pattern": {
       "corridor": {
         "band": "#7C6FCD22",
-        "edge": "#7C6FCD33",
+        "edge": "#7C6FCD44",
         "label": "#9B97B8",
         "phaseChip": "#7C6FCD22",
         "phaseLabel": "#9B8FE0"
@@ -460,7 +460,7 @@ const THEMES = {
       },
       "accent": {
         "default": "#7C6FCD",
-        "strong": "#7163C9",
+        "strong": "#6B5DBE",
         "dim": "#3D3668"
       },
       "category": {
@@ -730,10 +730,10 @@ const THEMES = {
     "pattern": {
       "corridor": {
         "band": "#7C6FCD22",
-        "edge": "#7C6FCD33",
+        "edge": "#7C6FCD44",
         "label": "#6B6890",
         "phaseChip": "#7C6FCD22",
-        "phaseLabel": "#7163C9"
+        "phaseLabel": "#6B5DBE"
       },
       "rest": {
         "surface": "#F8F7FC",
@@ -743,7 +743,7 @@ const THEMES = {
       "accumulation": {
         "counterFill": "#7C6FCD22",
         "counterEdge": "#7C6FCD44",
-        "counterLabel": "#7163C9",
+        "counterLabel": "#6B5DBE",
         "dotFilled": "#7C6FCD",
         "dotEmpty": "#E4E1F5"
       },
@@ -760,7 +760,7 @@ const THEMES = {
         "fadeTo": "#FFFFFF",
         "pillFill": "#7C6FCD22",
         "pillEdge": "#7C6FCD44",
-        "pillLabel": "#7163C9"
+        "pillLabel": "#6B5DBE"
       },
       "insight": {
         "headline": "#1A1830",

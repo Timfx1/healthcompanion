@@ -10,8 +10,8 @@
   "corridor": {
     "$intent": "Answer 'am I on track?' without letting anyone fail a benchmark nobody told them about.",
     "$contract": "A soft translucent band behind the chart, labelled as a common range, with phase chips describing what typically happens and an 'everyone heals differently' affordance always within reach.",
-    "band":       { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint13}" }, "$description": "The range band itself. Sits UNDER the data line; the data must always read on top." },
-    "edge":       { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint20}" } },
+    "band":       { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint13}" }, "$description": "The range band itself. Sits UNDER the data line; the data must always read on top. The chart previously painted a different base on dark (accent.strong at 12.9%) — the rendered results differ by 3 RGB units, which is why the token's simpler mode-invariant form was kept rather than the code's." },
+    "edge":       { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint27}" }, "$description": "The dashed boundaries. RAISED from 20% to 27% to match what the chart actually painted, because the CODE was right about this one: the two dashes are what make the band read as a range with two sides rather than as a threshold you are above or below. That is N5 doing real work, and the weaker token would have quietly undermined it. Still under the 3:1 non-text floor and declared decorative — the band fill and the 'common range for …' label both carry the meaning independently." },
     "label":      { "$type": "ref", "$value": "{color.text.secondary}", "$description": "\"Common range for …\" — deliberately quiet. The band is context, not a verdict." },
     "phaseChip":  { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint13}" } },
     "phaseLabel": { "$type": "ref", "$value": "{color.accent.strong}" }

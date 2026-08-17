@@ -201,7 +201,22 @@ Two things worth keeping from it. **The worst step was in the middle of the rang
 
 **`Toast` ignores light mode, and its token family is unused.** `patterns/Toast.tsx` reads `s(D.card, "#333", "dark")` — the third argument is the *mode*, hardcoded. The dark branch is always taken and the light value has never rendered. Meanwhile `pattern.toast.{surface,label,dwell}` exists in `patterns.json`, mode-paired, and is referenced by nothing. Not fixed yet for a specific reason: the toast is only visible after a quick-capture save, and no baseline captures it in that state, so the fix is unverifiable by the harness in exactly the place the harness is already blind. It belongs in the same change as the dev-route state hook.
 
-**Three pattern families are defined and unused, and two of them would move pixels.** `corridor.*` resolves to `accent.default` at 13% (`#7C6FCD22`) while `PainSparklineWithCorridor` paints `#9B8FE021` on dark and `#7C6FCD1A` on light; `insight.*` and `toast.*` are likewise unconsumed. Adopting them is a design change requiring re-baselining, not a refactor — which is why the extraction left them inline and said so at each call site rather than quietly reconciling the values.
+**`insight.*` is still defined and unused.** `insight.trendUp`/`trendDown` resolve to category **marks** while the component now correctly renders the trend word in `ink` — so adopting the family as written would reintroduce the failure that was just fixed. The family needs its trend roles repointed at `ink` before anything consumes it.
+
+### Resolved — the `corridor.*` reconciliation
+
+The corridor family diverged from what the chart painted, and the answer was not "the tokens are right" or "the code is right". It was one of each, plus two things neither had:
+
+| Element | Token said | Code painted | Verdict |
+|---|---|---|---|
+| `band` | accent @13%, mode-invariant | accent-strong @12.9% dark, accent @10.2% light | **Token.** The two composite three RGB units apart on a decorative wash — not worth a mode-specific token. |
+| `edge` | accent @20% → 1.27:1 | accent-strong @30% dark, accent @25% light | **Code.** The two dashes are what make the band read as a range *with two sides* rather than a threshold — N5 doing real work. The token was raised to 27% to match. |
+| `label` | `text.secondary` → 5.91 / 5.24 | translucent accent → **3.58 / 2.99** | **Token.** A live failure on 10px italic text. |
+| `phaseChip` + `phaseLabel` | tint + accent-strong → 4.97 dark, 4.15 light | opaque `accent.dim` + accent-strong → **3.84 both modes** | **Neither.** And `accent.dim`'s own token note already reads *"NOT safe behind secondary text … use lavender.750 where text sits on top"* — the code did exactly what the token source warned against. |
+
+Two lessons worth keeping. **Three of the five corridor tokens — `edge`, `phaseChip`, `phaseLabel` — were never declared as pairs**, so nothing measured them; that is the manifest-coverage gap again, in a family whose whole purpose is enforcing a product principle. And **`label` *was* declared and still failed**, because the pair named the token while the screen painted something else. Declaring a pair proves nothing if the screen does not consume it.
+
+`lavender.650` was re-solved from `#7163C9` to `#6B5DBE` as part of this — same error as the category inks, calibrated against white when accent text usually sits inside an accent tint. Better on every backdrop, so nothing was traded for it.
 
 **Two contrast fixes are unbaselined, and it is the same gap both times.** `app-checkin` captures the fast path with nothing selected *and* the detail panel collapsed, so neither the selected-word fix nor the 22px pain numeral is exercised by any baseline. The pain-ramp change moved exactly one screenshot (`ob-05-pain-baseline`, light) when it should logically have moved two. This is the coverage gap already recorded in `tests/visual.spec.ts` — interactive states have no dev-route hook — and it is now demonstrably hiding real changes rather than only theoretically able to. Adding `&state=` to the dev route is the fix.
 
@@ -244,7 +259,7 @@ Every semantic colour, both modes, as the emitters hand them to the app. A role 
 | `text.muted` | `#8D89A8` | `#716AA9` |
 | `text.onAccent` | `#FFFFFF` | `#FFFFFF` |
 | `accent.default` | `#7C6FCD` | `#7C6FCD` |
-| `accent.strong` | `#9B8FE0` | `#7163C9` |
+| `accent.strong` | `#9B8FE0` | `#6B5DBE` |
 | `accent.dim` | `#3D3668` | `#3D3668` |
 | `category.pain.mark` | `#F2A69E` | `#F2A69E` |
 | `category.pain.ink` | `#F2A69E` | `#AE4571` |
@@ -302,16 +317,16 @@ Product concepts with fixed contracts, defined once so they cannot drift between
 | Pattern token | Dark | Light |
 |---|---|---|
 | `corridor.band` | `#7C6FCD22` | `#7C6FCD22` |
-| `corridor.edge` | `#7C6FCD33` | `#7C6FCD33` |
+| `corridor.edge` | `#7C6FCD44` | `#7C6FCD44` |
 | `corridor.label` | `#9B97B8` | `#6B6890` |
 | `corridor.phaseChip` | `#7C6FCD22` | `#7C6FCD22` |
-| `corridor.phaseLabel` | `#9B8FE0` | `#7163C9` |
+| `corridor.phaseLabel` | `#9B8FE0` | `#6B5DBE` |
 | `rest.surface` | `#15141F` | `#F8F7FC` |
 | `rest.mark` | `#2E2C45` | `#E4E1F5` |
 | `rest.label` | `#8D89A8` | `#716AA9` |
 | `accumulation.counterFill` | `#7C6FCD22` | `#7C6FCD22` |
 | `accumulation.counterEdge` | `#7C6FCD44` | `#7C6FCD44` |
-| `accumulation.counterLabel` | `#9B8FE0` | `#7163C9` |
+| `accumulation.counterLabel` | `#9B8FE0` | `#6B5DBE` |
 | `accumulation.dotFilled` | `#7C6FCD` | `#7C6FCD` |
 | `accumulation.dotEmpty` | `#2E2C45` | `#E4E1F5` |
 | `lock.badgeFill` | `#2E2C45` | `#E4E1F5` |
@@ -321,7 +336,7 @@ Product concepts with fixed contracts, defined once so they cannot drift between
 | `historyFade.fadeTo` | `#1E1D2E` | `#FFFFFF` |
 | `historyFade.pillFill` | `#7C6FCD22` | `#7C6FCD22` |
 | `historyFade.pillEdge` | `#7C6FCD44` | `#7C6FCD44` |
-| `historyFade.pillLabel` | `#9B8FE0` | `#7163C9` |
+| `historyFade.pillLabel` | `#9B8FE0` | `#6B5DBE` |
 | `insight.headline` | `#F0EFFE` | `#1A1830` |
 | `insight.trendUp` | `#A8D9B8` | `#A8D9B8` |
 | `insight.trendDown` | `#F2A69E` | `#F2A69E` |
@@ -414,13 +429,13 @@ The `z` order is fixed: an overlay must never be authored with an ad-hoc z-index
 
 ### Contrast manifest
 
-**71 declared pairs, 132 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
+**74 declared pairs, 136 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
 
 | Usage class | Pairs |
 |---|---|
-| `body-text` | 45 |
+| `body-text` | 47 |
 | `ui-boundary` | 4 |
-| `decorative` | 11 |
+| `decorative` | 12 |
 | `large-text` | 11 |
 
 This measures the pairs the manifest DECLARES, not the pairs the app renders. An undeclared combination is unmeasured, not passing — see §11.

@@ -13,16 +13,27 @@
 //                       using mark: 1.47-1.96:1 on light against a 3:1 non-text
 //                       threshold. Now 4.80-4.84.
 //
-// KNOWN DIVERGENCE — the corridor colours below are still inline rather than
-// drawn from the `corridor.*` pattern family, which exists and is unused. They
-// are not the same values: corridor.band resolves to accent.default at 13%
-// (#7C6FCD22) while this paints #9B8FE021 on dark and #7C6FCD1A on light.
-// Adopting the tokens would therefore MOVE PIXELS on app-progress, so it is a
-// deliberate design change rather than part of this extraction. Recorded rather
-// than quietly reconciled.
+// THE CORRIDOR NOW COMES FROM `corridor.*`, and the reconciliation went BOTH
+// ways rather than "adopt the tokens":
+//
+//   band   -> token won. The code painted a different base on dark
+//             (accent.strong at 12.9% vs accent.default at 13.3%). The two
+//             composite to #2E2C45 and #2B2843 — three RGB units apart, on a
+//             decorative wash. Not worth a mode-specific token.
+//
+//   edge   -> CODE won, and the token was raised to match it. The token had the
+//             dashes at 20%, the code at 30/25%. The dashes are what make the
+//             band read as a range with two sides instead of a threshold, which
+//             is N5 doing actual work; the weaker value would have quietly
+//             undermined the rule the token family exists to enforce.
+//
+//   label  -> token won, and the code was a live accessibility failure: a
+//             translucent accent reaching 3.58:1 on dark and 2.99:1 on light,
+//             on 10px italic text. text.secondary reaches 5.91 / 5.24.
+//             It was never declared as a pair, so nothing measured it.
 // ============================================================
 
-import { scale } from "../tokens";
+import { scale, theme } from "../tokens";
 import { cat, type Category } from "./category";
 import type { Mode } from "../tokens";
 
@@ -44,8 +55,7 @@ export default function PainSparklineWithCorridor({
   // C4: corridor = the common range for knee rehab at weeks 4-6 = pain 2-5.
   const corridorTop = h - (5 / max) * h;
   const corridorBot = h - (2 / max) * h;
-  const bandColor = mode === "dark" ? "#9B8FE021" : "#7C6FCD1A";
-  const bandBorder = mode === "dark" ? "#9B8FE04D" : "#7C6FCD40";
+  const corridor = theme(mode).pattern.corridor;
   return (
     <div style={{ position: "relative" }}>
       <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
@@ -54,9 +64,9 @@ export default function PainSparklineWithCorridor({
             {/* The band sits UNDER the line and is bounded by dashes on BOTH
                 edges — a range has two sides, and that is what stops it reading
                 as a threshold. */}
-            <rect x="0" y={corridorTop} width={w} height={corridorBot - corridorTop} fill={bandColor} />
-            <line x1="0" y1={corridorTop} x2={w} y2={corridorTop} stroke={bandBorder} strokeWidth="1" strokeDasharray="4 3" />
-            <line x1="0" y1={corridorBot} x2={w} y2={corridorBot} stroke={bandBorder} strokeWidth="1" strokeDasharray="4 3" />
+            <rect x="0" y={corridorTop} width={w} height={corridorBot - corridorTop} fill={corridor.band} />
+            <line x1="0" y1={corridorTop} x2={w} y2={corridorTop} stroke={corridor.edge} strokeWidth="1" strokeDasharray="4 3" />
+            <line x1="0" y1={corridorBot} x2={w} y2={corridorBot} stroke={corridor.edge} strokeWidth="1" strokeDasharray="4 3" />
           </>
         )}
         {/* Area fill: MARK — decorative. */}
@@ -67,7 +77,7 @@ export default function PainSparklineWithCorridor({
       {/* "Common range for …" plus the everyone-heals-differently affordance,
           deliberately quiet: the band is context, not a verdict. */}
       {showCorridor && corridorLabel && (
-        <div style={{ fontSize: scale.font.size["3xs"], color: mode === "dark" ? "#9B8FE0B3" : "#7C6FCDCC", marginTop: 2, fontStyle: "italic" }}>
+        <div style={{ fontSize: scale.font.size["3xs"], color: corridor.label, marginTop: 2, fontStyle: "italic" }}>
           {corridorLabel}
         </div>
       )}

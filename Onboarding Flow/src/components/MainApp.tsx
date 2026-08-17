@@ -1379,10 +1379,16 @@ function ProgressScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void
             <span style={{ fontSize: scale.font.size["3xs"], color: s(D.textMut, D.lTextSec, mode) }}>Day 1</span>
             <span style={{ fontSize: scale.font.size["3xs"], color: s(D.textMut, D.lTextSec, mode) }}>Day 30</span>
           </div>
-          {/* C4 CORRIDOR PHASE CHIP: descriptive label of current phase */}
+          {/* C4 CORRIDOR PHASE CHIP: describes what typically happens now.
+              Was an OPAQUE accent.dim fill with accent.strong text: 3.84:1 in
+              both modes, on 10px/600 — body text. And accent.dim's own token
+              note already says "NOT safe behind secondary text … use
+              lavender.750 where text sits on top", so the code did exactly what
+              the token source warned against. Neither was declared as a pair.
+              Now the corridor.phaseChip tint over the card: 4.97 dark, 4.57 light. */}
           <div className="flex items-center gap-2 mb-3">
-            <div className="flex items-center gap-1 px-2 py-1 rounded-full" style={{ background: `${D.accentD}`, border: `1px solid ${D.accent}44` }}>
-              <span style={{ fontSize: scale.font.size["3xs"], fontWeight: 600, color: D.accentL }}>📍 Weight-bearing usually returns</span>
+            <div className="flex items-center gap-1 px-2 py-1 rounded-full" style={{ background: theme(mode).pattern.corridor.phaseChip, border: `1px solid ${D.accent}44` }}>
+              <span style={{ fontSize: scale.font.size["3xs"], fontWeight: 600, color: theme(mode).pattern.corridor.phaseLabel }}>📍 Weight-bearing usually returns</span>
             </div>
           </div>
           {/* C8 HISTORY DEPTH GATE: soft gradient fade + pill (not hard modal).
