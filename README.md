@@ -117,8 +117,11 @@ what is not finished. Full detail in `DESIGN_CRITERIA.md` §11.
   of which failed; the next one will be just as invisible.
 - **Interactive states are unbaselined.** The check-in sheet is captured with
   nothing selected and its detail panel collapsed, so two real contrast fixes
-  are not exercised by any baseline.
-- **`Toast` ignores light mode** — a hardcoded mode argument — and its token
-  family is unused.
-- **23 off-scale font sizes and 66 raw hex values remain** in consumer code,
-  under a ratchet that can only tighten.
+  are not exercised by any baseline. Not theoretical: this gap hid a dead code
+  path in `Toast` for the whole life of the component, because nothing could
+  photograph a state that exists for 2.4 seconds behind an interaction. That one
+  is closed (`?screen=app:toast`); the check-in's states need the same.
+- **`insight.*` is defined and unused**, and would reintroduce a fixed bug if
+  adopted as written — its trend roles still point at category `mark`.
+- **Off-scale font sizes and raw hex values remain** in consumer code, under a
+  ratchet that can only tighten.
