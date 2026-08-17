@@ -40,7 +40,7 @@
 // ============================================================
 
 import { useState, useRef, useEffect } from "react";
-import { D, c as s, type Mode } from "./tokens";
+import { D, c as s, theme, type Mode } from "./tokens";
 
 // ============================================================
 // LIGHT MODE vs DARK MODE — VISUAL COMPARISON GUIDE (MAIN APP)
@@ -604,7 +604,7 @@ function PaywallSheet({ mode, onClose }: { mode: Mode; onClose: () => void }) {
 
         {/* BUTTON: "Start free trial" → onClose() (prototype — no payment) */}
         <button onClick={onClose} className="btn-press w-full flex items-center justify-center rounded-2xl font-semibold"
-          style={{ height: 52, background: `linear-gradient(135deg,${D.accent},${D.accentL})`, color: "#fff", border: "none", cursor: "pointer", fontSize: 15, boxShadow: `0 4px 20px ${D.accent}44` }}>
+          style={{ height: 52, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, color: "#fff", border: "none", cursor: "pointer", fontSize: 15, boxShadow: `0 4px 20px ${D.accent}44` }}>
           Start free trial
         </button>
         <div className="text-center mt-2">
@@ -686,7 +686,7 @@ function ShareCardScreen({ mode, milestone, onClose }: { mode: Mode; milestone: 
       <div className="px-5 pb-8 flex flex-col gap-3 shrink-0">
         {/* BUTTON: "Share" — prototype stub (no native share API) */}
         <button className="btn-press w-full flex items-center justify-center gap-2 rounded-2xl font-semibold"
-          style={{ height: 52, background: `linear-gradient(135deg,${D.accent},${D.accentL})`, color: "#fff", border: "none", cursor: "pointer", fontSize: 15, boxShadow: `0 4px 20px ${D.accent}44` }}>
+          style={{ height: 52, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, color: "#fff", border: "none", cursor: "pointer", fontSize: 15, boxShadow: `0 4px 20px ${D.accent}44` }}>
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round"><path d="M9 2v10M5 6l4-4 4 4M3 14h12"/></svg>
           Share
         </button>
@@ -1143,7 +1143,7 @@ function TimelineScreen({ mode, onShareMilestone }: { mode: Mode; onShareMilesto
           BUTTON: 52×52px gradient circle. ACTION: Prototype stub (no wired action). */}
       <div className="absolute" style={{ bottom: 100, right: 20, zIndex: 10 }}>
         <button className="btn-press flex items-center justify-center rounded-full"
-          style={{ width: 52, height: 52, background: `linear-gradient(135deg,${D.accent},${D.accentL})`, border: "none", cursor: "pointer", boxShadow: `0 4px 20px ${D.accent}55` }}>
+          style={{ width: 52, height: 52, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, border: "none", cursor: "pointer", boxShadow: `0 4px 20px ${D.accent}55` }}>
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round"><path d="M11 4v14M4 11h14"/></svg>
         </button>
       </div>
@@ -1258,7 +1258,7 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
         {/* ANIMATION: animate-fade-up, delay 160ms
             BUTTON: "Back to home" → onClose() → modal unmounts */}
         <button onClick={onClose} className="btn-press animate-fade-up px-8 rounded-2xl font-semibold"
-          style={{ animationDelay: "160ms", height: 50, background: `linear-gradient(135deg,${D.accent},${D.accentL})`, color: "#fff", border: "none", cursor: "pointer", fontSize: 15, boxShadow: `0 4px 20px ${D.accent}44` }}>
+          style={{ animationDelay: "160ms", height: 50, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, color: "#fff", border: "none", cursor: "pointer", fontSize: 15, boxShadow: `0 4px 20px ${D.accent}44` }}>
           Back to home
         </button>
       </div>
@@ -1389,7 +1389,7 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
             {/* BUTTON: "Log detailed check-in" → setStep("done").
                 VISUAL: Same gradient as fast-path done button. 50px height. */}
             <button onClick={() => setStep("done")} className="btn-press w-full flex items-center justify-center rounded-2xl font-semibold"
-              style={{ height: 50, background: `linear-gradient(135deg,${D.accent},${D.accentL})`, color: "#fff", border: "none", cursor: "pointer", fontSize: 15, boxShadow: `0 4px 20px ${D.accent}44` }}>
+              style={{ height: 50, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, color: "#fff", border: "none", cursor: "pointer", fontSize: 15, boxShadow: `0 4px 20px ${D.accent}44` }}>
               Log detailed check-in
             </button>
           </div>
@@ -1746,7 +1746,7 @@ function TabBar({ active, onChange, mode }: { active: Tab; onChange: (t: Tab) =>
             <button key={tab.id} onClick={() => onChange(tab.id)} className="btn-press flex-1 flex flex-col items-center justify-center"
               style={{ background: "none", border: "none", cursor: "pointer" }}>
               <div className="flex items-center justify-center rounded-full"
-                style={{ width: 52, height: 52, background: `linear-gradient(135deg,${D.accent},${D.accentL})`, boxShadow: `0 4px 16px ${D.accent}55`, marginTop: -20 }}>
+                style={{ width: 52, height: 52, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, boxShadow: `0 4px 16px ${D.accent}55`, marginTop: -20 }}>
                 {tab.icon(true)}
               </div>
               <span style={{ fontSize: 10, fontWeight: 600, color: D.accent, marginTop: 2 }}>{tab.label}</span>

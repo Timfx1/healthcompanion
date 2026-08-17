@@ -53,7 +53,7 @@
 // ============================================================
 
 import { useState, useEffect, useRef } from "react";
-import { D, c as s2, type Mode } from "./tokens";
+import { D, c as s2, theme, type Mode } from "./tokens";
 
 // ============================================================
 // LIGHT MODE vs DARK MODE — VISUAL COMPARISON GUIDE (ONBOARDING)
@@ -462,7 +462,7 @@ function PrimaryButton({ label, onClick, mode, loading = false, disabled = false
       className="btn-press w-full flex items-center justify-center gap-2 rounded-2xl font-semibold text-base"
       style={{
         height: 56,
-        background: disabled ? s(D.border, D.lBorder, mode) : `linear-gradient(135deg, ${D.accent} 0%, ${D.accentL} 100%)`,
+        background: disabled ? s(D.border, D.lBorder, mode) : `linear-gradient(135deg, ${theme(mode).color.cta.from} 0%, ${theme(mode).color.cta.to} 100%)`,
         color: disabled ? s(D.textMut, D.lTextSec, mode) : "#fff",
         boxShadow: disabled ? "none" : `0 4px 20px rgba(124,111,205,0.35)`,
         border: "none",
