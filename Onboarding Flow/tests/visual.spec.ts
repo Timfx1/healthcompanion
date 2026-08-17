@@ -75,15 +75,61 @@ const APP: Screen[] = [
 const SCREENS = [...ONBOARDING, ...APP];
 const MODES = ["dark", "light"] as const;
 
+// ── Flake attribution ────────────────────────────────────────────────────────
+// There is an OPEN intermittent failure, roughly 1 run in 8-20, whose only
+// symptom is that it reports no pixel-diff count. That absence is the whole
+// clue: it means the run very likely never reached the comparison. Everything
+// before the comparison is in gotoScreen(), and on a bare `await` a hang
+// surfaces only as "Test timeout of 30000ms exceeded" — which names the test,
+// not the step, so each occurrence has had to be re-guessed from scratch. One
+// such guess (raise the screenshot timeout) was committed as a fix and was not
+// one.
+//
+// So every await that can hang is bounded and named. The budgets are ~20x the
+// measured cost of each step across 15 clean runs, which makes them useless as
+// gates and decisive as diagnostics: nothing legitimate approaches them, and
+// whichever one trips identifies the stalled step by name.
+async function step<T>(label: string, budgetMs: number, work: Promise<T>): Promise<T> {
+  let timer: ReturnType<typeof setTimeout>;
+  const bail = new Promise<never>((_, reject) => {
+    timer = setTimeout(
+      () => reject(new Error(
+        `HARNESS STALL: "${label}" did not settle within ${budgetMs}ms.\n` +
+        `This is the open intermittent failure, and this message is the diagnosis it was missing.\n` +
+        `A trace was retained (playwright.config.ts sets trace: retain-on-failure) — open it with\n` +
+        `  pnpm exec playwright show-trace test-results/**/trace.zip\n` +
+        `and check, in this order: did the font request complete; did the page clock advance past\n` +
+        `runFor(); did the dev server answer the navigation at all.`
+      )),
+      budgetMs,
+    );
+  });
+  try {
+    return await Promise.race([work, bail]);
+  } finally {
+    clearTimeout(timer!);
+  }
+}
+
 async function gotoScreen(page: Page, route: string, mode: string) {
   // Clock must be installed before any app script runs, or the app will have
   // already captured the real Date.
-  await page.clock.install({ time: FROZEN_CLOCK });
+  await step("clock.install", 10_000, page.clock.install({ time: FROZEN_CLOCK }));
 
-  await page.goto(`/?screen=${encodeURIComponent(route)}&mode=${mode}&motion=off`);
+  await step(
+    "page.goto",
+    15_000,
+    page.goto(`/?screen=${encodeURIComponent(route)}&mode=${mode}&motion=off`).then(() => undefined),
+  );
 
   // Drive every pending timer to completion deterministically.
-  await page.clock.runFor(SETTLE_MS);
+  //
+  // NOTE for the flake hunt: this PAUSES the page clock at T+SETTLE_MS. Any
+  // in-page promise that resolves off a setTimeout AFTER this line therefore
+  // never settles — which is one of the few mechanisms that would produce a
+  // silent hang rather than a slow pass, and it is why the font work below is
+  // bounded separately.
+  await step("clock.runFor", 15_000, page.clock.runFor(SETTLE_MS));
 
   // Fonts: actively LOAD each weight, then verify.
   //
@@ -96,22 +142,22 @@ async function gotoScreen(page: Page, route: string, mode: string) {
   // Every weight the app renders is loaded explicitly, because checking only
   // 400 would pass while 600 was still missing and the headings silently fell
   // back.
-  await page.evaluate(async () => {
+  await step("fonts.load + fonts.ready", 15_000, page.evaluate(async () => {
     await Promise.all([
       document.fonts.load("400 16px Inter"),
       document.fonts.load("500 16px Inter"),
       document.fonts.load("600 16px Inter"),
     ]);
     await document.fonts.ready;
-  });
+  }));
 
-  const missing = await page.evaluate(() =>
+  const missing = await step("fonts.check", 10_000, page.evaluate(() =>
     ["400", "500", "600"].filter((w) => !document.fonts.check(`${w} 16px Inter`))
-  );
+  ));
   expect(missing, `Inter weight(s) ${missing.join(", ")} failed to load — capturing with a system-font fallback would bake wrong text metrics into the baseline`).toEqual([]);
 
   // Confirm motion suppression actually applied, rather than trusting the URL.
-  await expect(page.locator("html")).toHaveClass(/no-motion/);
+  await expect(page.locator("html")).toHaveClass(/no-motion/, { timeout: 10_000 });
 }
 
 for (const mode of MODES) {

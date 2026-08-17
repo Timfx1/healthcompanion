@@ -57,14 +57,28 @@ export default defineConfig({
       maxDiffPixels: 12,
       threshold: 0,
 
-      // RESIDUAL FLAKE, ~1 run in 20. Failing runs emit no pixel-diff count,
-      // which points at the capture timing out rather than the image differing
-      // — so the fix is more time, not more tolerance. The default 5s can be
-      // tight when the dev server is cold or has just restarted, which is
-      // exactly when the flake was observed (immediately after re-baselining).
+      // RESIDUAL FLAKE, ~1 run in 8-20. STILL OPEN. This value is NOT a fix and
+      // was not shown to be one — read on before changing it.
       //
-      // Recorded rather than hidden: if a failure ever DOES report a pixel
-      // count, this is not the cause and the diff is real.
+      // The original reasoning was: failing runs emit no pixel-diff count, so
+      // the capture must be timing out, so give it more time. The timeout was
+      // raised 5s -> 15s on that basis. It did not help; the next eight runs
+      // still produced a failure.
+      //
+      // MEASUREMENT REFUTES THE PREMISE. Across 15 consecutive clean runs,
+      // per-test wall time is 340-570ms and whole-suite time 17.7-18.8s. A
+      // capture finishing in ~0.4s is not one that occasionally needs more than
+      // 5s; the margin is roughly twelvefold. Something that completes in 0.4s
+      // or not at all is HANGING, and no timeout value fixes a hang — which is
+      // exactly what raising it to 15s demonstrated.
+      //
+      // So "no pixel-diff count" most likely means the run never reached the
+      // comparison at all. The three awaits in gotoScreen() that precede it are
+      // the candidates, and they are now individually attributed and bounded in
+      // visual.spec.ts so the next occurrence names its own cause instead of
+      // being re-guessed.
+      //
+      // 15s is retained only because it is harmless at a 0.4s working cost.
       timeout: 15_000,
       animations: "disabled",
       caret: "hide",
@@ -74,6 +88,16 @@ export default defineConfig({
 
   use: {
     baseURL: `http://127.0.0.1:${PORT}`,
+
+    // Kept for the OPEN flake above. With retries at 0 there is no second run to
+    // record, so the only chance to capture a failure is the failing run itself.
+    // A trace carries the network log, the console, and a per-action timeline —
+    // which is what distinguishes "the font request never completed" from "the
+    // clock never advanced" from "the capture genuinely stalled", none of which
+    // the current failure text can tell apart.
+    //
+    // Discarded on success, so a green suite leaves nothing behind.
+    trace: "retain-on-failure",
   },
 
   projects: [
