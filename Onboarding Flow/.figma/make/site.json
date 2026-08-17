@@ -1,0 +1,10 @@
+{
+  "description": "Streamline the onboarding process for new employees with an intuitive platform that enhances engagement, accelerates training, and boosts productivity.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

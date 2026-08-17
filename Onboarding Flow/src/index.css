@@ -1,0 +1,198 @@
+/* ============================================================
+   FILE: index.css
+   PURPOSE: Global CSS for Recovery Companion.
+     1. Loads Inter font from Google Fonts (weights 400, 500, 600).
+     2. Imports Tailwind CSS v4.
+     3. Defines Tailwind theme tokens (mapped to D tokens in tokens.ts).
+     4. Defines all keyframe animations used across the app.
+     5. Defines animation utility classes (applied via className in JSX).
+     6. Defines stagger-delay utility classes for sequential entry animations.
+     7. Styles the range input thumb (used by the pain slider in check-in).
+     8. Defines .btn-press — the universal press-feedback class.
+   ============================================================ */
+
+/* FONT: Inter loaded from Google Fonts. Weights: 400 (regular), 500 (medium), 600 (semibold). */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import 'tailwindcss';
+
+/* ── Tailwind v4 theme tokens ─────────────────────────────────────────────── */
+/* These CSS custom properties mirror the D object in tokens.ts.
+   Both sets must be kept in sync if either is changed. */
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Dark surface palette */
+  --color-surface-base: #15141F;
+  --color-surface-raised: #1E1D2E;
+  --color-surface-card: #252438;
+  --color-surface-border: #2E2C45;
+
+  /* Accent */
+  --color-accent: #7C6FCD;
+  --color-accent-light: #9B8FE0;
+  --color-accent-dim: #3D3668;
+
+  /* Text */
+  --color-text-primary: #F0EFFE;
+  --color-text-secondary: #9B97B8;
+  --color-text-muted: #5C5878;
+
+  /* Light mode */
+  --color-light-base: #F8F7FC;
+  --color-light-card: #FFFFFF;
+  --color-light-border: #E4E1F5;
+  --color-light-text: #1A1830;
+  --color-light-text-secondary: #6B6890;
+
+  /* Pastel category hues */
+  --color-pastel-pain: #F2A69E;
+  --color-pastel-sleep: #9EC3F5;
+  --color-pastel-energy: #F5D08A;
+  --color-pastel-mood: #A8D9B8;
+  --color-pastel-meds: #C9B8F0;
+}
+
+html, body, #root {
+  height: 100%;
+  font-family: var(--font-sans);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ── Keyframe animations ──────────────────────────────────────────────────── */
+
+/* ANIMATION: fadeUp
+   TRIGGER: Applied via .animate-fade-up class.
+   MOTION: Element fades in (opacity 0→1) and rises 16px upward.
+   DURATION: 350ms  EASING: ease-out  FILL: both (holds end state)
+   USAGE: Screen entry animations, card/button staggered entrances.
+   STAGGER: Combined with .stagger-1 through .stagger-5 for sequential reveal. */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ANIMATION: fadeIn
+   TRIGGER: Applied via .animate-fade-in class.
+   MOTION: Element fades in (opacity 0→1). No translation.
+   DURATION: 300ms  EASING: ease-out  FILL: both
+   USAGE: Modal overlays, screen-level key transitions, confirmation states. */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ANIMATION: pulse-soft
+   TRIGGER: Applied via .animate-pulse-soft class.
+   MOTION: Element gently scales up to 1.04× and opacity 0.7→1, then back.
+   DURATION: 2.4s per cycle  EASING: ease-in-out  LOOP: infinite
+   USAGE: Welcome screen heart illustration, notification bell icon.
+   PURPOSE: Creates a calm "living" quality. Not aggressive or distracting. */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.04); }
+}
+
+/* ANIMATION: draw-bar
+   TRIGGER: Applied to progress bar fills.
+   MOTION: Width animates from 0% to --bar-w (CSS variable set per element).
+   DURATION: Set per element via inline style.
+   USAGE: Onboarding plan-reveal timeline bars. */
+@keyframes draw-bar {
+  from { width: 0%; }
+  to   { width: var(--bar-w); }
+}
+
+/* ANIMATION: spin-slow
+   TRIGGER: Applied via .animate-spin-slow class.
+   MOTION: Full 360° rotation.
+   DURATION: 1.8s per revolution  EASING: linear  LOOP: infinite
+   USAGE: Plan-loading screen conic progress ring spinner.
+   Also used in PrimaryButton loading state (spinner inside button). */
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Animation utility classes ────────────────────────────────────────────── */
+
+/* ANIMATION CLASS: .animate-fade-up
+   duration: 350ms | easing: ease-out | fill-mode: both */
+.animate-fade-up   { animation: fadeUp 350ms ease-out both; }
+
+/* ANIMATION CLASS: .animate-fade-in
+   duration: 300ms | easing: ease-out | fill-mode: both */
+.animate-fade-in   { animation: fadeIn 300ms ease-out both; }
+
+/* ANIMATION CLASS: .animate-pulse-soft
+   duration: 2400ms | easing: ease-in-out | loop: infinite */
+.animate-pulse-soft { animation: pulse-soft 2.4s ease-in-out infinite; }
+
+/* ANIMATION CLASS: .animate-spin-slow
+   duration: 1800ms | easing: linear | loop: infinite */
+.animate-spin-slow { animation: spin-slow 1.8s linear infinite; }
+
+/* ── Stagger delay utilities ─────────────────────────────────────────────────
+   USAGE: Combine with .animate-fade-up to stagger sequential card entrances.
+   RELATIONSHIP: Applied to list items in RecoveryTypeScreen, GoalScreen, etc.
+   SEQUENCE: Item 1 appears at 60ms, item 2 at 120ms, etc.
+   stagger-1: 60ms delay
+   stagger-2: 120ms delay
+   stagger-3: 180ms delay
+   stagger-4: 240ms delay
+   stagger-5: 300ms delay */
+.stagger-1 { animation-delay: 60ms; }
+.stagger-2 { animation-delay: 120ms; }
+.stagger-3 { animation-delay: 180ms; }
+.stagger-4 { animation-delay: 240ms; }
+.stagger-5 { animation-delay: 300ms; }
+
+/* ── Range input thumb (pain slider) ─────────────────────────────────────────
+   COMPONENT: Pain score slider in CheckInModal and PainScreen (onboarding).
+   APPEARANCE: 24×24px white circle with drop shadow.
+   INTERACTION: On :active (drag), thumb scales up to 1.15× in 120ms ease-out.
+   The track background is set via inline style in JSX (gradient follows value). */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  cursor: pointer;
+  /* INTERACTION: Scale feedback on active drag.
+     duration: 120ms | easing: ease-out */
+  transition: transform 120ms ease-out;
+}
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(1.15);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  cursor: pointer;
+  border: none;
+}
+
+/* ── Button press feedback ────────────────────────────────────────────────────
+   CLASS: .btn-press
+   USAGE: Applied to every interactive button and tappable card in the app.
+   PURPOSE: Provides immediate tactile-like visual press feedback.
+
+   STATE: DEFAULT
+     No transform applied. Normal opacity.
+
+   STATE: PRESSED (:active)
+     ANIMATION: Scales down to 0.97× and reduces opacity to 0.88.
+     DURATION: 120ms  EASING: ease-out
+     RELEASE: Reverses back to default over the same 120ms transition.
+
+   NOTE: -webkit-tap-highlight-color: transparent removes the default
+   blue flash on iOS/Android WebView tap, so only our custom animation shows. */
+.btn-press {
+  transition: transform 120ms ease-out, opacity 120ms ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-press:active { transform: scale(0.97); opacity: 0.88; }

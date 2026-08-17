@@ -1,0 +1,78 @@
+{
+  "$schema": "./pairs.manifest.schema.json",
+  "$note": "Every PERMITTED foreground/background combination in Recovery Companion, declared explicitly. A pair that is not listed here is not approved for use. Usage classes: body-text (4.5:1), large-text (3.0:1), ui-boundary (3.0:1, WCAG 1.4.11 non-text), decorative (exempt, recorded only). Color specs accept a token name from tokens.ts, a literal #hex, or token@AA where AA is the 2-hex-digit alpha the prototype already writes (e.g. accent@44).",
+  "$source": "Onboarding Flow/src/components/tokens.ts",
+
+  "pairs": [
+    { "id": "dark/text on base",            "mode": "dark",  "fg": "text",     "bg": "base",   "usage": "body-text",   "note": "primary body copy on the page background" },
+    { "id": "dark/text on raised",          "mode": "dark",  "fg": "text",     "bg": "raised", "usage": "body-text" },
+    { "id": "dark/text on card",            "mode": "dark",  "fg": "text",     "bg": "card",   "usage": "body-text" },
+    { "id": "dark/textSec on base",         "mode": "dark",  "fg": "textSec",  "bg": "base",   "usage": "body-text",   "note": "labels, captions, supporting copy" },
+    { "id": "dark/textSec on raised",       "mode": "dark",  "fg": "textSec",  "bg": "raised", "usage": "body-text" },
+    { "id": "dark/textSec on card",         "mode": "dark",  "fg": "textSec",  "bg": "card",   "usage": "body-text" },
+    { "id": "dark/textMut on base",         "mode": "dark",  "fg": "textMut",  "bg": "base",   "usage": "body-text",   "note": "tokens.ts documents this for placeholders and fine print, which is body-text usage" },
+    { "id": "dark/textMut on raised",       "mode": "dark",  "fg": "textMut",  "bg": "raised", "usage": "body-text" },
+    { "id": "dark/textMut on card",         "mode": "dark",  "fg": "textMut",  "bg": "card",   "usage": "body-text" },
+
+    { "id": "dark/accentL on base",         "mode": "dark",  "fg": "accentL",  "bg": "base",   "usage": "body-text",   "note": "accent-coloured text and links on dark" },
+    { "id": "dark/accentL on raised",       "mode": "dark",  "fg": "accentL",  "bg": "raised", "usage": "body-text" },
+    { "id": "dark/accent on base",          "mode": "dark",  "fg": "accent",   "bg": "base",   "usage": "ui-boundary", "note": "progress bar fill, active tab indicator, selected outline" },
+    { "id": "dark/accent on raised",        "mode": "dark",  "fg": "accent",   "bg": "raised", "usage": "ui-boundary" },
+    { "id": "dark/white on CTA gradient start", "mode": "dark", "fg": "#FFFFFF", "bg": "accent",  "usage": "body-text", "note": "PrimaryButton label, fontSize 16 / weight 600 = body text, not large text. Gradient stop 0%." },
+    { "id": "dark/white on CTA gradient end",   "mode": "dark", "fg": "#FFFFFF", "bg": "accentL", "usage": "body-text", "note": "PrimaryButton background is linear-gradient(135deg, accent 0%, accentL 100%). This lighter stop is the worst case and is what the trailing half of the label actually sits on." },
+
+    { "id": "dark/border on base",          "mode": "dark",  "fg": "border",   "bg": "base",   "usage": "decorative",  "note": "card outline; separation is reinforced by the surface step, so not load-bearing" },
+    { "id": "dark/border on raised",        "mode": "dark",  "fg": "border",   "bg": "raised", "usage": "decorative" },
+
+    { "id": "dark/pain ink on raised",      "mode": "dark",  "fg": "pain",     "bg": "raised", "usage": "body-text",   "note": "category hue used as chart line, chip label and legend text" },
+    { "id": "dark/sleep ink on raised",     "mode": "dark",  "fg": "sleep",    "bg": "raised", "usage": "body-text" },
+    { "id": "dark/energy ink on raised",    "mode": "dark",  "fg": "energy",   "bg": "raised", "usage": "body-text" },
+    { "id": "dark/mood ink on raised",      "mode": "dark",  "fg": "mood",     "bg": "raised", "usage": "body-text" },
+    { "id": "dark/meds ink on raised",      "mode": "dark",  "fg": "meds",     "bg": "raised", "usage": "body-text" },
+    { "id": "dark/pain ink on base",        "mode": "dark",  "fg": "pain",     "bg": "base",   "usage": "body-text" },
+    { "id": "dark/sleep ink on base",       "mode": "dark",  "fg": "sleep",    "bg": "base",   "usage": "body-text" },
+    { "id": "dark/energy ink on base",      "mode": "dark",  "fg": "energy",   "bg": "base",   "usage": "body-text" },
+    { "id": "dark/mood ink on base",        "mode": "dark",  "fg": "mood",     "bg": "base",   "usage": "body-text" },
+    { "id": "dark/meds ink on base",        "mode": "dark",  "fg": "meds",     "bg": "base",   "usage": "body-text" },
+
+    { "id": "dark/safety on base",          "mode": "dark",  "fg": "safety",   "bg": "base",   "usage": "body-text",   "note": "red-flag copy: the one place warm alert colour is permitted" },
+    { "id": "dark/safety on raised",        "mode": "dark",  "fg": "safety",   "bg": "raised", "usage": "body-text" },
+
+    { "id": "dark/accent@44 border on raised", "mode": "dark", "fg": "accent@44", "bg": "raised", "usage": "ui-boundary", "note": "the recurring 27%-alpha tint border; 13 occurrences in the prototype" },
+    { "id": "dark/accent@22 fill on raised",   "mode": "dark", "fg": "accent@22", "bg": "raised", "usage": "decorative",  "note": "the recurring 13%-alpha tint background" },
+
+    { "id": "light/lText on lBase",         "mode": "light", "fg": "lText",    "bg": "lBase",  "usage": "body-text" },
+    { "id": "light/lText on lCard",         "mode": "light", "fg": "lText",    "bg": "lCard",  "usage": "body-text" },
+    { "id": "light/lTextSec on lBase",      "mode": "light", "fg": "lTextSec", "bg": "lBase",  "usage": "body-text" },
+    { "id": "light/lTextSec on lCard",      "mode": "light", "fg": "lTextSec", "bg": "lCard",  "usage": "body-text" },
+    { "id": "light/lTextMut on lBase",      "mode": "light", "fg": "lTextMut", "bg": "lBase",  "usage": "body-text",   "note": "the token missing from the index.css @theme block" },
+    { "id": "light/lTextMut on lCard",      "mode": "light", "fg": "lTextMut", "bg": "lCard",  "usage": "body-text" },
+
+    { "id": "light/accent on lBase",        "mode": "light", "fg": "accent",   "bg": "lBase",  "usage": "body-text",   "note": "accent text and links on light" },
+    { "id": "light/accent on lCard",        "mode": "light", "fg": "accent",   "bg": "lCard",  "usage": "body-text" },
+    { "id": "light/accent ui on lCard",     "mode": "light", "fg": "accent",   "bg": "lCard",  "usage": "ui-boundary", "note": "progress fill and active tab on light" },
+    { "id": "light/white on CTA gradient start", "mode": "light", "fg": "#FFFFFF", "bg": "accent",  "usage": "body-text", "note": "the CTA gradient is mode-invariant, so both stops fail identically in light mode" },
+    { "id": "light/white on CTA gradient end",   "mode": "light", "fg": "#FFFFFF", "bg": "accentL", "usage": "body-text" },
+    { "id": "light/accentL on lCard",       "mode": "light", "fg": "accentL",  "bg": "lCard",  "usage": "body-text",   "note": "lighter accent variant reused on light surfaces" },
+
+    { "id": "light/lBorder on lCard",       "mode": "light", "fg": "lBorder",  "bg": "lCard",  "usage": "decorative" },
+    { "id": "light/lBorder on lBase",       "mode": "light", "fg": "lBorder",  "bg": "lBase",  "usage": "decorative" },
+
+    { "id": "light/pain ink on lCard",      "mode": "light", "fg": "pain",     "bg": "lCard",  "usage": "body-text",   "note": "same category hue, now as text on white" },
+    { "id": "light/sleep ink on lCard",     "mode": "light", "fg": "sleep",    "bg": "lCard",  "usage": "body-text" },
+    { "id": "light/energy ink on lCard",    "mode": "light", "fg": "energy",   "bg": "lCard",  "usage": "body-text" },
+    { "id": "light/mood ink on lCard",      "mode": "light", "fg": "mood",     "bg": "lCard",  "usage": "body-text" },
+    { "id": "light/meds ink on lCard",      "mode": "light", "fg": "meds",     "bg": "lCard",  "usage": "body-text" },
+    { "id": "light/pain mark on lCard",     "mode": "light", "fg": "pain",     "bg": "lCard",  "usage": "ui-boundary", "note": "same hue as a chart line or filled chip, not as text" },
+    { "id": "light/sleep mark on lCard",    "mode": "light", "fg": "sleep",    "bg": "lCard",  "usage": "ui-boundary" },
+    { "id": "light/energy mark on lCard",   "mode": "light", "fg": "energy",   "bg": "lCard",  "usage": "ui-boundary" },
+    { "id": "light/mood mark on lCard",     "mode": "light", "fg": "mood",     "bg": "lCard",  "usage": "ui-boundary" },
+    { "id": "light/meds mark on lCard",     "mode": "light", "fg": "meds",     "bg": "lCard",  "usage": "ui-boundary" },
+
+    { "id": "light/safety on lCard",        "mode": "light", "fg": "safety",   "bg": "lCard",  "usage": "body-text" },
+    { "id": "light/safety on lBase",        "mode": "light", "fg": "safety",   "bg": "lBase",  "usage": "body-text" },
+
+    { "id": "light/accent@44 border on lCard", "mode": "light", "fg": "accent@44", "bg": "lCard", "usage": "ui-boundary", "note": "the same tint border, now over white" },
+    { "id": "light/accent@22 fill on lCard",   "mode": "light", "fg": "accent@22", "bg": "lCard", "usage": "decorative" }
+  ]
+}

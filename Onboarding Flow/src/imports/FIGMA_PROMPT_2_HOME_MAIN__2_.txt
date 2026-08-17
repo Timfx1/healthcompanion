@@ -1,0 +1,81 @@
+FIGMA MAKE PROMPT — FILE 2 OF 2: HOME & MAIN APP (Recovery Companion)
+Paste this prompt into Figma Make together with the attached design file. The attached file is my curated inspiration board: pasted screens from BOTH Bearable AND CareClinic (Symptom & Medication Tracker), grouped as ONE big component covering their HOME SCREENS and main-app functions. It is INSPIRATION ONLY — each app plays a different role (see section 5): CareClinic for structure and feature patterns, Bearable for color mood and premium/lock treatment. Never copy branding, logos, exact layouts, or exact brand colors from either.
+
+CONTINUITY: This is session 2 of 2. Session 1 produced the onboarding flow plus a portable design-system sheet (Bearable-inspired palette, type scale, spacing, lock-badge language, motion spec). REUSE that system exactly. If session 1's outputs are not available in this session, regenerate the system from section 2 below before designing screens, and keep it identical in spirit.
+
+========================================
+1. WHAT YOU ARE DESIGNING IN THIS SESSION
+========================================
+The full main app for RECOVERY COMPANION — a personal recovery operating system ("This app remembers my recovery so I don't have to"). Supportive-companion tone, low cognitive load, one primary action per screen.
+
+BOTTOM TAB BAR (5 tabs): Home · Timeline · Check-in (center, visually prominent, largest target) · Progress · Profile
+
+ 1. HOME: morning encouragement card ("You're on Day 46. Compared to last week: ✅ Pain down ✅ Walking improved. Recovery isn't always linear. Keep going."), big friendly Day-N counter, today's actions (check-in / medication / exercise), next appointment card, latest insight card, "Generate doctor report" entry point.
+ 2. TIMELINE: vertical chronological recovery history mixing check-ins, notes, medications, photos, appointments, milestones (milestones visually celebrated, e.g. "Walked without crutches 🎉"); filter chips; floating add-entry button (note/photo/milestone/medication/appointment).
+ 3. DAILY CHECK-IN: ONE screen, under 30 seconds, one-handed, tap-only — mood (😊 😐 😣), pain 0–10 slider, energy/sleep/mobility 3-level taps, medication yes/no toggle, one optional single-line note, one big Done → celebratory confirmation (soft checkmark/confetti < 1s, light haptic). Missing days never shamed — returning users get a gentle "welcome back".
+ 4. PROGRESS: pain trend chart with milestone markers, weekly comparison card, sleep/energy/mobility trends, plain-language insight cards ("Pain tends to increase after poor sleep") — color-code data types with the pastel category hues from the design system.
+ 5. PROFILE: account, manage recoveries, medications, appointments, education hub, reports history, premium status row, settings, medical disclaimer.
+
+DETAIL SCREENS:
+ 6. DOCTOR REPORT PREVIEW (flagship): consultation summary a clinician scans in 60 seconds — header (condition, Day N, range), "What changed since last visit" block, graphs, key timeline events, medications, photo strip; print/PDF-friendly restrained styling; date-range selector.
+ 7. PHOTO COMPARE: Day X vs Day Y side-by-side/split-slider comparison.
+ 8. APPOINTMENT DETAIL with "Questions for my doctor" list + pre-appointment nudge card.
+ 9. MILESTONE CELEBRATION overlay.
+10. SAFETY / RED FLAGS ("When to contact a doctor") — calm but unmistakable; the ONLY place warm alert colors appear.
+11. MEDICATION DETAIL with schedule + adherence.
+12. JOURNAL ENTRY (free text, "Recovery Journal" framing, one-tap "make this a milestone").
+
+========================================
+2. COLOR & DESIGN SYSTEM — BEARABLE-INSPIRED (same as session 1)
+========================================
+- Original palette in Bearable's spirit (never their exact hex): deep indigo/plum-tinted dark surfaces (~#15141F-family, never pure black; elevated surfaces slightly lighter, warm-tinted) with lavender/violet primary accent, plus muted pastel category hues color-coding pain / sleep / energy / mood / medication across chips, charts, and timeline entries. Light variant: soft off-white ~#F8F7FC base, white cards, desaturated accents. Deliver BOTH modes for every screen.
+- 60-30-10 neutral/secondary/accent. Red/coral/amber reserved for safety states only.
+- Accessibility: WCAG AA (4.5:1 body, 3:1 UI), ≥44pt targets, thumb-zone placement for daily actions, never meaning by color alone, charts need text-summary alternatives, survive large text.
+- Typography: one humanist sans, max 3 weights, large expressive numerals (Day counter, pain score).
+- Layout: cards, 8pt grid, 12–16 radius, soft low shadows. Skeleton loaders, optimistic UI.
+- Motion: micro 100–150ms, components 200–300ms, screens 300–350ms, ease-out entrances, gentle springs for celebrations; charts draw in 400–600ms staggered on first view only; nothing flashing/looping.
+
+========================================
+3. PREMIUM PLACEMENT — BEARABLE-STYLE (core of this session)
+========================================
+Model the premium experience on how Bearable does it: the free tier is genuinely usable daily; premium is surfaced contextually where its value is felt, never as a hard wall.
+- FREE forever: daily check-in, timeline, journal, basic pain chart, medications, appointments, safety content.
+- PREMIUM: advanced insights & correlations, full/unlimited history depth (free shows e.g. last 30 days), doctor report export, photo compare, multiple simultaneous recoveries, education deep-dives.
+- Design the contextual touchpoints:
+  a) Locked insight/correlation cards on Progress: real card layout, slightly desaturated + the consistent lock badge from session 1, with a one-line value hook ("See how sleep affects your pain") — tapping opens the paywall sheet.
+  b) History-depth gate on charts: a soft gradient fade at the free-history boundary with an inline "Unlock full history" pill.
+  c) Doctor Report: preview fully visible, EXPORT button carries the lock badge (value first, gate at output).
+  d) A small non-intrusive premium row in Profile with current plan status.
+  e) PAYWALL as a bottom sheet (not full-screen takeover) reachable from all gates: benefit checklist using pastel category hues, 14-day trial + monthly, price transparency, restore purchases, easy dismiss. Never dark-patterned; dismissing always leaves the free experience intact.
+- Locked treatment must be identical everywhere (badge size, desaturation level, tap behavior) — spec it once in the system sheet.
+
+========================================
+4. MANDATORY ANNOTATION RULE (most important)
+========================================
+For EVERY screen and component, ALWAYS write descriptive specification notes alongside the design (and as structured comments in any generated code). Output goes to an AI coding agent implementing 1:1 in React Native + react-native-reanimated. Document per screen:
+- TRANSITIONS: entry/exit type, exact ms, easing (e.g., "check-in opens as modal slide-up, 320ms, ease-out; paywall bottom sheet spring, damping 0.85").
+- BUTTONS/INTERACTIVE ELEMENTS: default/pressed/disabled/loading states, visual changes, press timing + haptics, and what each tap triggers/navigates to (including every locked element → paywall sheet).
+- EFFECTS: shadows (color/opacity/blur/offset), gradients (stops + hex, incl. the history-fade gate), blurs, overlays, haptics — exact values.
+- ANIMATION CHOREOGRAPHY: entry order, stagger delays, durations, easings (e.g., "Home cards fade+rise 16px, 250ms, 60ms stagger"; "Done → checkmark draw-on 600ms + light haptic"; "milestone overlay spring-in ≤1s").
+- COMPONENT SPECS: sizes, paddings, radii, font sizes/weights/line-heights, exact hex per element.
+- STATES: empty (with one obvious next action), loading (skeletons), and error for every data screen; plus locked state where relevant.
+
+========================================
+5. USING THE ATTACHED INSPIRATION COMPONENT (Bearable + CareClinic home/main-app screens, mixed)
+========================================
+The board contains screens from two apps with two DIFFERENT roles — identify which app each screenshot belongs to and use it only for its role:
+- CARECLINIC SCREENS → STRUCTURE & FEATURE PATTERNS ONLY: home dashboard composition, how daily actions are surfaced, medication tracking + reminder patterns, appointment management, journaling entry points, report generation flow — its validated strengths. Do NOT adopt its visual style or density — it is more clinical and form-heavy than we want; ours must be lighter, calmer, companion-like, with fewer elements per screen.
+- BEARABLE SCREENS → COLOR MOOD + PREMIUM/LOCK TREATMENT ONLY: study its palette feel (indigo/plum dark surfaces, lavender accent, pastel category hues color-coding data types), its chart/factor styling warmth, and how it surfaces premium contextually (locked features, upgrade framing). Use them to calibrate section 2's palette and section 3's premium touchpoints — but create an ORIGINAL palette in that spirit, never sampling Bearable's exact brand hex values, and do NOT copy its screen structures.
+- Never reproduce either competitor's logos, exact copy, brand hex, or proprietary layouts.
+- Sections 2–4 override any conflicting inspiration.
+- Note which app + screen each adapted element came from and how you changed it.
+
+========================================
+6. DELIVERABLES (this session)
+========================================
+1. All screens in section 1, dark + light mode.
+2. Updated design-system sheet extending session 1: chart styles, timeline entry components, tab bar, FAB, lock badge + locked-card treatment, paywall sheet, alert styles.
+3. Section-4 annotations for every screen.
+4. A one-page motion spec consolidating all timings across both sessions.
+
+Start with the Daily Check-in and Home screens — they define the app's personality — then Timeline, Progress (with premium touchpoints), Doctor Report, and the rest.

@@ -1,0 +1,84 @@
+FIGMA MAKE — DESIGN ADJUSTMENT PROMPT (Recovery Companion, revision pass)
+Paste this into the existing Figma Make session(s) where the ONBOARDING and HOME/MAIN-APP designs are already complete. This is a REVISION, not a redesign: keep the established design system (indigo/lavender palette, pastel category hues, type scale, spacing, lock-badge language, motion spec) and the overall structure. Apply only the changes below, derived from user research on why health-tracking apps succeed or get abandoned.
+
+THE ANNOTATION RULE STILL APPLIES IN FULL: every changed or new screen/component must carry written specs — transitions (type, exact ms, easing), button states with press timing and haptics, effects with exact values, animation choreography with stagger delays, component dimensions/hex. Output will be implemented 1:1 in react-native-reanimated.
+
+========================================
+WHY THESE CHANGES (context for the model)
+========================================
+Research across competitor reviews and studies shows: ~70% of health-app users churn within 100 days; the top abandonment causes are entry effort, guilt (broken streaks, red missed days, scolding reminders), data without meaning, and paywalling core features. The most-loved apps win with ≤10-second typing-free entry, shame-free tone, plain-language insight, and a "showed my doctor" payoff. Our positioning: finite recovery with a finish line — the defining user question is "Am I on track?"
+
+========================================
+CHANGE 1 — CHECK-IN: ADD A ≤10-SECOND FAST PATH (highest priority)
+========================================
+Restructure the Daily Check-in screen into two layers on one screen:
+- TOP (dominant, thumb zone): "How's today?" with three large buttons — Better / Same / Worse (icon + word, never color-only). ONE tap = a complete, valid check-in → gentle confirmation (checkmark draw-on ~600ms + light haptic) → done. No scrolling needed.
+- BELOW (optional, clearly secondary): "Add detail" — the existing mood/pain slider/energy/sleep/mobility/medication/note controls, collapsed by default.
+Annotate: exact button sizes (≥44pt, likely much larger), pressed states, the confirmation choreography, and how the detail layer expands (duration/easing).
+
+========================================
+CHANGE 2 — HOME: ADD THE QUICK CAPTURE FIELD (the "Notes-app" lane)
+========================================
+Add a persistent single-line capture field on Home, high in the layout: placeholder "Note anything… ('knee hurt after stairs')", with a microphone affordance inviting dictation, and one Save action. Zero other required inputs — no category, no tags, no questions. Saving shows a subtle "Added to your timeline" toast.
+Also design (as a separate frame) a HOME-SCREEN WIDGET mockup: compact widget with Day N + one-tap "Capture" and "Check in" shortcuts (for a later native phase — design it now).
+Annotate: field autofocus behavior, keyboard handling, save micro-interaction, toast timing.
+
+========================================
+CHANGE 3 — REMOVE ALL GUILT MECHANICS (structural, app-wide)
+========================================
+- Replace any streak/chain visual with gentle ACCUMULATION: "12 check-ins" counter or softly filled dots — nothing that can visually "break."
+- Timeline gaps: empty days render as a soft neutral "rest" treatment (muted, calm), NEVER red, alert-colored, or labeled as missed.
+- Design a "Welcome back" state for returning after several days: warm one-liner, no recap of missed days, straight into the fast-path check-in.
+- Reminder/notification design mock: friendly, single, non-escalating tone example.
+Annotate the gap treatment (exact colors/opacity) and welcome-back entry animation.
+
+========================================
+CHANGE 4 — PROGRESS & TIMELINE: THE "AM I ON TRACK?" CORRIDOR
+========================================
+Add a soft translucent RANGE BAND behind the pain/mobility charts and (toggleable) on the timeline: label style "Common range for ankle surgery, weeks 4–6". Rules: always a RANGE, never a single target line; label language is "common / typical for many people", never pass–fail; include a small "Everyone heals differently" link affordance. Add one phase-label chip style for corridor phases ("Weight-bearing usually returns").
+Annotate: band color/opacity in both modes, how it layers under the data line, chart draw-in unchanged.
+
+========================================
+CHANGE 5 — INSIGHT SENTENCES ABOVE EVERY CHART
+========================================
+Every chart on Progress gets a plain-language headline sentence directly above it ("Pain trending down over the last 14 days"), styled as the primary element — the chart supports the sentence, not the reverse. Define the insight-sentence text style and its trend icon treatment (icon + word, not color-only).
+
+========================================
+CHANGE 6 — WEEKLY GIVE-BACK CARD (new component, Home)
+========================================
+Design a "Your week" reflection card that appears on Home once a week: last-week comparison lines (✅/– items with icons), ONE specific noticed detail ("You mentioned stairs twice this week — and Friday they felt easier"), one encouragement line, actions: Save to timeline / Dismiss. Warm, not gamified.
+Annotate entry animation and dismissal.
+
+========================================
+CHANGE 7 — SHAREABLE MILESTONE CARD (new screens)
+========================================
+From the milestone celebration overlay, add "Create share card" → ShareCardPreview screen: a beautiful, dignified card — milestone title, Day N, date, optional photo, subtle app brandmark — in a story-friendly ratio, gorgeous in dark and light. One Share button (OS share sheet). Strictly user-initiated; no share prompts anywhere else.
+Annotate card dimensions, type sizes, brandmark placement/opacity.
+
+========================================
+CHANGE 8 — PREMIUM SURFACES: SOFTEN TO MATCH GUARDRAILS
+========================================
+Verify/adjust the existing premium touchpoints so that:
+- Daily check-in, quick capture, timeline, journal, basic pain chart, medications+reminders, appointments, safety content, and the ENTIRE doctor report (incl. its export button) show NO lock badges anywhere — free forever.
+- Premium = depth only: advanced insights/correlations cards (locked-card treatment stays), history beyond 30 days (soft gradient fade + "Unlock full history" pill on charts/timeline — never a hard-lock modal), photo compare, multiple recoveries.
+- Paywall remains a dismissible bottom sheet; dismissing returns cleanly to an intact free experience. No countdown timers, no fake urgency, no guilt copy.
+If any completed screen conflicts with this, revise it and note the change.
+
+========================================
+CHANGE 9 — DOCTOR REPORT PROMINENCE
+========================================
+On Home, ensure "Generate doctor report" is a first-class element (reachable in ≤2 taps), and on the ReportPreview make the "What changed since last visit" block the visually dominant section. Add a pre-appointment nudge card variant for Home: "Appointment in 2 days — review your report?"
+
+========================================
+CHANGE 10 — ONBOARDING: CORRIDOR PREVIEW AT PLAN REVEAL
+========================================
+In the existing plan-reveal screen, add a corridor preview moment: "Here's what the coming weeks commonly look like" with 2–3 phase chips on a mini-timeline, then the existing Free Plan Unlocked celebration. Keep everything else as designed.
+
+========================================
+DELIVERABLES FOR THIS REVISION PASS
+========================================
+1. Updated frames for every changed screen (dark + light).
+2. New frames: QuickCaptureSheet/field states, Widget mockup, WeeklyReflection card, ShareCardPreview, Welcome-back state, corridor band styles.
+3. Updated design-system sheet entries: fast-path buttons, capture field, corridor band, insight-sentence style, accumulation counter, gap treatment, share card.
+4. Full section-style annotations for everything changed or added, plus an updated one-page motion spec.
+5. A short changelog listing each modified screen and what changed, so the coding agent can diff against the previous designs.

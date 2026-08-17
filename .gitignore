@@ -1,0 +1,48 @@
+# ── Dependencies ──────────────────────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+
+# ── Build output ──────────────────────────────────────────────────────────────
+dist/
+build/
+.vite/
+*.tsbuildinfo
+vite.config.*.timestamp-*
+
+# NOTE: design-system/dist/ is deliberately NOT ignored. Generated token
+# artifacts are committed so consumers need no build step, and so drift.mjs can
+# byte-compare a regenerated build against the committed copy. That comparison
+# is the mechanism that makes token drift impossible; ignoring dist/ would
+# silently disable it.
+!design-system/dist/
+!design-system/dist/**
+
+# ── Test / verification output ────────────────────────────────────────────────
+# Baselines are committed (they are the parity contract); only failure diffs
+# and transient runner state are ignored.
+test-results/
+playwright-report/
+blob-report/
+**/__screenshots__/**/*-actual.png
+**/__screenshots__/**/*-diff.png
+
+# ── Environment & secrets ─────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+logs/
+*.log
+*-debug.log*
+.claude-replay.*
+
+# ── Scratch ───────────────────────────────────────────────────────────────────
+.cache/
+.tmp-*
+*.tmp
+
+# ── OS cruft ──────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini

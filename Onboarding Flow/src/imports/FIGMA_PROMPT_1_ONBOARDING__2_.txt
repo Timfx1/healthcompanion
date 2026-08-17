@@ -1,0 +1,72 @@
+FIGMA MAKE PROMPT — FILE 1 OF 2: ONBOARDING (Recovery Companion)
+Paste this prompt into Figma Make together with the attached design file. The attached file is my curated inspiration board: pasted screens from BOTH Bearable AND CareClinic (Symptom & Medication Tracker), grouped as ONE big component covering their ONBOARDING flows. It is INSPIRATION ONLY — each app plays a different role (see section 5): CareClinic for structure and flow, Bearable for color mood and premium framing. Never copy branding, logos, exact layouts, or exact brand colors from either.
+
+========================================
+1. WHAT YOU ARE DESIGNING IN THIS SESSION
+========================================
+The complete ONBOARDING flow for RECOVERY COMPANION — a mobile app (iOS-first, React Native/Expo) that is a personal recovery operating system for people healing from injuries, surgeries, chronic conditions, and rehabilitation. Core promise: "This app remembers my recovery so I don't have to." Tone: supportive companion, warm and calm — never clinical software. Users may be in pain or stressed: one primary action per screen, minimal typing, generous whitespace.
+
+Screens (wizard with a slim progress indicator):
+ 1. Welcome — brand moment, warm animated illustration, single CTA + subtle sign-in link
+ 2. Recovery type picker: Injury / Surgery / Illness / Chronic condition / Rehabilitation (large tappable option cards)
+ 3. Condition & body part picker
+ 4. "When did your recovery start?" (date)
+ 5. Current symptoms (multi-select chips)
+ 6. Pain baseline (0–10 slider, expressive but dignified)
+ 7. Recovery goal
+ 8. Notifications opt-in (value-framed, easy skip)
+ 9. Plan loading — calm animated build-up → "Your recovery timeline is ready" reveal showing a preview of the personalized timeline + Day counter
+10. FREE PLAN UNLOCKED screen → 11. PREMIUM TEASER → 12. TRIAL PAYWALL (see section 3 — Bearable-style)
+
+========================================
+2. COLOR & DESIGN SYSTEM — BEARABLE-INSPIRED DIRECTION
+========================================
+I specifically like Bearable's color feel. Take direction from it, but create an ORIGINAL palette (do not sample their exact brand colors):
+- Overall feel: soft, friendly, slightly playful health app — deep indigo/plum-tinted dark surfaces with a lavender/violet primary accent, plus a small set of muted pastel category hues (used to color-code data types: pain, sleep, energy, mood, medication) that stay gentle, never neon.
+- Deliver BOTH modes for every screen: a dark-first variant (deep indigo/charcoal ~#15141F-family base, never pure black, elevated surfaces slightly lighter and warm-tinted) and a light variant (soft off-white ~#F8F7FC base, white cards, same accent family desaturated appropriately).
+- 60-30-10 rule: 60% neutral surfaces, 30% secondary tint, 10% accent. One accent for primary CTAs only.
+- Red/coral/amber remain RESERVED for genuine safety states — never decorative.
+- Accessibility: WCAG AA contrast (4.5:1 body, 3:1 UI), touch targets ≥ 44pt, never meaning by color alone (pair with icon/label), must survive large text sizes.
+- Typography: one friendly humanist sans, max 3 weights, large expressive numerals (pain score, Day counter preview).
+- Layout: card-based, 8pt grid, 12–16 corner radius, soft low shadows.
+- Motion feel: calm. Micro-feedback 100–150ms, component transitions 200–300ms, screen transitions 300–350ms, ease-out entrances, gentle springs for the plan-reveal moment. Nothing flashing or looping.
+
+========================================
+3. PREMIUM PLACEMENT — BEARABLE-STYLE (design these touchpoints now)
+========================================
+I like how Bearable positions premium: the core daily tracking stays genuinely free and premium feels like a natural upgrade, surfaced contextually — not a hard wall. Apply that model:
+- Onboarding ends with FREE PLAN UNLOCKED (celebratory, lists everything free: daily check-ins, timeline, journal, basic charts) BEFORE any paywall — the user must feel they already won something.
+- PREMIUM TEASER: a friendly benefits screen (advanced insights & correlations, full history, doctor report export, photo compare, multiple recoveries) with soft lock iconography, clear "Continue free" path equal in visual weight discoverability (premium CTA may be more prominent, but skipping must be one obvious tap, never dark-patterned).
+- TRIAL PAYWALL: 14-day trial + monthly plan, benefit checklist reusing the same pastel category hues, price transparency, restore purchases link, tiny legal row.
+- Define the visual language of "locked": a consistent small lock badge + slight desaturation treatment on locked cards, so the Home/Main file (session 2) can reuse it identically.
+
+========================================
+4. MANDATORY ANNOTATION RULE (most important)
+========================================
+For EVERY screen and component, ALWAYS write descriptive specification notes alongside the design (and as structured comments in any generated code). Your output goes to an AI coding agent implementing it 1:1 in React Native + react-native-reanimated, so notes must be codeable without guessing. Document per screen:
+- TRANSITIONS: entry/exit type, exact ms duration, easing curve (e.g., "push from right, 300ms, ease-out").
+- BUTTONS/INTERACTIVE ELEMENTS: default/pressed/disabled/loading states, visual change per state, press feedback timing (e.g., "scale 0.97, 120ms, light haptic"), and what each tap triggers/navigates to.
+- EFFECTS: every shadow (color/opacity/blur/offset), gradient (stops + hex), blur, overlay, haptic — exact values.
+- ANIMATION CHOREOGRAPHY: what animates on entry, order, stagger delays, durations, easings (e.g., "option cards fade+rise 16px, 250ms each, 60ms stagger"; "plan-reveal timeline draws in 500ms, once").
+- COMPONENT SPECS: sizes, paddings, radii, font sizes/weights/line-heights, exact hex per element.
+- STATES: empty/loading (skeletons, not spinners)/error where applicable.
+
+========================================
+5. USING THE ATTACHED INSPIRATION COMPONENT (Bearable + CareClinic onboarding screens, mixed)
+========================================
+The board contains screens from two apps with two DIFFERENT roles — identify which app each screenshot belongs to and use it only for its role:
+- CARECLINIC SCREENS → STRUCTURE ONLY: onboarding flow order and pacing, question framing and grouping, condition/medication setup patterns, reminder opt-in placement, progress indication. Its strengths: how it sets up medications, appointments, and reminders during onboarding. Do NOT adopt its visual style, density, or color — it is more clinical/form-heavy than we want.
+- BEARABLE SCREENS → COLOR MOOD + PREMIUM FRAMING ONLY: study its palette feel (deep indigo/plum surfaces, lavender accents, pastel category hues), its friendly non-clinical warmth, and how it frames free vs. premium. Use them to calibrate section 2's palette — but create an ORIGINAL palette in that spirit, never sampling Bearable's exact brand hex values. Do NOT copy its screen structures.
+- Never reproduce either competitor's logos, exact copy, brand hex values, or proprietary layouts.
+- If any inspiration conflicts with sections 2–4, sections 2–4 win.
+- For each pattern you adapt, note which app + screen it came from and how you changed it.
+
+========================================
+6. DELIVERABLES (this session)
+========================================
+1. All 12 onboarding screens, dark + light mode.
+2. The design-system sheet (color tokens with hex incl. pastel category hues, type scale, spacing, radii, shadows, chips, option cards, slider, lock badge, progress indicator) — this sheet will be reused verbatim in session 2 (Home/Main app), so make it complete and portable.
+3. Section-4 annotations for every screen.
+4. A short motion spec summarizing all timings used.
+
+Start with the Recovery type picker and the Plan-reveal screen — they set the personality — then complete the flow in order.
