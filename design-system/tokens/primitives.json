@@ -48,7 +48,7 @@
       "pain":   { "$type": "color", "$value": "#AE4571", "$description": "Pain ink. 5.40:1 on white, 4.96 at the 13% tint, 4.55 at the 27% tint. DELIBERATELY SHIFTED toward plum (hue 335) rather than the darkened peach the maths first produced (#B95247). That value sat RGB-distance 35 from the reserved safety red at a near-identical hue, which would have made a pain chart label read as an alert and quietly undermined the reserved-colour rule. This sits at distance 67 from color.alert.500." },
       "sleep":  { "$type": "color", "$value": "#406CA9", "$description": "Sleep ink. 5.34 / 4.96 / 4.59 on white, 13% tint, 27% tint." },
       "energy": { "$type": "color", "$value": "#876A34", "$description": "Energy ink. 5.07 / 4.83 / 4.57. Its mark was the worst pair in the system at 1.47:1." },
-      "mood":   { "$type": "color", "$value": "#367B4D", "$description": "Mood ink. 5.13 / 4.84 / 4.56." },
+      "mood":   { "$type": "color", "$value": "#35784B", "$description": "Mood ink. 5.33 on white, 5.03 at its own 13% tint, 4.75 at 27%, and 4.57 on the ACCENT tint. That last backdrop is why it moved again: the RN trend badge puts this word on an accent-tinted pill, where the previous value reached only 4.39. Third time this lesson has been paid for — an ink is only calibrated for the backdrops someone actually measured it on." },
       "meds":   { "$type": "color", "$value": "#775BB9", "$description": "Medication ink. 5.27 / 4.92 / 4.55." }
     },
     "painRamp": {

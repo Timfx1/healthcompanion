@@ -26,7 +26,7 @@ Being precise about this, because the gap matters:
 
 **Three were stopped rather than mapped.** `palette.red` and `dangerSoft` on the **Sign out** row mark a destructive action, and this system has no destructive role. Its only red is `safety.*`, which N3 reserves for red-flag guidance. Choosing between a neutral treatment, confirm-on-press, or a deliberate second red is a design decision, so the code is left failing with the options written at the site.
 
-`checks/redomain.mjs` holds the count at 3 and may only shrink.
+`checks/redomain.mjs` holds the count at 3 and may only shrink. It also budgets the **89 hardcoded hex literals** still in RN consumer code — the compiler cannot see a raw `#2F7DE1` in a gradient, which is how the splash screen still carries AnklePath brand blue with a clean typecheck.
 
 ---
 

@@ -7,7 +7,7 @@ type PhaseBadgeProps = {
 };
 
 export function PhaseBadge({ label }: PhaseBadgeProps) {
-  const { palette, tokens } = useAppTheme();
+  const { tokens } = useAppTheme();
 
   return (
     <View style={[styles.badge, { backgroundColor: tokens.color.accent.surface, borderColor: tokens.color.accent.default }]}>

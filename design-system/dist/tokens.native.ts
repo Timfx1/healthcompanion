@@ -465,7 +465,7 @@ const THEMES = {
         },
         "mood": {
           "mark": "#A8D9B8",
-          "ink": "#367B4D",
+          "ink": "#35784B",
           "icon": "mood",
           "label": "Mood",
           "onMark": "#1A1830"
@@ -748,7 +748,7 @@ const THEMES = {
           "lineHeight": 22,
           "tracking": 0
         },
-        "trendUp": "#367B4D",
+        "trendUp": "#35784B",
         "trendDown": "#AE4571",
         "trendFlat": "#6B6890",
         "chartLine": "#7C6FCD",

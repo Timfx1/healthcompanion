@@ -230,6 +230,10 @@ The third matters most: `99939ec` is the exact commit that claimed to have clear
 | `green`/`amber`/`red` by pain score | `painStep(mode, n)` | This *was* the pain scale, hardcoded — and its top step put the reserved hue on a data point. |
 | `green` on celebration copy | `category.mood.*` | Direct precedent: the web prototype paints "FREE PLAN UNLOCKED" and "SAVE 40%" the same way. |
 
+**Measuring the port found two failures a review would not have.** The trend badge puts the tone word on an accent-tinted pill, a backdrop no category ink had ever been measured against — `mood.ink` reached 4.39:1 there, so it was re-solved to #35784B (the third time that lesson has been paid for: an ink is only calibrated for the backdrops someone actually measured it on). And the neutral badge put `trendFlat` — deliberately quiet text — on a muted chip fill at 4.09:1; "no notable change" is plain, not quiet, so it takes primary text instead. Nine RN-rendered pairs are now declared, including the SafetyAlert icon on its own tint, which had never been measured against anything but a flat surface.
+
+**The type-driven approach has a blind spot, and it is now measured.** The compiler can only see a palette KEY. A raw `#2F7DE1` in a gradient is invisible to it, which is how the splash and plan-loading screens still carry AnklePath's brand blue with a perfectly clean typecheck. 89 hardcoded hex literals remain in RN consumer code — 57 of them in the HTML report template — and `checks/redomain.mjs` now counts and budgets them alongside the palette sites, may only shrink. Some are genuine brand decisions rather than mappings, so the ratchet holds the line without pretending to make the call.
+
 **Three references were stopped rather than mapped.** `palette.red` and `palette.dangerSoft` on the **Sign out** row mark a *destructive action*, and this design system has no destructive role. The only red it owns is `safety.*`, which N3 reserves for red-flag guidance — "never decorative, never for emphasis, never for a 'bad' data point". Sign out is none of those, and spending the alert hue on it is how an app stops being believed when it finally means it.
 
 That is a design decision (neutral treatment? confirm-on-press? a deliberate second red?), not a mapping one, so the code is **left failing** with the options written at the site. `checks/redomain.mjs` holds the count at 3.
@@ -320,7 +324,7 @@ Every semantic colour, both modes, as the emitters hand them to the app. A role 
 | `category.energy.ink` | `#F5D08A` | `#876A34` |
 | `category.energy.onMark` | `#1A1830` | `#1A1830` |
 | `category.mood.mark` | `#A8D9B8` | `#A8D9B8` |
-| `category.mood.ink` | `#A8D9B8` | `#367B4D` |
+| `category.mood.ink` | `#A8D9B8` | `#35784B` |
 | `category.mood.onMark` | `#1A1830` | `#1A1830` |
 | `category.meds.mark` | `#C9B8F0` | `#C9B8F0` |
 | `category.meds.ink` | `#C9B8F0` | `#775BB9` |
@@ -387,7 +391,7 @@ Product concepts with fixed contracts, defined once so they cannot drift between
 | `historyFade.pillEdge` | `#7C6FCD44` | `#7C6FCD44` |
 | `historyFade.pillLabel` | `#9B8FE0` | `#6B5DBE` |
 | `insight.headline` | `#F0EFFE` | `#1A1830` |
-| `insight.trendUp` | `#A8D9B8` | `#367B4D` |
+| `insight.trendUp` | `#A8D9B8` | `#35784B` |
 | `insight.trendDown` | `#F2A69E` | `#AE4571` |
 | `insight.trendFlat` | `#9B97B8` | `#6B6890` |
 | `insight.chartLine` | `#7C6FCD` | `#7C6FCD` |
@@ -478,13 +482,13 @@ The `z` order is fixed: an overlay must never be authored with an ad-hoc z-index
 
 ### Contrast manifest
 
-**74 declared pairs, 136 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
+**83 declared pairs, 150 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
 
 | Usage class | Pairs |
 |---|---|
-| `body-text` | 47 |
-| `ui-boundary` | 4 |
+| `body-text` | 52 |
+| `ui-boundary` | 5 |
 | `decorative` | 12 |
-| `large-text` | 11 |
+| `large-text` | 14 |
 
 This measures the pairs the manifest DECLARES, not the pairs the app renders. An undeclared combination is unmeasured, not passing — see §11.
