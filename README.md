@@ -16,11 +16,23 @@ Being precise about this, because the gap matters:
 |---|---|
 | **Design system** (`design-system/`) | Real. One token source, two platforms, seven gates. |
 | **Web prototype** (`Onboarding Flow/`) | Real, and the reference implementation — 12 onboarding screens + 5 tabs, both colour modes. A Figma Make export, since evolved. |
-| **The React Native app** | **Does not exist yet.** Phase 1 per `CLAUDE_CODE_RECOVERY_COMPANION_v2.md` §7 is an Expo app re-domained from AnklePath. Not started. |
+| **React Native app** (`app/`) | **Started.** The AnklePath `ActivatePayment` tree, copied in with fresh history. Its palette already comes from the token source; 172 sites await re-domaining. |
 | **16 of 17 detail/modal screens** (§5) | Designed nowhere — not in Figma, not in code. Includes the Doctor Report, the flagship. |
 
-`tokens.native.ts` is emitted and currently consumed by nothing. That is
-deliberate: it is the input to the port, finished ahead of it.
+`tokens.native.ts` is now consumed by `app/`, vendored as
+`app/src/theme/tokens.generated.ts`.
+
+**The app's typecheck is red on purpose.** The generated palette maps only the
+structural neutrals — surfaces, text steps, borders — and deliberately omits
+every AnklePath key that carried *meaning*: `blue`, `teal`, `red`, `green`,
+`amber`, `purple` and the four `*Soft` status tints. 290 of 439 colour
+references swapped mechanically; the remaining 172 fail to compile so a person
+has to decide what each one meant. `palette.red`, for instance, currently
+colours a **Sign out** button — mapping it to the reserved safety hue would
+break the rule that hue exists to protect.
+
+The count is guarded by a ratchet (`checks/redomain.mjs`) that may only shrink,
+so the port cannot stall and no new `palette.blue` can appear.
 
 ---
 

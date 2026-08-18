@@ -24,6 +24,7 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { emitNativePalette } from "./emit-native-palette.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DS = resolve(HERE, "..");
@@ -347,6 +348,9 @@ function emitNative() {
   ts += PAIN_STEP;
   ts += `export type Theme = (typeof THEMES)["dark"];\n`;
   ts += `export type ColorRole = keyof Theme["color"];\n`;
+  // AnklePath-shaped bridge for the RN port. Deliberately incomplete — see
+  // build/emit-native-palette.mjs for which keys it refuses to map and why.
+  ts += emitNativePalette({ modes: MODES, semantic, at, resolveValue });
   return ts;
 }
 
@@ -364,6 +368,10 @@ const artifacts = {
 const CONSUMERS = {
   "Onboarding Flow/src/components/tokens.generated.ts": artifacts["tokens.web.ts"],
   "Onboarding Flow/src/tokens.generated.css": artifacts["tokens.css"],
+  // The React Native app gets the native emitter, vendored for the same reason
+  // as the web copies: Metro resolves poorly across a project root, and the app
+  // should not depend on a sibling directory's layout.
+  "app/src/theme/tokens.generated.ts": artifacts["tokens.native.ts"],
 };
 const REPO = resolve(DS, "..");
 
@@ -387,7 +395,7 @@ if (CHECK) {
 } else {
   for (const [path, content] of targets) writeFileSync(path, content, "utf8");
   const colorCount = Object.keys(resolved.modes.dark.color).length;
-  console.log(`Built ${targets.length} artifacts (4 in dist/, 2 vendored into the prototype).`);
+  console.log(`Built ${targets.length} artifacts (4 in dist/, 2 vendored into the web prototype, 1 into the RN app).`);
   console.log(`  colour role groups : ${colorCount}`);
   console.log(`  pattern families   : ${Object.keys(resolved.modes.dark.pattern).length}`);
   console.log(`  legacy D keys      : ${Object.keys(D).length}`);

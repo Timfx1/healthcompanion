@@ -1,0 +1,82 @@
+{
+  "expo": {
+    "name": "AnklePath",
+    "slug": "anklepath",
+    "version": "1.0.4",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "icon": "./assets/icon.png",
+    "updates": {
+      "url": "https://u.expo.dev/36805750-1c1d-42d2-b72e-38d518668f9c",
+      "fallbackToCacheTimeout": 0
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "scheme": "anklepath",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.timfx1.anklepath",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.timfx1.anklepath",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0E1E32"
+      },
+      "permissions": [
+        "com.android.vending.BILLING"
+      ],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow AnklePath to choose a profile picture from your photo library."
+        }
+      ],
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.792915420183-c554qlltqofhelea935565gro4feu0ef"
+        }
+      ],
+      "expo-apple-authentication",
+      "expo-web-browser",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "extraPods": [
+              {
+                "name": "GoogleUtilities",
+                "modular_headers": true
+              },
+              {
+                "name": "RecaptchaInterop",
+                "modular_headers": true
+              }
+            ]
+          }
+        }
+      ]
+    ],
+    "web": {
+      "bundler": "metro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "36805750-1c1d-42d2-b72e-38d518668f9c"
+      }
+    }
+  }
+}

@@ -1,0 +1,77 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /*
+      User profile: users/{uid}
+
+      Owner-only for every operation. Delete is allowed — the app deletes this
+      document from the client during account deletion (Profile -> Delete
+      account), which GDPR Art. 17 and App Store Guideline 5.1.1(v) require.
+      Blocking it here would leave health data behind after the auth account
+      is gone.
+    */
+    match /users/{userId} {
+      allow create, read, update, delete: if isOwner(userId);
+
+      /*
+        User-owned subcollections:
+        users/{uid}/onboardingAnswers/latest
+        users/{uid}/painLogs/{autoId}
+
+        Same rule, same reason: account deletion clears these first, while the
+        user is still authenticated.
+      */
+      match /{subcollection}/{docId} {
+        allow create, read, update, delete: if isOwner(userId);
+      }
+    }
+
+    /*
+      Feature requests: featureRequests/{requestId}
+
+      Any signed-in user, including anonymous accounts, can submit one. Reads
+      and deletes are limited to that user's own rows so account deletion can
+      remove them; the query in accountDeletion.ts filters on `uid`, which
+      satisfies this rule. Updates stay blocked — a submission is a record of
+      what was asked, not editable content.
+    */
+    match /featureRequests/{requestId} {
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      allow read, delete: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow update: if false;
+    }
+
+    /*
+      Premium waitlist: premiumWaitlist/{entryId}
+
+      The document ID must equal the user's uid, which matches how
+      joinPremiumWaitlist writes it. Owners may also read and delete their own
+      entry so it can be cleared on account deletion.
+
+      Note: the anonymous fallback path in firestore.ts writes to
+      `anonymous-<timestamp>` when there is no uid. That write is rejected by
+      this rule by design — an entry nobody can be matched to could not be
+      deleted on request either.
+    */
+    match /premiumWaitlist/{entryId} {
+      allow create, update, read, delete: if isSignedIn() && request.auth.uid == entryId;
+    }
+
+    /*
+      Deny everything else by default.
+    */
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

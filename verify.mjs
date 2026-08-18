@@ -16,8 +16,11 @@
 //   3. contrast     — reads the resolved tokens; fails on regressions only.
 //   4. restricted   — the non-negotiables (N1-N5) in consumer code.
 //   5. coverage     — the literal ratchet.
-//   6. typecheck    — token name typos, via as-const unions.
-//   7. visual       — 36 baselines. LAST because it is by far the slowest, and
+//   6. redomain     — the RN re-domain ratchet. The app typecheck is RED ON
+//                     PURPOSE (the generated palette omits every key needing a
+//                     human decision), so the COUNT is the gate, not the pass.
+//   7. typecheck    — token name typos, via as-const unions.
+//   8. visual       — 38 baselines. LAST because it is by far the slowest, and
 //                     because a token-layer failure makes its result meaningless.
 //
 // USAGE:
@@ -60,10 +63,11 @@ const GATES = [
   { name: "contrast",   cmd: "node design-system/checks/contrast.mjs",         cwd: ROOT, why: "WCAG AA over the declared pair manifest, both modes" },
   { name: "restricted", cmd: "node design-system/checks/restricted.mjs",       cwd: ROOT, why: "non-negotiables N1-N5 in consumer code" },
   { name: "coverage",   cmd: "node design-system/checks/coverage.mjs",         cwd: ROOT, why: "raw-literal ratchet" },
+  { name: "redomain",   cmd: "node design-system/checks/redomain.mjs",         cwd: ROOT, why: "RN re-domain ratchet (skips if app/ is not installed)" },
   ...(INSTALLED ? [
     { name: "typecheck", cmd: `${PNPM} exec tsc --noEmit`,                     cwd: APP,  why: "token name typos" },
     ...(FAST ? [] : [
-      { name: "visual",  cmd: `${PNPM} exec playwright test`,                  cwd: APP,  why: "36 baselines, 18 screens x 2 modes" },
+      { name: "visual",  cmd: `${PNPM} exec playwright test`,                  cwd: APP,  why: "38 baselines, 19 screens x 2 modes" },
     ]),
   ] : []),
 ];

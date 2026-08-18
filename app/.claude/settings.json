@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"https://storage.googleapis.com/eas-workflows-production/logs/36805750-1c1d-42d2-b72e-38d518668f9c/22d2df4c-48db-4706-a714-8f9b5370afdc/2026-06-18T19%3A05%3A44Z-46d30436-8046-4fd5-b994-c37880c72af0.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260618%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260618T192621Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=542da96807683706af7bb584efe9248c2069e573afdfbb0d2993f4c552b55a234f3d7a1d6e049cf090b6eeb1708300ddf92b1041597adbaec6de27d8d9b89b8595e536436a2eb96aef16053a6488b509124b261e02d46094e339e6faa62ef82540e2580ab19912393c7296df67a0b36e9f8532c76aead1e4b886657807819306f625ed1a1795bf948324b25c4a22baefa65e0e9bd5e21d6bf0f2bd0c14bd2d8cf6444d1dea9ddcec508f527b776c4f75e259ff76f1cf922a04a20246e59486337f95e12f62b336d2e0fe364b9ae244da81ca08a97c4589f2f3496ad908c100fcda144d51f4dd751b54f701038a4c5ba869eb8ebb7b3e27fffe85d6aa4415790b\")",
+      "Read(//tmp/**)"
+    ]
+  }
+}
