@@ -234,11 +234,21 @@ The third matters most: `99939ec` is the exact commit that claimed to have clear
 
 **The type-driven approach has a blind spot, and it is now measured.** The compiler can only see a palette KEY. A raw `#2F7DE1` in a gradient is invisible to it, which is how the splash and plan-loading screens still carry AnklePath's brand blue with a perfectly clean typecheck. 89 hardcoded hex literals remain in RN consumer code — 57 of them in the HTML report template — and `checks/redomain.mjs` now counts and budgets them alongside the palette sites, may only shrink. Some are genuine brand decisions rather than mappings, so the ratchet holds the line without pretending to make the call.
 
-**Three references were stopped rather than mapped.** `palette.red` and `palette.dangerSoft` on the **Sign out** row mark a *destructive action*, and this design system has no destructive role. The only red it owns is `safety.*`, which N3 reserves for red-flag guidance — "never decorative, never for emphasis, never for a 'bad' data point". Sign out is none of those, and spending the alert hue on it is how an app stops being believed when it finally means it.
+**The last three were a design decision, and it was taken: neutral.** `palette.red` and `dangerSoft` on the **Sign out** row marked a *destructive action*, and this system has no destructive role — the only red it owns is `safety.*`, reserved by N3 for red-flag guidance. Rather than spend the alert hue on a button and make it mean less where it matters, or invent a second red, the row is neutral: `text.secondary` on the muted fill, 4.81/4.09:1 for the glyph against a 3:1 floor.
 
-That is a design decision (neutral treatment? confirm-on-press? a deliberate second red?), not a mapping one, so the code is **left failing** with the options written at the site. `checks/redomain.mjs` holds the count at 3.
+That is also the honest reading of the action. Signing out is reversible in one tap; it is not dangerous, and colouring it as though it were is the kind of small dishonesty that makes real warnings cheap.
+
+**The re-domain is complete: 172 → 0, and the RN app typechecks clean.** The mechanism — a generated palette that omits every key carrying meaning, so each site fails to compile until a person decides — has done its job. The budget stays at 0 so no new `palette.blue` can appear.
 
 Two token changes fell out of the port, both closing older gaps: `accent.surface`/`accent.edge` name a value the system already used five times without a general name, and `insight.trendUp`/`trendDown` were repointed from `mark` to `ink` — they colour a *word*, and consuming them as written would have reintroduced the mark-as-text defect §11 already records.
+
+### Deferred by decision — the brand treatment
+
+**The splash and plan-loading gradients still run AnklePath's blue**, and they are staying that way for now. Replacing them is a *new brand treatment*, not a mapping: there is no Recovery Companion gradient to collapse them onto, and inventing one to clear a counter would be deciding the product's first impression by accident.
+
+They are among the **89 hardcoded hex literals** the compiler cannot see — a raw `#2F7DE1` in a `LinearGradient` is just a string to it — so `checks/redomain.mjs` counts and budgets them. 57 of the 89 are in `services/report/reportHtml.ts`, a standalone HTML template for the doctor report, which wants its own **print** palette rather than the app's screen tokens; that is a separate piece of work with different constraints (print contrast, no dark mode, no device gamut).
+
+Both groups are held by a ratchet that can only shrink, so nothing new joins them while the decisions wait.
 
 ### Open — found, measured, not yet fixed
 
@@ -482,12 +492,12 @@ The `z` order is fixed: an overlay must never be authored with an ad-hoc z-index
 
 ### Contrast manifest
 
-**83 declared pairs, 150 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
+**84 declared pairs, 152 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
 
 | Usage class | Pairs |
 |---|---|
 | `body-text` | 52 |
-| `ui-boundary` | 5 |
+| `ui-boundary` | 6 |
 | `decorative` | 12 |
 | `large-text` | 14 |
 

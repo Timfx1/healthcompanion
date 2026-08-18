@@ -1,9 +1,8 @@
 {
-  "$note": "Remaining React Native re-domain sites. MAY ONLY DECREASE. Each is a place where an AnklePath colour carried meaning that Recovery Companion encodes differently, so a person has to choose. --update will not raise this even if the count grew.",
+  "$note": "React Native port debt. BOTH NUMBERS MAY ONLY DECREASE.",
   "$generated": "2026-08-18",
-  "total": 3,
-  "byKey": {
-    "dangerSoft": 1,
-    "red": 2
-  }
+  "total": 0,
+  "byKey": {},
+  "$palette": "0 — the colour re-domain is COMPLETE. All 172 AnklePath colour references now resolve to Recovery Companion roles. The mechanism was the generated palette omitting every key that carried meaning, so each site failed to compile until a person decided what it meant; it has now done its job. The budget stays at 0 so no new palette.blue can appear.",
+  "$literals": "89 hex literals the COMPILER CANNOT SEE — a raw #2F7DE1 in a gradient is just a string to it. Two groups, both deliberately unfixed:  (1) BRAND, awaiting a decision — the splash and plan-loading gradients still run AnklePath blue, and what replaces them is a new brand treatment rather than a mapping. (2) PRINT — 57 of the 89 are in services/report/reportHtml.ts, a standalone HTML template for the doctor report, which needs its own print palette rather than the app tokens."
 }

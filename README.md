@@ -16,17 +16,29 @@ Being precise about this, because the gap matters:
 |---|---|
 | **Design system** (`design-system/`) | Real. One token source, two platforms, seven gates. |
 | **Web prototype** (`Onboarding Flow/`) | Real, and the reference implementation — 12 onboarding screens + 5 tabs, both colour modes. A Figma Make export, since evolved. |
-| **React Native app** (`app/`) | **Started.** The AnklePath `ActivatePayment` tree, copied in with fresh history. Its palette comes from the token source; 169 of 172 colour references are re-domained, 3 deliberately stopped. |
+| **React Native app** (`app/`) | **Colour re-domain complete.** The AnklePath `ActivatePayment` tree, copied in with fresh history. All 172 colour references resolve to Recovery Companion roles and the app typechecks clean. Screens are still AnklePath's. |
 | **16 of 17 detail/modal screens** (§5) | Designed nowhere — not in Figma, not in code. Includes the Doctor Report, the flagship. |
 
 `tokens.native.ts` is now consumed by `app/`, vendored as
 `app/src/theme/tokens.generated.ts`.
 
-**The app's typecheck is red on purpose, and now down to three.** The generated palette maps only structural neutrals and omits every AnklePath key that carried *meaning*, so each site failed to compile until a person decided what it meant. 290 of 439 references swapped mechanically and 169 of the remaining 172 have been re-domained with a documented reason each — see `DESIGN_CRITERIA.md` §11 for the table.
+**How the port was driven.** The generated palette maps only the structural
+neutrals and deliberately omits every AnklePath key that carried *meaning* —
+`blue`, `teal`, `red`, `green`, `amber`, `purple` and the `*Soft` tints. 290 of
+439 references swapped mechanically; the other 172 failed to compile until a
+person decided what each meant. That count is now **0**, with a documented
+reason per mapping in `DESIGN_CRITERIA.md` §11.
 
-**Three were stopped rather than mapped.** `palette.red` and `dangerSoft` on the **Sign out** row mark a destructive action, and this system has no destructive role. Its only red is `safety.*`, which N3 reserves for red-flag guidance. Choosing between a neutral treatment, confirm-on-press, or a deliberate second red is a design decision, so the code is left failing with the options written at the site.
+The two that were genuine design questions were treated as such rather than
+mapped away. **Sign out** is neutral — there is no destructive role here, and the
+one red this system owns is reserved for red-flag guidance. The **splash and
+plan-loading gradients** still run AnklePath blue and are waiting on a deliberate
+brand treatment; replacing them is a new decision, not a mapping.
 
-`checks/redomain.mjs` holds the count at 3 and may only shrink. It also budgets the **89 hardcoded hex literals** still in RN consumer code — the compiler cannot see a raw `#2F7DE1` in a gradient, which is how the splash screen still carries AnklePath brand blue with a clean typecheck.
+`checks/redomain.mjs` holds palette sites at 0 and budgets the **89 hardcoded hex
+literals** the compiler cannot see — a raw `#2F7DE1` in a gradient is just a
+string to it. 57 of those are the doctor-report HTML template, which wants its
+own print palette.
 
 ---
 

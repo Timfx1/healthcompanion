@@ -81,6 +81,7 @@
     { "id": "RN painScale/5 ink on raised",         "fg": "color.painScale.5.ink", "bg": "color.surface.raised", "usage": "large-text" },
     { "id": "RN painScale/10 ink on raised",        "fg": "color.painScale.10.ink", "bg": "color.surface.raised", "usage": "large-text" },
 
+    { "id": "RN text/secondary as icon on muted fill", "fg": "color.text.secondary", "bg": "color.surface.border", "usage": "ui-boundary", "note": "The Sign out glyph, and any neutral chip that puts a quiet foreground on the muted fill. 4.81 dark / 4.09 light against a 3:1 floor. Declared when Sign out was resolved to a NEUTRAL treatment rather than a destructive colour: this design system has no destructive role, and the only red it owns is reserved for red-flag guidance. NOTE the asymmetry that makes this pair ui-boundary and not body-text — text.secondary on this fill reaches only 4.09 on light, so it is fine for a glyph and NOT fine for a label. The trend badge learned that the hard way." },
     { "id": "safety/ink on base",   "fg": "color.safety.ink",  "bg": "color.surface.base",   "usage": "body-text", "note": "FIXED in v1 and mode-paired. Red-flag copy — the one thing a health app must not get wrong." },
     { "id": "safety/ink on raised", "fg": "color.safety.ink",  "bg": "color.surface.raised", "usage": "body-text", "note": "FIXED in v1. Was 4.38:1 dark and 3.78:1 light." },
     { "id": "safety/ink on card",   "fg": "color.safety.ink",  "bg": "color.surface.card",   "usage": "body-text" },

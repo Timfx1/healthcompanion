@@ -394,36 +394,21 @@ export function ProfileScreen() {
             pressed && styles.signOutPressed
           ]}
         >
-          {/* ────────────────────────────────────────────────────────────────
-              STOPPED, NOT SOLVED — this block does not compile, on purpose.
-
-              These three references are the only colours in the port with NO
-              Recovery Companion equivalent. They mark a DESTRUCTIVE ACTION
-              (sign out), and the design system has no destructive role.
-
-              The one red it owns is `safety.*`, and N3 reserves that for
-              red-flag health guidance — "never decorative, never for emphasis,
-              never for a 'bad' data point". A sign-out button is none of those
-              things, and spending the alert hue on it is exactly how an app
-              stops being believed when it finally means it. That rule is worth
-              more than this button.
-
-              Three options, all of which are a DESIGN decision rather than a
-              mapping one, which is why nothing was invented here:
-                1. Neutral treatment — text.secondary, no colour at all. Sign
-                   out is not dangerous; it is reversible in one tap.
-                2. Confirm on press and drop the colour entirely.
-                3. Add a deliberate `destructive.*` role, accepting that the
-                   product now has two reds and that the reserved one is a
-                   little less unique for it.
-
-              Left failing so the choice is made by a person, not by whoever
-              needed the build green.
-              ──────────────────────────────────────────────────────────────── */}
-          <View style={[styles.signOutIcon, { backgroundColor: palette.dangerSoft }]}>
-            <Ionicons name="log-out-outline" size={20} color={palette.red} />
+          {/* NEUTRAL, by decision.
+              Sign out is a destructive action, and this design system has no
+              destructive role — the only red it owns is safety.*, which N3
+              reserves for red-flag health guidance. Rather than spend the alert
+              hue on a button (and make it mean less where it matters), or invent
+              a second red, the row is neutral: text.secondary on the muted chip
+              fill, 4.81/4.09:1 for the glyph against a 3:1 floor, and 5.91/5.24:1
+              for the label.
+              Which is also honest about the action. Signing out is reversible in
+              one tap; it is not dangerous, and colouring it as though it were is
+              the kind of small dishonesty that makes real warnings cheap. */}
+          <View style={[styles.signOutIcon, { backgroundColor: palette.surfaceMuted }]}>
+            <Ionicons name="log-out-outline" size={20} color={tokens.color.text.secondary} />
           </View>
-          <Text style={[styles.signOutText, { color: palette.red }]}>Sign out</Text>
+          <Text style={[styles.signOutText, { color: tokens.color.text.secondary }]}>Sign out</Text>
         </Pressable>
       </ProfileSection>
 
