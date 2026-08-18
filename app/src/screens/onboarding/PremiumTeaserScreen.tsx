@@ -55,7 +55,7 @@ function getWaitlistErrorMessage(error: unknown) {
 
 export function PremiumTeaserScreen() {
   const navigation = useNavigation<any>();
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
   const { completeOnboarding } = useAppData();
   const { state } = useOnboarding();
   const [isJoining, setIsJoining] = useState(false);
@@ -137,21 +137,21 @@ export function PremiumTeaserScreen() {
   return (
     <ScreenContainer contentStyle={styles.content}>
       <View style={styles.header}>
-        <View style={[styles.iconWrap, { backgroundColor: palette.infoSoft, borderColor: palette.borderSoft }]}>
-          <Ionicons name="sparkles" size={30} color={palette.purple} />
+        <View style={[styles.iconWrap, { backgroundColor: tokens.color.accent.surface, borderColor: palette.borderSoft }]}>
+          <Ionicons name="sparkles" size={30} color={tokens.color.accent.default} />
         </View>
-        <Text style={[styles.kicker, { color: palette.purple }]}>Optional upgrade</Text>
+        <Text style={[styles.kicker, { color: tokens.color.accent.strong }]}>Optional upgrade</Text>
         <Text style={[styles.title, { color: palette.text }]}>Unlock more recovery tools</Text>
         <Text style={[styles.subtext, { color: palette.textMuted }]}>Get extra guidance when you need it, while continuing to use the free plan.</Text>
       </View>
-      <View style={[styles.price, { backgroundColor: palette.infoSoft, borderColor: palette.borderSoft }]}>
+      <View style={[styles.price, { backgroundColor: tokens.color.accent.surface, borderColor: palette.borderSoft }]}>
         <Text style={[styles.priceText, { color: palette.text }]}>Coming soon</Text>
         <Text style={[styles.priceSubtext, { color: palette.textMuted }]}>No payment today. The free plan stays open.</Text>
       </View>
       <View style={[styles.card, { backgroundColor: palette.surface, borderColor: palette.borderSoft }]}>
         {features.map((feature) => (
           <View key={feature} style={styles.feature}>
-            <Ionicons name="sparkles" size={19} color={palette.purple} />
+            <Ionicons name="sparkles" size={19} color={tokens.color.accent.default} />
             <Text style={[styles.featureText, { color: palette.text }]}>{feature}</Text>
           </View>
         ))}

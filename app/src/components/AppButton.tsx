@@ -15,10 +15,10 @@ type AppButtonProps = {
 };
 
 export function AppButton({ label, onPress, variant = "primary", icon, style, disabled = false }: AppButtonProps) {
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
   const variantStyle =
     variant === "primary"
-      ? { backgroundColor: palette.teal, borderColor: palette.teal, shadowColor: palette.teal }
+      ? { backgroundColor: tokens.color.accent.default, borderColor: tokens.color.accent.default, shadowColor: tokens.color.accent.default }
       : variant === "secondary"
         ? { backgroundColor: palette.surfaceRaised, borderColor: palette.border }
         : { backgroundColor: "transparent", borderColor: palette.borderSoft };

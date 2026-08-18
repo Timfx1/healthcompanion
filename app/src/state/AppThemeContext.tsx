@@ -26,7 +26,7 @@
 // ============================================================
 
 import { createContext, PropsWithChildren, useContext, useMemo, useState } from "react";
-import { appPalette, type RcPalette } from "../theme/tokens.generated";
+import { appPalette, theme, type RcPalette, type Theme } from "../theme/tokens.generated";
 
 export type ThemeMode = "light" | "dark";
 
@@ -36,6 +36,17 @@ export type AppPalette = RcPalette;
 type AppThemeValue = {
   mode: ThemeMode;
   palette: AppPalette;
+  /**
+   * The real Recovery Companion token tree for this mode.
+   *
+   * `palette` is the flat migration shim; this is the destination. It is the
+   * only one of the two that can express mark-vs-ink, which is the distinction
+   * a colour-coded health app most needs its components to make — a category
+   * hue used as a fill is fine, the same hue used as a chart line or a label is
+   * unreadable on light. Re-domained code reads `tokens.color.…`; nothing new
+   * should reach for `palette`.
+   */
+  tokens: Theme;
   isDark: boolean;
   setMode: (mode: ThemeMode) => void;
   toggleMode: () => void;
@@ -46,15 +57,17 @@ const AppThemeContext = createContext<AppThemeValue | undefined>(undefined);
 export function AppThemeProvider({ children }: PropsWithChildren) {
   const [mode, setMode] = useState<ThemeMode>("light");
   const palette = appPalette(mode);
+  const tokens = theme(mode);
   const value = useMemo<AppThemeValue>(
     () => ({
       mode,
       palette,
+      tokens,
       isDark: mode === "dark",
       setMode,
       toggleMode: () => setMode((current) => (current === "dark" ? "light" : "dark"))
     }),
-    [mode, palette]
+    [mode, palette, tokens]
   );
   return <AppThemeContext.Provider value={value}>{children}</AppThemeContext.Provider>;
 }

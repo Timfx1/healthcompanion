@@ -15,7 +15,7 @@ const benefits = ["Daily guided exercises", "Pain and swelling tracking", "Recov
 
 export function FreePlanUnlockedScreen() {
   const navigation = useNavigation<any>();
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
   const { completeOnboarding } = useAppData();
   const { isPremium, gatingActive } = usePremium();
   useEffect(() => {
@@ -39,10 +39,10 @@ export function FreePlanUnlockedScreen() {
   return (
     <ScreenContainer contentStyle={styles.content}>
       <View style={styles.success}>
-        <View style={[styles.successIcon, { backgroundColor: palette.green, shadowColor: palette.green }]}>
+        <View style={[styles.successIcon, { backgroundColor: tokens.color.category.mood.mark, shadowColor: tokens.color.category.mood.mark }]}>
           <Ionicons name="checkmark" size={38} color={palette.background} />
         </View>
-        <Text style={[styles.kicker, { color: palette.green }]}>Free plan unlocked</Text>
+        <Text style={[styles.kicker, { color: tokens.color.category.mood.ink }]}>Free plan unlocked</Text>
         <Text style={[styles.title, { color: palette.text }]}>Your recovery plan is ready</Text>
         <Text style={[styles.subtext, { color: palette.textMuted }]}>
           Start with guided exercises, tracking, and clear education for your current recovery stage.
@@ -51,8 +51,8 @@ export function FreePlanUnlockedScreen() {
       <View style={[styles.card, { backgroundColor: palette.surface, borderColor: palette.borderSoft }]}>
         {benefits.map((benefit) => (
           <View key={benefit} style={styles.benefit}>
-            <View style={[styles.benefitIcon, { backgroundColor: palette.successSoft }]}>
-              <Ionicons name="checkmark" size={16} color={palette.green} />
+            <View style={[styles.benefitIcon, { backgroundColor: tokens.color.accent.surface }]}>
+              <Ionicons name="checkmark" size={16} color={tokens.color.category.mood.ink} />
             </View>
             <Text style={[styles.benefitText, { color: palette.text }]}>{benefit}</Text>
           </View>

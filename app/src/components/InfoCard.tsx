@@ -13,13 +13,13 @@ type InfoCardProps = {
 };
 
 export function InfoCard({ title, subtitle, icon, children, onPress }: InfoCardProps) {
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
   const content = (
     <>
       <View style={styles.row}>
         {icon ? (
           <View style={styles.icon}>
-            <Ionicons name={icon} size={20} color={palette.blue} />
+            <Ionicons name={icon} size={20} color={tokens.color.accent.default} />
           </View>
         ) : null}
         <View style={styles.text}>

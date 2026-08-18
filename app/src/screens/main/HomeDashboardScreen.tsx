@@ -17,7 +17,7 @@ import { usePremium } from "../../hooks/usePremium";
 
 export function HomeDashboardScreen() {
   const navigation = useNavigation<any>();
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
   const { completedExerciseIds, painEntries, trackerCheckIns } = useAppData();
   const { state } = useOnboarding();
   const exerciseProgress = Math.min(1, completedExerciseIds.length / 4);
@@ -35,13 +35,13 @@ export function HomeDashboardScreen() {
 
   return (
     <ScreenContainer>
-      <View style={[styles.headerHero, { backgroundColor: palette.blue }]}>
+      <View style={[styles.headerHero, { backgroundColor: tokens.color.accent.default }]}>
         <View>
           <Text style={styles.kicker}>AnklePath</Text>
           <Text style={styles.title}>Today's Recovery Plan</Text>
         </View>
         <View style={styles.headerIcon}>
-          <Ionicons name="footsteps" size={22} color={palette.blueDark} />
+          <Ionicons name="footsteps" size={22} color={tokens.color.accent.default} />
         </View>
         <View style={styles.statusCard}>
           <View style={styles.heroTop}>
@@ -79,12 +79,12 @@ export function HomeDashboardScreen() {
           onPress={openUpgrade}
           style={({ pressed }) => [
             styles.upgrade,
-            { backgroundColor: palette.surface, borderColor: palette.purple },
+            { backgroundColor: palette.surface, borderColor: tokens.color.accent.default },
             pressed && styles.pressed
           ]}
         >
-          <View style={[styles.upgradeIcon, { backgroundColor: palette.infoSoft }]}>
-            <Ionicons name="sparkles" size={20} color={palette.purple} />
+          <View style={[styles.upgradeIcon, { backgroundColor: tokens.color.accent.surface }]}>
+            <Ionicons name="sparkles" size={20} color={tokens.color.accent.default} />
           </View>
           <View style={styles.upgradeCopy}>
             <Text style={[styles.upgradeTitle, { color: palette.text }]}>Unlock your recovery report</Text>

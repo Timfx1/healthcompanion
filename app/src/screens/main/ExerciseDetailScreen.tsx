@@ -16,7 +16,7 @@ import { usePremium } from "../../hooks/usePremium";
 
 export function ExerciseDetailScreen() {
   const route = useRoute<RouteProp<MainStackParamList, "ExerciseDetail">>();
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
   const { completedExerciseIds, markExerciseComplete } = useAppData();
   const { locked } = usePremium();
   const exercise = allExercises.find((item) => item.id === route.params.exerciseId) ?? allExercises[0];
@@ -79,13 +79,13 @@ export function ExerciseDetailScreen() {
       <Pressable
         accessibilityRole="button"
         onPress={openVideo}
-        style={[styles.video, { backgroundColor: palette.infoSoft, borderColor: palette.borderSoft }]}
+        style={[styles.video, { backgroundColor: tokens.color.accent.surface, borderColor: palette.borderSoft }]}
       >
         <View style={[styles.playButton, { backgroundColor: palette.surface }]}>
-          <Ionicons name="play" size={42} color={palette.blue} />
+          <Ionicons name="play" size={42} color={tokens.color.accent.default} />
         </View>
         <Text style={[styles.videoText, { color: palette.textMuted }]}>Video guide placeholder</Text>
-        <Text style={[styles.videoSource, { color: palette.blue }]}>Open guide from {exercise.video.sourceName}</Text>
+        <Text style={[styles.videoSource, { color: tokens.color.accent.strong }]}>Open guide from {exercise.video.sourceName}</Text>
         <Text style={[styles.thumbnailHint, { color: palette.textMuted }]}>{exercise.video.thumbnailDescription}</Text>
       </Pressable>
       <Text style={[styles.title, { color: palette.text }]}>{exercise.name}</Text>
@@ -100,15 +100,15 @@ export function ExerciseDetailScreen() {
         <Pressable
           accessibilityRole="button"
           onPress={toggleTimer}
-          style={[styles.timerButton, { backgroundColor: isRunning ? palette.warningSoft : palette.teal }]}
+          style={[styles.timerButton, { backgroundColor: isRunning ? tokens.color.accent.surface : tokens.color.accent.default }]}
         >
-          <Ionicons name={isRunning ? "pause" : "play"} size={22} color={isRunning ? palette.amber : palette.background} />
+          <Ionicons name={isRunning ? "pause" : "play"} size={22} color={isRunning ? tokens.color.accent.strong : palette.background} />
         </Pressable>
         <View style={[styles.timerTrack, { backgroundColor: palette.surfaceMuted }]}>
-          <View style={[styles.timerFill, { width: `${progress * 100}%`, backgroundColor: palette.teal }]} />
+          <View style={[styles.timerFill, { width: `${progress * 100}%`, backgroundColor: tokens.color.accent.default }]} />
         </View>
         <Pressable onPress={resetTimer}>
-          <Text style={[styles.resetText, { color: palette.blue }]}>Reset timer</Text>
+          <Text style={[styles.resetText, { color: tokens.color.accent.strong }]}>Reset timer</Text>
         </Pressable>
       </View>
 
@@ -116,12 +116,12 @@ export function ExerciseDetailScreen() {
         <Text style={[styles.cardTitle, { color: palette.text }]}>Step-by-step</Text>
         {exercise.steps.map((step, index) => (
           <View key={step} style={styles.step}>
-            <Text style={[styles.stepNumber, { color: palette.background, backgroundColor: palette.blue }]}>{index + 1}</Text>
+            <Text style={[styles.stepNumber, { color: palette.background, backgroundColor: tokens.color.accent.default }]}>{index + 1}</Text>
             <Text style={[styles.stepText, { color: palette.text }]}>{step}</Text>
           </View>
         ))}
       </View>
-      <View style={[styles.card, { backgroundColor: palette.infoSoft, borderColor: palette.blue }]}>
+      <View style={[styles.card, { backgroundColor: tokens.color.accent.surface, borderColor: tokens.color.accent.default }]}>
         <Text style={[styles.cardTitle, { color: palette.text }]}>Sets / reps</Text>
         <Text style={[styles.purpose, { color: palette.textMuted }]}>{exercise.prescription}</Text>
       </View>

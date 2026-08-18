@@ -20,7 +20,7 @@ type PremiumLockCardProps = {
 // Navigates to the "upgrade" paywall (returns the user here after purchase/close).
 export function PremiumLockCard({ title, subtitle, benefits, sourceScreen }: PremiumLockCardProps) {
   const navigation = useNavigation<any>();
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
 
   useEffect(() => {
     trackEvent(AnalyticsEvents.premiumLockViewed, { sourceScreen });
@@ -34,10 +34,10 @@ export function PremiumLockCard({ title, subtitle, benefits, sourceScreen }: Pre
 
   return (
     <View style={[styles.card, { backgroundColor: palette.surface, borderColor: palette.borderSoft }]}>
-      <View style={[styles.iconWrap, { backgroundColor: palette.infoSoft, borderColor: palette.borderSoft }]}>
-        <Ionicons name="lock-closed" size={26} color={palette.purple} />
+      <View style={[styles.iconWrap, { backgroundColor: tokens.color.accent.surface, borderColor: palette.borderSoft }]}>
+        <Ionicons name="lock-closed" size={26} color={tokens.color.accent.default} />
       </View>
-      <Text style={[styles.kicker, { color: palette.purple }]}>Premium feature</Text>
+      <Text style={[styles.kicker, { color: tokens.color.accent.strong }]}>Premium feature</Text>
       <Text style={[styles.title, { color: palette.text }]}>{title}</Text>
       <Text style={[styles.subtitle, { color: palette.textMuted }]}>{subtitle}</Text>
 
@@ -45,7 +45,7 @@ export function PremiumLockCard({ title, subtitle, benefits, sourceScreen }: Pre
         <View style={styles.benefits}>
           {benefits.map((benefit) => (
             <View key={benefit} style={styles.benefit}>
-              <Ionicons name="sparkles" size={16} color={palette.purple} />
+              <Ionicons name="sparkles" size={16} color={tokens.color.accent.default} />
               <Text style={[styles.benefitText, { color: palette.text }]}>{benefit}</Text>
             </View>
           ))}

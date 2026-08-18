@@ -11,9 +11,9 @@ export const tabIconMap = {
 } as const satisfies Record<string, keyof typeof Ionicons.glyphMap>;
 
 export function getTabIcon(routeName: keyof typeof tabIconMap, focused: boolean, color: string, size: number) {
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
   return (
-    <View style={[styles.wrap, focused && { backgroundColor: palette.teal }]}>
+    <View style={[styles.wrap, focused && { backgroundColor: tokens.color.accent.default }]}>
       <Ionicons name={tabIconMap[routeName]} size={focused ? size + 1 : size} color={focused ? palette.background : color} />
     </View>
   );

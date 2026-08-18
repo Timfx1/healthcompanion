@@ -16,23 +16,17 @@ Being precise about this, because the gap matters:
 |---|---|
 | **Design system** (`design-system/`) | Real. One token source, two platforms, seven gates. |
 | **Web prototype** (`Onboarding Flow/`) | Real, and the reference implementation — 12 onboarding screens + 5 tabs, both colour modes. A Figma Make export, since evolved. |
-| **React Native app** (`app/`) | **Started.** The AnklePath `ActivatePayment` tree, copied in with fresh history. Its palette already comes from the token source; 172 sites await re-domaining. |
+| **React Native app** (`app/`) | **Started.** The AnklePath `ActivatePayment` tree, copied in with fresh history. Its palette comes from the token source; 169 of 172 colour references are re-domained, 3 deliberately stopped. |
 | **16 of 17 detail/modal screens** (§5) | Designed nowhere — not in Figma, not in code. Includes the Doctor Report, the flagship. |
 
 `tokens.native.ts` is now consumed by `app/`, vendored as
 `app/src/theme/tokens.generated.ts`.
 
-**The app's typecheck is red on purpose.** The generated palette maps only the
-structural neutrals — surfaces, text steps, borders — and deliberately omits
-every AnklePath key that carried *meaning*: `blue`, `teal`, `red`, `green`,
-`amber`, `purple` and the four `*Soft` status tints. 290 of 439 colour
-references swapped mechanically; the remaining 172 fail to compile so a person
-has to decide what each one meant. `palette.red`, for instance, currently
-colours a **Sign out** button — mapping it to the reserved safety hue would
-break the rule that hue exists to protect.
+**The app's typecheck is red on purpose, and now down to three.** The generated palette maps only structural neutrals and omits every AnklePath key that carried *meaning*, so each site failed to compile until a person decided what it meant. 290 of 439 references swapped mechanically and 169 of the remaining 172 have been re-domained with a documented reason each — see `DESIGN_CRITERIA.md` §11 for the table.
 
-The count is guarded by a ratchet (`checks/redomain.mjs`) that may only shrink,
-so the port cannot stall and no new `palette.blue` can appear.
+**Three were stopped rather than mapped.** `palette.red` and `dangerSoft` on the **Sign out** row mark a destructive action, and this system has no destructive role. Its only red is `safety.*`, which N3 reserves for red-flag guidance. Choosing between a neutral treatment, confirm-on-press, or a deliberate second red is a design decision, so the code is left failing with the options written at the site.
+
+`checks/redomain.mjs` holds the count at 3 and may only shrink.
 
 ---
 

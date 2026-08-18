@@ -36,7 +36,9 @@ const THEMES = {
       "accent": {
         "default": "#7C6FCD",
         "strong": "#9B8FE0",
-        "dim": "#3D3668"
+        "dim": "#3D3668",
+        "surface": "#7C6FCD22",
+        "edge": "#7C6FCD44"
       },
       "category": {
         "pain": {
@@ -435,7 +437,9 @@ const THEMES = {
       "accent": {
         "default": "#7C6FCD",
         "strong": "#6B5DBE",
-        "dim": "#3D3668"
+        "dim": "#3D3668",
+        "surface": "#7C6FCD22",
+        "edge": "#7C6FCD44"
       },
       "category": {
         "pain": {
@@ -744,8 +748,8 @@ const THEMES = {
           "lineHeight": 22,
           "tracking": 0
         },
-        "trendUp": "#A8D9B8",
-        "trendDown": "#F2A69E",
+        "trendUp": "#367B4D",
+        "trendDown": "#AE4571",
         "trendFlat": "#6B6890",
         "chartLine": "#7C6FCD",
         "chartGrid": "#E4E1F588"
@@ -952,7 +956,7 @@ export const scale = {
   }
 } as const;
 
-export function theme(mode: Mode) {
+export function theme(mode: Mode): Theme {
   return THEMES[mode];
 }
 
@@ -968,7 +972,7 @@ export function painStep(mode: Mode, score: number) {
   return THEMES[mode].color.painScale[String(i) as keyof Theme["color"]["painScale"]];
 }
 
-export type Theme = (typeof THEMES)["dark"];
+export type Theme = (typeof THEMES)[Mode];
 export type ColorRole = keyof Theme["color"];
 
 /**

@@ -7,11 +7,11 @@ type PhaseBadgeProps = {
 };
 
 export function PhaseBadge({ label }: PhaseBadgeProps) {
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
 
   return (
-    <View style={[styles.badge, { backgroundColor: palette.infoSoft, borderColor: palette.blue }]}>
-      <Text style={[styles.text, { color: palette.blueDark }]}>{label}</Text>
+    <View style={[styles.badge, { backgroundColor: tokens.color.accent.surface, borderColor: tokens.color.accent.default }]}>
+      <Text style={[styles.text, { color: tokens.color.accent.strong }]}>{label}</Text>
     </View>
   );
 }

@@ -10,7 +10,7 @@ import { walkingOptions } from "../../data/onboardingOptions";
 import { useOnboarding } from "../../state/OnboardingContext";
 import { AnalyticsEvents } from "../../services/analytics/events";
 import { trackEvent, trackOnboardingOptionSelected, trackOnboardingStepViewed } from "../../services/analytics/posthog";
-import { colors, spacing, typography } from "../../theme";
+import { colors, spacing, typography , tokens } from "../../theme";
 
 export function PainWalkingScreen() {
   const navigation = useNavigation<any>();
@@ -62,7 +62,7 @@ export function PainWalkingScreen() {
         label="Continue"
         // Both answers are required now that pain has no pre-selected default.
         disabled={state.pain === undefined || !state.walkingAbility}
-        style={{ backgroundColor: colors.blue, borderColor: colors.blue }}
+        style={{ backgroundColor: tokens.color.accent.default, borderColor: tokens.color.accent.default }}
         onPress={() => {
           trackEvent(AnalyticsEvents.onboardingStepCompleted, {
             stepName: "Pain and mobility",
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   painValue: {
     fontSize: 28,
     fontWeight: "800",
-    color: colors.blue
+    color: tokens.color.accent.strong
   },
   scale: {
     flexDirection: "row",
@@ -120,8 +120,8 @@ const styles = StyleSheet.create({
     borderColor: colors.border
   },
   painSelected: {
-    backgroundColor: colors.blue,
-    borderColor: colors.blue
+    backgroundColor: tokens.color.accent.default,
+    borderColor: tokens.color.accent.default
   },
   painText: {
     ...typography.bodyStrong,

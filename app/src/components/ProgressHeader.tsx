@@ -8,13 +8,13 @@ type ProgressHeaderProps = {
 };
 
 export function ProgressHeader({ step, total }: ProgressHeaderProps) {
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
   const progress = Math.max(0, Math.min(1, step / total));
 
   return (
     <View style={styles.wrap}>
       <View style={[styles.track, { backgroundColor: palette.surfaceMuted }]}>
-        <View style={[styles.fill, { width: `${progress * 100}%`, backgroundColor: palette.blue }]} />
+        <View style={[styles.fill, { width: `${progress * 100}%`, backgroundColor: tokens.color.accent.default }]} />
       </View>
       <Text style={[styles.label, { color: palette.textMuted }]}>
         Step {step} of {total}

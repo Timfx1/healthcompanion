@@ -62,8 +62,8 @@
     "$contract": "The headline sentence is the primary element and the chart supports it. Trend is icon PLUS word — never a bare colour or arrow.",
     "headline":  { "$type": "ref", "$value": "{color.text.primary}" },
     "headlineType": { "$type": "ref", "$value": "{type.insight}" },
-    "trendUp":   { "$type": "ref", "$value": "{color.category.mood.mark}",  "$description": "Paired with an explicit word such as \"Improving\"." },
-    "trendDown": { "$type": "ref", "$value": "{color.category.pain.mark}",  "$description": "Direction is not valence — falling pain is good. The WORD carries the meaning; colour only supports it." },
+    "trendUp":   { "$type": "ref", "$value": "{color.category.mood.ink}",  "$description": "INK, not mark. These roles colour a WORD (\"Improving\"), which is text, and mark fails as text on light — 1.47-1.96:1. They pointed at mark until the RN port tried to consume them, which would have reintroduced the exact defect the web prototype had just been cleaned of." },
+    "trendDown": { "$type": "ref", "$value": "{color.category.pain.ink}",  "$description": "INK, not mark — see trendUp. Direction is not valence: falling pain is good. The WORD carries the meaning; colour only supports it, which is also why this must never be the reserved safety hue." },
     "trendFlat": { "$type": "ref", "$value": "{color.text.secondary}" },
     "chartLine": { "$type": "ref", "$value": "{color.accent.default}" },
     "chartGrid": { "$type": "colorAlpha", "$value": { "base": "{color.surface.border}", "alpha": "{alpha.tint53}" } }

@@ -299,9 +299,9 @@ function emitWeb() {
   ts += "// Mode-resolved themes. `theme(mode).color.surface.raised` is already the\n// right value — there is no raw-value channel for a literal to sneak through.\n";
   ts += `const THEMES = ${JSON.stringify(resolved.modes, null, 2)} as const;\n\n`;
   ts += `export const scale = ${JSON.stringify(resolved.primitive, null, 2)} as const;\n\n`;
-  ts += `export function theme(mode: Mode) {\n  return THEMES[mode];\n}\n\n`;
+  ts += `export function theme(mode: Mode): Theme {\n  return THEMES[mode];\n}\n\n`;
   ts += PAIN_STEP;
-  ts += `export type Theme = (typeof THEMES)["dark"];\n`;
+  ts += `export type Theme = (typeof THEMES)[Mode];\n`;
   return ts;
 }
 
@@ -344,9 +344,9 @@ function emitNative() {
   ts += `export type Mode = "dark" | "light";\n\n`;
   ts += `const THEMES = ${JSON.stringify(resolved.modes, null, 2)} as const;\n\n`;
   ts += `export const scale = ${JSON.stringify(resolved.primitive, null, 2)} as const;\n\n`;
-  ts += `export function theme(mode: Mode) {\n  return THEMES[mode];\n}\n\n`;
+  ts += `export function theme(mode: Mode): Theme {\n  return THEMES[mode];\n}\n\n`;
   ts += PAIN_STEP;
-  ts += `export type Theme = (typeof THEMES)["dark"];\n`;
+  ts += `export type Theme = (typeof THEMES)[Mode];\n`;
   ts += `export type ColorRole = keyof Theme["color"];\n`;
   // AnklePath-shaped bridge for the RN port. Deliberately incomplete — see
   // build/emit-native-palette.mjs for which keys it refuses to map and why.

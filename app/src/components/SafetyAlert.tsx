@@ -8,11 +8,11 @@ type SafetyAlertProps = {
 };
 
 export function SafetyAlert({ text }: SafetyAlertProps) {
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
 
   return (
-    <View style={[styles.alert, { backgroundColor: palette.warningSoft, borderColor: palette.amber }]}>
-      <Ionicons name="warning" size={22} color={palette.amber} />
+    <View style={[styles.alert, { backgroundColor: tokens.color.safety.surface, borderColor: tokens.color.safety.mark }]}>
+      <Ionicons name="warning" size={22} color={tokens.color.safety.mark} />
       <Text style={[styles.text, { color: palette.text }]}>{text}</Text>
     </View>
   );

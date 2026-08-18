@@ -19,7 +19,7 @@ const MAX_TRACKED_QUERY_LENGTH = 60;
 export function LearnScreen() {
   const navigation = useNavigation<any>();
   const { savedArticles, toggleArticleSaved } = useAppData();
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
@@ -85,8 +85,8 @@ export function LearnScreen() {
               style={[
                 styles.chip,
                 {
-                  backgroundColor: active ? palette.blue : palette.surfaceRaised,
-                  borderColor: active ? palette.blue : palette.border
+                  backgroundColor: active ? tokens.color.accent.default : palette.surfaceRaised,
+                  borderColor: active ? tokens.color.accent.default : palette.border
                 }
               ]}
             >
@@ -108,8 +108,8 @@ export function LearnScreen() {
               onPress={() => navigation.navigate("ArticleDetail", { articleId: article.id })}
             >
               <Pressable onPress={() => toggleArticleSaved(article.title)} style={styles.saveRow}>
-                <Ionicons name={saved ? "bookmark" : "bookmark-outline"} size={18} color={palette.blue} />
-                <Text style={[styles.saveText, { color: palette.blue }]}>{saved ? "Saved" : "Save article"}</Text>
+                <Ionicons name={saved ? "bookmark" : "bookmark-outline"} size={18} color={tokens.color.accent.default} />
+                <Text style={[styles.saveText, { color: tokens.color.accent.strong }]}>{saved ? "Saved" : "Save article"}</Text>
               </Pressable>
             </InfoCard>
           );

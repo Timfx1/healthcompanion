@@ -20,7 +20,7 @@ initSentry();
 const navigationRef = createNavigationContainerRef();
 
 function ThemedAppShell() {
-  const { palette, isDark } = useAppTheme();
+  const { palette, isDark, tokens } = useAppTheme();
   const routeNameRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ function ThemedAppShell() {
       card: palette.surface,
       text: palette.text,
       border: palette.border,
-      primary: palette.teal
+      primary: tokens.color.accent.default
     }
   };
 

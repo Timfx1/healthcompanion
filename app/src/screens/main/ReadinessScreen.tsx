@@ -37,7 +37,7 @@ const VERDICT_COPY = {
 
 export function ReadinessScreen() {
   const navigation = useNavigation<any>();
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
   const { painEntries, trackerCheckIns, completedExerciseIds } = useAppData();
   const { locked } = usePremium();
 
@@ -82,14 +82,14 @@ export function ReadinessScreen() {
 
       {!readiness.hasData ? (
         <View style={[styles.empty, { backgroundColor: palette.surface, borderColor: palette.borderSoft }]}>
-          <Ionicons name="clipboard-outline" size={34} color={palette.blue} />
+          <Ionicons name="clipboard-outline" size={34} color={tokens.color.accent.default} />
           <Text style={[styles.emptyTitle, { color: palette.text }]}>Nothing logged yet</Text>
           <Text style={[styles.emptyText, { color: palette.textMuted }]}>
             These are the four signs this screen will track for you once you start logging on the Track tab.
           </Text>
         </View>
       ) : (
-        <View style={[styles.scoreCard, { backgroundColor: palette.infoSoft, borderColor: palette.blue }]}>
+        <View style={[styles.scoreCard, { backgroundColor: tokens.color.accent.surface, borderColor: tokens.color.accent.default }]}>
           <View style={styles.scoreRow}>
             <Text style={[styles.score, { color: palette.text }]}>
               {metCount}
@@ -101,7 +101,7 @@ export function ReadinessScreen() {
             </View>
           </View>
           <View style={[styles.track, { backgroundColor: palette.surfaceMuted }]}>
-            <View style={[styles.fill, { width: `${readiness.score}%`, backgroundColor: palette.teal }]} />
+            <View style={[styles.fill, { width: `${readiness.score}%`, backgroundColor: tokens.color.accent.default }]} />
           </View>
         </View>
       )}
@@ -124,7 +124,7 @@ export function ReadinessScreen() {
           pressed && styles.pressed
         ]}
       >
-        <Ionicons name="book-outline" size={18} color={palette.blue} />
+        <Ionicons name="book-outline" size={18} color={tokens.color.accent.default} />
         <Text style={[styles.readMoreText, { color: palette.text }]}>Read: When can I return to sport?</Text>
         <Ionicons name="chevron-forward" size={18} color={palette.textSubtle} />
       </Pressable>
@@ -143,9 +143,10 @@ function CriterionRow({
 }) {
   // With no logs at all, show the criteria as a neutral goal list rather than
   // four red crosses on a brand new user's first visit.
+  const { tokens } = useAppTheme();
   const showAsGoal = !hasData;
   const iconName = showAsGoal ? "ellipse-outline" : criterion.met ? "checkmark-circle" : "close-circle";
-  const iconColor = showAsGoal ? palette.textSubtle : criterion.met ? palette.green : palette.amber;
+  const iconColor = showAsGoal ? palette.textSubtle : criterion.met ? tokens.pattern.insight.trendUp : palette.textMuted;
 
   return (
     <View style={[styles.criterion, { backgroundColor: palette.surface, borderColor: palette.borderSoft }]}>

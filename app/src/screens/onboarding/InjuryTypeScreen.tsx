@@ -10,7 +10,7 @@ import { injuryTypes } from "../../data/onboardingOptions";
 import { useOnboarding } from "../../state/OnboardingContext";
 import { AnalyticsEvents } from "../../services/analytics/events";
 import { trackEvent, trackOnboardingOptionSelected, trackOnboardingStepViewed } from "../../services/analytics/posthog";
-import { colors, spacing, typography } from "../../theme";
+import { colors, spacing, typography , tokens } from "../../theme";
 
 const injuryTypeIcons: (keyof typeof Ionicons.glyphMap)[] = [
   "information-circle-outline",
@@ -55,7 +55,7 @@ export function InjuryTypeScreen() {
       <AppButton
         label="Continue"
         disabled={!state.injuryType}
-        style={{ backgroundColor: colors.blue, borderColor: colors.blue }}
+        style={{ backgroundColor: tokens.color.accent.default, borderColor: tokens.color.accent.default }}
         onPress={() => {
           trackEvent(AnalyticsEvents.onboardingStepCompleted, { stepName: "Injury stage", stepNumber: 1, injuryType: state.injuryType });
           navigation.navigate("InjuryTiming");

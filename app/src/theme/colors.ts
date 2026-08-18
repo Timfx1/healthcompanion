@@ -22,7 +22,7 @@
 // site using one fails to compile and has to be re-domained by a person.
 // ============================================================
 
-import { appPalette } from "./tokens.generated";
+import { appPalette, theme } from "./tokens.generated";
 
 /**
  * Light-mode palette for onboarding.
@@ -32,3 +32,13 @@ import { appPalette } from "./tokens.generated";
  * to light; it is not a licence to add new light-only screens.
  */
 export const colors = appPalette("light");
+
+/**
+ * The Recovery Companion token tree, pinned to light — the destination for
+ * re-domained onboarding code, matching `useAppTheme().tokens` in the main app.
+ *
+ * Pinned rather than mode-aware for the same reason `colors` is: onboarding
+ * runs before the theme toggle is reachable. When onboarding becomes
+ * mode-aware, this export is what should be deleted first.
+ */
+export const tokens = theme("light");

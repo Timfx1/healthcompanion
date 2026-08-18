@@ -20,6 +20,8 @@
   --color-accent-default: #7C6FCD;
   --color-accent-strong: #9B8FE0;
   --color-accent-dim: #3D3668;
+  --color-accent-surface: #7C6FCD22;
+  --color-accent-edge: #7C6FCD44;
   --color-category-pain-mark: #F2A69E;
   --color-category-pain-ink: #F2A69E;
   --color-category-pain-onMark: #1A1830;
@@ -132,6 +134,8 @@
   --color-accent-default: #7C6FCD;
   --color-accent-strong: #6B5DBE;
   --color-accent-dim: #3D3668;
+  --color-accent-surface: #7C6FCD22;
+  --color-accent-edge: #7C6FCD44;
   --color-category-pain-mark: #F2A69E;
   --color-category-pain-ink: #AE4571;
   --color-category-pain-onMark: #1A1830;

@@ -18,7 +18,7 @@ const painLocations = ["Outside ankle", "Inside ankle", "Front ankle", "Achilles
 export function PainCheckInScreen() {
   const navigation = useNavigation<any>();
   const { savePainEntry } = useAppData();
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
   // No pre-selected score: the user has to report their own number rather than
   // silently accepting ours, which would log a check-in they never made.
   const [pain, setPain] = useState<number | undefined>(undefined);
@@ -75,7 +75,7 @@ export function PainCheckInScreen() {
             style={[
               styles.pill,
               { backgroundColor: palette.surface, borderColor: palette.border },
-              pain === value && { backgroundColor: palette.teal, borderColor: palette.teal }
+              pain === value && { backgroundColor: tokens.color.accent.default, borderColor: tokens.color.accent.default }
             ]}
           >
             <Text style={[styles.pillText, { color: pain === value ? palette.background : palette.text }]}>{value}</Text>

@@ -20,7 +20,7 @@ import { getPremiumOffer, purchasePremiumPackage, restorePremiumPurchases, Premi
 export function TrialPaywallScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<RouteProp<OnboardingStackParamList, "TrialPaywall">>();
-  const { palette } = useAppTheme();
+  const { palette , tokens } = useAppTheme();
   const { state } = useOnboarding();
   const { setPremiumActive } = useAppData();
   const [isPurchasing, setIsPurchasing] = useState(false);
@@ -187,10 +187,10 @@ export function TrialPaywallScreen() {
   return (
     <ScreenContainer contentStyle={styles.content}>
       <View style={styles.header}>
-        <View style={[styles.iconWrap, { backgroundColor: palette.infoSoft, borderColor: palette.borderSoft }]}>
-          <Ionicons name="shield-checkmark" size={30} color={palette.teal} />
+        <View style={[styles.iconWrap, { backgroundColor: tokens.color.accent.surface, borderColor: palette.borderSoft }]}>
+          <Ionicons name="shield-checkmark" size={30} color={tokens.color.accent.default} />
         </View>
-        <Text style={[styles.kicker, { color: palette.purple }]}>Premium recovery plan</Text>
+        <Text style={[styles.kicker, { color: tokens.color.accent.strong }]}>Premium recovery plan</Text>
         <Text style={[styles.title, { color: palette.text }]}>Recover with full guidance</Text>
         <Text style={[styles.subtext, { color: palette.textMuted }]}>
           Add deeper tracking, smarter progression, and return-to-sport tools when you are ready.
@@ -200,11 +200,11 @@ export function TrialPaywallScreen() {
       <View style={[styles.offerCard, { backgroundColor: palette.surface, borderColor: palette.borderSoft }]}>
         <View style={styles.offerTopRow}>
           <View>
-            <Text style={[styles.trial, { color: palette.tealDark }]}>{trialText}</Text>
+            <Text style={[styles.trial, { color: tokens.color.accent.strong }]}>{trialText}</Text>
             <Text style={[styles.price, { color: palette.text }]}>{priceText}</Text>
           </View>
-          <View style={[styles.badge, { backgroundColor: palette.successSoft }]}>
-            <Text style={[styles.badgeText, { color: palette.green }]}>No charge today</Text>
+          <View style={[styles.badge, { backgroundColor: tokens.color.accent.surface }]}>
+            <Text style={[styles.badgeText, { color: tokens.color.category.mood.ink }]}>No charge today</Text>
           </View>
         </View>
         <Text style={[styles.offerNote, { color: palette.textMuted }]}>
@@ -215,8 +215,8 @@ export function TrialPaywallScreen() {
       <View style={[styles.card, { backgroundColor: palette.surface, borderColor: palette.borderSoft }]}>
         {PAYWALL_COPY.benefits.map((feature) => (
           <View key={feature} style={styles.feature}>
-            <View style={[styles.check, { backgroundColor: palette.infoSoft }]}>
-              <Ionicons name="checkmark" size={17} color={palette.blue} />
+            <View style={[styles.check, { backgroundColor: tokens.color.accent.surface }]}>
+              <Ionicons name="checkmark" size={17} color={tokens.color.accent.default} />
             </View>
             <Text style={[styles.featureText, { color: palette.text }]}>{feature}</Text>
           </View>
@@ -255,11 +255,11 @@ export function TrialPaywallScreen() {
       </Text>
       <View style={styles.legalRow}>
         <Pressable accessibilityRole="link" onPress={() => openLegal(LEGAL.termsUrl)}>
-          <Text style={[styles.legalLink, { color: palette.blue }]}>Terms of Use</Text>
+          <Text style={[styles.legalLink, { color: tokens.color.accent.strong }]}>Terms of Use</Text>
         </Pressable>
         <Text style={[styles.legalDot, { color: palette.textSubtle }]}>·</Text>
         <Pressable accessibilityRole="link" onPress={() => openLegal(LEGAL.privacyUrl)}>
-          <Text style={[styles.legalLink, { color: palette.blue }]}>Privacy Policy</Text>
+          <Text style={[styles.legalLink, { color: tokens.color.accent.strong }]}>Privacy Policy</Text>
         </Pressable>
       </View>
     </ScreenContainer>

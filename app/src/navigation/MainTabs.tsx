@@ -12,7 +12,7 @@ import { ProfileScreen } from "../screens/main/ProfileScreen";
 const Tab = createBottomTabNavigator<MainTabsParamList>();
 
 export function MainTabs() {
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
 
   return (
     <Tab.Navigator
@@ -25,7 +25,7 @@ export function MainTabs() {
           paddingTop: 9,
           paddingBottom: 12
         },
-        tabBarActiveTintColor: palette.teal,
+        tabBarActiveTintColor: tokens.color.accent.default,
         tabBarInactiveTintColor: palette.textSubtle,
         tabBarLabelStyle: {
           ...typography.tiny,

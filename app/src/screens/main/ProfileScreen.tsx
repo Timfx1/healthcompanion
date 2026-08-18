@@ -30,7 +30,7 @@ import { LEGAL } from "../../config/legal";
 export function ProfileScreen() {
   const navigation = useNavigation<any>();
   const { state, resetOnboarding } = useOnboarding();
-  const { palette, isDark, toggleMode } = useAppTheme();
+  const { palette, isDark, toggleMode , tokens } = useAppTheme();
   const {
     savedArticles,
     painEntries,
@@ -259,7 +259,7 @@ export function ProfileScreen() {
 
   return (
     <ScreenContainer>
-      <View style={[styles.header, { backgroundColor: palette.blue }]}>
+      <View style={[styles.header, { backgroundColor: tokens.color.accent.default }]}>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={isRegistered ? "Change profile picture" : "Profile picture unavailable for guest accounts"}
@@ -269,10 +269,10 @@ export function ProfileScreen() {
           {profile.photoUri ? (
             <Image source={{ uri: profile.photoUri }} style={styles.avatarImage} />
           ) : (
-            <Ionicons name="person" size={32} color={palette.blueDark} />
+            <Ionicons name="person" size={32} color={tokens.color.accent.default} />
           )}
           {isRegistered ? (
-            <View style={[styles.cameraBadge, { backgroundColor: palette.teal }]}>
+            <View style={[styles.cameraBadge, { backgroundColor: tokens.color.accent.default }]}>
               <Ionicons name="camera" size={13} color={palette.white} />
             </View>
           ) : null}
@@ -323,7 +323,7 @@ export function ProfileScreen() {
       <ProfileSection title="Settings">
         <View style={[styles.settingRow, { backgroundColor: palette.surface, borderColor: palette.borderSoft }]}>
           <View style={styles.settingIcon}>
-            <Ionicons name={isDark ? "moon" : "sunny"} size={20} color={palette.blue} />
+            <Ionicons name={isDark ? "moon" : "sunny"} size={20} color={tokens.color.accent.default} />
           </View>
           <View style={styles.settingCopy}>
             <Text style={[styles.settingTitle, { color: palette.text }]}>Dark mode</Text>
@@ -334,13 +334,13 @@ export function ProfileScreen() {
           <Switch
             value={isDark}
             onValueChange={toggleMode}
-            trackColor={{ false: palette.surfaceMuted, true: palette.teal }}
+            trackColor={{ false: palette.surfaceMuted, true: tokens.color.accent.default }}
             thumbColor={palette.white}
           />
         </View>
         <View style={[styles.settingRow, { backgroundColor: palette.surface, borderColor: palette.borderSoft }]}>
           <View style={styles.settingIcon}>
-            <Ionicons name="stats-chart" size={20} color={palette.blue} />
+            <Ionicons name="stats-chart" size={20} color={tokens.color.accent.default} />
           </View>
           <View style={styles.settingCopy}>
             <Text style={[styles.settingTitle, { color: palette.text }]}>Product analytics</Text>
@@ -353,7 +353,7 @@ export function ProfileScreen() {
           <Switch
             value={analytics.granted}
             onValueChange={toggleAnalyticsConsent}
-            trackColor={{ false: palette.surfaceMuted, true: palette.teal }}
+            trackColor={{ false: palette.surfaceMuted, true: tokens.color.accent.default }}
             thumbColor={palette.white}
           />
         </View>
@@ -394,6 +394,32 @@ export function ProfileScreen() {
             pressed && styles.signOutPressed
           ]}
         >
+          {/* ────────────────────────────────────────────────────────────────
+              STOPPED, NOT SOLVED — this block does not compile, on purpose.
+
+              These three references are the only colours in the port with NO
+              Recovery Companion equivalent. They mark a DESTRUCTIVE ACTION
+              (sign out), and the design system has no destructive role.
+
+              The one red it owns is `safety.*`, and N3 reserves that for
+              red-flag health guidance — "never decorative, never for emphasis,
+              never for a 'bad' data point". A sign-out button is none of those
+              things, and spending the alert hue on it is exactly how an app
+              stops being believed when it finally means it. That rule is worth
+              more than this button.
+
+              Three options, all of which are a DESIGN decision rather than a
+              mapping one, which is why nothing was invented here:
+                1. Neutral treatment — text.secondary, no colour at all. Sign
+                   out is not dangerous; it is reversible in one tap.
+                2. Confirm on press and drop the colour entirely.
+                3. Add a deliberate `destructive.*` role, accepting that the
+                   product now has two reds and that the reserved one is a
+                   little less unique for it.
+
+              Left failing so the choice is made by a person, not by whoever
+              needed the build green.
+              ──────────────────────────────────────────────────────────────── */}
           <View style={[styles.signOutIcon, { backgroundColor: palette.dangerSoft }]}>
             <Ionicons name="log-out-outline" size={20} color={palette.red} />
           </View>
@@ -444,8 +470,8 @@ export function ProfileScreen() {
         />
       </ProfileSection>
 
-      <View style={[styles.disclaimer, { backgroundColor: palette.infoSoft, borderColor: palette.blue }]}>
-        <Ionicons name="shield-checkmark" size={24} color={palette.blue} />
+      <View style={[styles.disclaimer, { backgroundColor: tokens.color.accent.surface, borderColor: tokens.color.accent.default }]}>
+        <Ionicons name="shield-checkmark" size={24} color={tokens.color.accent.default} />
         <View style={styles.disclaimerCopy}>
           <Text style={[styles.disclaimerTitle, { color: palette.text }]}>Medical disclaimer</Text>
           <Text style={[styles.disclaimerText, { color: palette.textMuted }]}>

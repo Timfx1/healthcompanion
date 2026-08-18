@@ -215,6 +215,27 @@ The third matters most: `99939ec` is the exact commit that claimed to have clear
 
 **So it stays open, and CI stays advisory.** A shared runner is slower and more contended than this machine, which appears to be the condition that matters; the workflow uploads a trace on failure. That is where the answer will come from, not from a local loop.
 
+### The React Native re-domain — one colour genuinely has no home
+
+169 of the 172 AnklePath colour references now resolve to Recovery Companion roles. Each mapping has a reason, not a resemblance:
+
+| AnklePath | Becomes | Why |
+|---|---|---|
+| `teal` (action), `blue` (informational) | `accent.default` / `accent.strong` | AnklePath ran **two** accents. §2 mandates one. The distinction they carried must be re-made by hierarchy — size, weight, placement — not by a second hue. |
+| `purple` | `accent.*` | It marked premium everywhere. Recovery Companion has no premium *hue*: premium is the lock badge, the word, and the accent. |
+| `infoSoft`, `successSoft` | `accent.surface` | Accent-tinted containers. |
+| `amber` + `warningSoft` **in SafetyAlert** | `safety.mark` / `safety.surface` | The one place N3 permits the reserved hue — this *is* the red-flag surface. |
+| `green` on completion | `accent.default` | Done/active is the accent's job (cf. `accumulation.dotFilled`). Category hues stay reserved for the five data types. |
+| `green`/`amber`/`red` as a tone scale | `insight.trendUp/Down/Flat` | Tone already carries an icon and a word, so colour only supports it. Deliberately **not** a traffic light: "bad" must never reach for the safety hue. |
+| `green`/`amber`/`red` by pain score | `painStep(mode, n)` | This *was* the pain scale, hardcoded — and its top step put the reserved hue on a data point. |
+| `green` on celebration copy | `category.mood.*` | Direct precedent: the web prototype paints "FREE PLAN UNLOCKED" and "SAVE 40%" the same way. |
+
+**Three references were stopped rather than mapped.** `palette.red` and `palette.dangerSoft` on the **Sign out** row mark a *destructive action*, and this design system has no destructive role. The only red it owns is `safety.*`, which N3 reserves for red-flag guidance — "never decorative, never for emphasis, never for a 'bad' data point". Sign out is none of those, and spending the alert hue on it is how an app stops being believed when it finally means it.
+
+That is a design decision (neutral treatment? confirm-on-press? a deliberate second red?), not a mapping one, so the code is **left failing** with the options written at the site. `checks/redomain.mjs` holds the count at 3.
+
+Two token changes fell out of the port, both closing older gaps: `accent.surface`/`accent.edge` name a value the system already used five times without a general name, and `insight.trendUp`/`trendDown` were repointed from `mark` to `ink` — they colour a *word*, and consuming them as written would have reintroduced the mark-as-text defect §11 already records.
+
 ### Open — found, measured, not yet fixed
 
 **The manifest is still hand-maintained.** Nothing verifies it covers what the screens render. The sweep above was done by reading code; the next undeclared combination will be exactly as invisible as these six were.
@@ -287,6 +308,8 @@ Every semantic colour, both modes, as the emitters hand them to the app. A role 
 | `accent.default` | `#7C6FCD` | `#7C6FCD` |
 | `accent.strong` | `#9B8FE0` | `#6B5DBE` |
 | `accent.dim` | `#3D3668` | `#3D3668` |
+| `accent.surface` | `#7C6FCD22` | `#7C6FCD22` |
+| `accent.edge` | `#7C6FCD44` | `#7C6FCD44` |
 | `category.pain.mark` | `#F2A69E` | `#F2A69E` |
 | `category.pain.ink` | `#F2A69E` | `#AE4571` |
 | `category.pain.onMark` | `#1A1830` | `#1A1830` |
@@ -364,8 +387,8 @@ Product concepts with fixed contracts, defined once so they cannot drift between
 | `historyFade.pillEdge` | `#7C6FCD44` | `#7C6FCD44` |
 | `historyFade.pillLabel` | `#9B8FE0` | `#6B5DBE` |
 | `insight.headline` | `#F0EFFE` | `#1A1830` |
-| `insight.trendUp` | `#A8D9B8` | `#A8D9B8` |
-| `insight.trendDown` | `#F2A69E` | `#F2A69E` |
+| `insight.trendUp` | `#A8D9B8` | `#367B4D` |
+| `insight.trendDown` | `#F2A69E` | `#AE4571` |
 | `insight.trendFlat` | `#9B97B8` | `#6B6890` |
 | `insight.chartLine` | `#7C6FCD` | `#7C6FCD` |
 | `insight.chartGrid` | `#2E2C4588` | `#E4E1F588` |

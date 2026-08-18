@@ -17,7 +17,7 @@ import { colors, spacing, typography } from "../../theme";
 
 export function ConsentScreen() {
   const navigation = useNavigation<any>();
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
   const { grantHealthConsent, setAnalyticsConsent } = useConsent();
   // Both start unticked: pre-ticked boxes are not valid consent under GDPR.
   const [healthAccepted, setHealthAccepted] = useState(false);
@@ -66,7 +66,7 @@ export function ConsentScreen() {
         </Text>
       </View>
 
-      <View style={[styles.infoBox, { backgroundColor: palette.infoSoft, borderColor: palette.blue }]}>
+      <View style={[styles.infoBox, { backgroundColor: tokens.color.accent.surface, borderColor: tokens.color.accent.default }]}>
         <Text style={[styles.infoTitle, { color: palette.text }]}>What we store and why</Text>
         <Text style={[styles.infoText, { color: palette.textMuted }]}>
           Your injury type, symptoms, walking ability, recovery goal, pain check-ins and any notes you write are used
@@ -93,18 +93,18 @@ export function ConsentScreen() {
 
       <View style={styles.links}>
         <Pressable accessibilityRole="link" onPress={() => WebBrowser.openBrowserAsync(LEGAL.privacyUrl)}>
-          <Text style={[styles.linkText, { color: palette.teal }]}>Privacy Policy</Text>
+          <Text style={[styles.linkText, { color: tokens.color.accent.strong }]}>Privacy Policy</Text>
         </Pressable>
         <Text style={[styles.linkDivider, { color: palette.textMuted }]}>·</Text>
         <Pressable accessibilityRole="link" onPress={() => WebBrowser.openBrowserAsync(LEGAL.termsUrl)}>
-          <Text style={[styles.linkText, { color: palette.teal }]}>Terms of Use</Text>
+          <Text style={[styles.linkText, { color: tokens.color.accent.strong }]}>Terms of Use</Text>
         </Pressable>
       </View>
 
       <AppButton
         label="Agree and continue"
         disabled={!healthAccepted}
-        style={{ backgroundColor: colors.blue, borderColor: colors.blue }}
+        style={{ backgroundColor: tokens.color.accent.default, borderColor: tokens.color.accent.default }}
         onPress={continueToOnboarding}
       />
     </ScreenContainer>
@@ -122,7 +122,7 @@ function ConsentCheckbox({
   label: string;
   caption: string;
 }) {
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
 
   return (
     <Pressable
@@ -132,15 +132,15 @@ function ConsentCheckbox({
       onPress={onToggle}
       style={({ pressed }) => [
         styles.choiceRow,
-        { backgroundColor: palette.surface, borderColor: checked ? palette.blue : palette.borderSoft },
+        { backgroundColor: palette.surface, borderColor: checked ? tokens.color.accent.default : palette.borderSoft },
         pressed && styles.pressed
       ]}
     >
       <View
         style={[
           styles.checkbox,
-          { borderColor: checked ? palette.blue : palette.border },
-          checked && { backgroundColor: palette.blue }
+          { borderColor: checked ? tokens.color.accent.default : palette.border },
+          checked && { backgroundColor: tokens.color.accent.default }
         ]}
       >
         {checked ? <Ionicons name="checkmark" size={16} color={palette.white} /> : null}

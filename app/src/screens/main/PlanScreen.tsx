@@ -20,7 +20,7 @@ export function PlanScreen() {
   const navigation = useNavigation<any>();
   const { completedExerciseIds, toggleExerciseComplete, painEntries, trackerCheckIns } = useAppData();
   const { state: onboarding } = useOnboarding();
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
   const { locked } = usePremium();
   const completedCount = completedExerciseIds.length;
 
@@ -55,11 +55,11 @@ export function PlanScreen() {
       <View style={[styles.progressCard, { backgroundColor: palette.surface, borderColor: palette.borderSoft }]}>
         <View style={styles.progressRow}>
           <Text style={[styles.progressTitle, { color: palette.text }]}>Recovery stage</Text>
-          <Text style={[styles.progressCount, { color: palette.blue }]}>{Math.round(progression.progress * 100)}%</Text>
+          <Text style={[styles.progressCount, { color: tokens.color.accent.strong }]}>{Math.round(progression.progress * 100)}%</Text>
         </View>
         <View style={[styles.track, { backgroundColor: palette.surfaceMuted }]}>
           <View
-            style={[styles.fill, { width: `${progression.progress * 100}%`, backgroundColor: palette.teal }]}
+            style={[styles.fill, { width: `${progression.progress * 100}%`, backgroundColor: tokens.color.accent.default }]}
           />
         </View>
         <Text style={[styles.phaseFocus, { color: palette.textMuted }]}>
@@ -79,7 +79,7 @@ export function PlanScreen() {
       <View style={[styles.progressCard, { backgroundColor: palette.surface, borderColor: palette.borderSoft }]}>
         <View style={styles.progressRow}>
           <Text style={[styles.progressTitle, { color: palette.text }]}>Today's exercises</Text>
-          <Text style={[styles.progressCount, { color: palette.blue }]}>
+          <Text style={[styles.progressCount, { color: tokens.color.accent.strong }]}>
             {completedCount}/{exercises.length}
           </Text>
         </View>
@@ -89,7 +89,7 @@ export function PlanScreen() {
               styles.fill,
               {
                 width: `${(completedCount / exercises.length) * 100}%`,
-                backgroundColor: palette.green
+                backgroundColor: tokens.color.accent.default
               }
             ]}
           />
@@ -105,8 +105,8 @@ export function PlanScreen() {
               style={({ pressed }) => [
                 styles.exercise,
                 {
-                  backgroundColor: isCompleted ? palette.successSoft : palette.surface,
-                  borderColor: isCompleted ? palette.green : palette.borderSoft
+                  backgroundColor: isCompleted ? tokens.color.accent.surface : palette.surface,
+                  borderColor: isCompleted ? tokens.color.accent.default : palette.borderSoft
                 },
                 pressed && styles.pressed
               ]}
@@ -122,8 +122,8 @@ export function PlanScreen() {
                 style={[
                   styles.checkbox,
                   {
-                    backgroundColor: isCompleted ? palette.green : "transparent",
-                    borderColor: isCompleted ? palette.green : palette.border
+                    backgroundColor: isCompleted ? tokens.color.accent.default : "transparent",
+                    borderColor: isCompleted ? tokens.color.accent.default : palette.border
                   }
                 ]}
               >
@@ -132,7 +132,7 @@ export function PlanScreen() {
               <View style={styles.exerciseText}>
                 <Text style={[styles.exerciseName, { color: palette.text }]}>{exercise.name}</Text>
                 <Text style={[styles.purpose, { color: palette.textMuted }]}>{exercise.purpose}</Text>
-                <Text style={[styles.meta, { color: palette.blue }]}>
+                <Text style={[styles.meta, { color: tokens.color.accent.strong }]}>
                   {exercise.prescription} · {exercise.difficulty}
                 </Text>
               </View>
@@ -144,9 +144,9 @@ export function PlanScreen() {
 
       <View style={styles.libraryHeader}>
         <Text style={[styles.sectionTitle, { color: palette.text }]}>Extended library</Text>
-        <View style={[styles.premiumTag, { backgroundColor: palette.infoSoft }]}>
-          <Ionicons name={locked ? "lock-closed" : "sparkles"} size={12} color={palette.purple} />
-          <Text style={[styles.premiumTagText, { color: palette.purple }]}>Premium</Text>
+        <View style={[styles.premiumTag, { backgroundColor: tokens.color.accent.surface }]}>
+          <Ionicons name={locked ? "lock-closed" : "sparkles"} size={12} color={tokens.color.accent.default} />
+          <Text style={[styles.premiumTagText, { color: tokens.color.accent.strong }]}>Premium</Text>
         </View>
       </View>
       <Text style={[styles.librarySubtitle, { color: palette.textMuted }]}>
@@ -166,13 +166,13 @@ export function PlanScreen() {
             ]}
             onPress={() => openPremiumExercise(exercise.id)}
           >
-            <View style={[styles.lockBadge, { backgroundColor: palette.infoSoft }]}>
-              <Ionicons name={locked ? "lock-closed" : "sparkles"} size={16} color={palette.purple} />
+            <View style={[styles.lockBadge, { backgroundColor: tokens.color.accent.surface }]}>
+              <Ionicons name={locked ? "lock-closed" : "sparkles"} size={16} color={tokens.color.accent.default} />
             </View>
             <View style={styles.exerciseText}>
               <Text style={[styles.exerciseName, { color: palette.text }]}>{exercise.name}</Text>
               <Text style={[styles.purpose, { color: palette.textMuted }]}>{exercise.purpose}</Text>
-              <Text style={[styles.meta, { color: palette.blue }]}>
+              <Text style={[styles.meta, { color: tokens.color.accent.strong }]}>
                 {exercise.prescription} · {exercise.difficulty}
               </Text>
             </View>
@@ -200,11 +200,12 @@ function ProgressionCard({
   onOpenSafety: () => void;
   onOpenExercise: (exerciseId: string) => void;
 }) {
+  const { tokens } = useAppTheme();
   const easeBack = progression.recommendation === "ease_back";
   const advance = progression.recommendation === "advance";
 
-  const accent = easeBack ? palette.amber : advance ? palette.green : palette.blue;
-  const accentSoft = easeBack ? palette.warningSoft : advance ? palette.successSoft : palette.infoSoft;
+  const accent = easeBack ? tokens.pattern.insight.trendDown : advance ? tokens.pattern.insight.trendUp : tokens.color.accent.default;
+  const accentSoft = tokens.color.accent.surface;
   const heading = easeBack
     ? "Ease back for now"
     : advance
@@ -257,7 +258,7 @@ function ProgressionCard({
                   pressed && styles.pressed
                 ]}
               >
-                <Ionicons name="sparkles" size={15} color={palette.purple} />
+                <Ionicons name="sparkles" size={15} color={tokens.color.accent.default} />
                 <Text style={[styles.suggestionText, { color: palette.text }]}>{exercise.name}</Text>
                 <Ionicons name="chevron-forward" size={16} color={palette.textSubtle} />
               </Pressable>

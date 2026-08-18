@@ -20,7 +20,7 @@ function isToday(iso: string) {
 export function TrackScreen() {
   const navigation = useNavigation<any>();
   const { painEntries, trackerCheckIns } = useAppData();
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
 
   const trackerSubtitle = (key: TrackerKey) => {
     const latest = trackerCheckIns.find((entry) => entry.key === key);
@@ -44,8 +44,8 @@ export function TrackScreen() {
   return (
     <ScreenContainer>
       <Text style={[styles.title, { color: palette.text }]}>Track Recovery</Text>
-      <View style={[styles.trend, { backgroundColor: palette.infoSoft, borderColor: palette.blue }]}>
-        <Text style={[styles.trendLabel, { color: palette.blue }]}>Recent trend</Text>
+      <View style={[styles.trend, { backgroundColor: tokens.color.accent.surface, borderColor: tokens.color.accent.default }]}>
+        <Text style={[styles.trendLabel, { color: tokens.color.accent.strong }]}>Recent trend</Text>
         <Text style={[styles.trendText, { color: palette.text }]}>{trend}</Text>
       </View>
       <View style={styles.list}>

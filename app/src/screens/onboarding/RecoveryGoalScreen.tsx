@@ -10,7 +10,7 @@ import { recoveryGoals } from "../../data/onboardingOptions";
 import { useOnboarding } from "../../state/OnboardingContext";
 import { AnalyticsEvents } from "../../services/analytics/events";
 import { trackEvent, trackOnboardingOptionSelected, trackOnboardingStepViewed } from "../../services/analytics/posthog";
-import { colors, spacing, typography } from "../../theme";
+import { colors, spacing, typography , tokens } from "../../theme";
 
 const goalIcons: (keyof typeof Ionicons.glyphMap)[] = [
   "footsteps-outline",
@@ -54,7 +54,7 @@ export function RecoveryGoalScreen() {
       <AppButton
         label="Continue"
         disabled={!state.goal}
-        style={{ backgroundColor: colors.blue, borderColor: colors.blue }}
+        style={{ backgroundColor: tokens.color.accent.default, borderColor: tokens.color.accent.default }}
         onPress={() => {
           trackEvent(AnalyticsEvents.onboardingStepCompleted, { stepName: "Recovery goal", stepNumber: 5, recoveryGoal: state.goal });
           navigation.navigate("Notifications");

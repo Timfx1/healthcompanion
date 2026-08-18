@@ -8,6 +8,7 @@ import { exercises } from "../../data/mockRecoveryPlan";
 import { trackerConfigs } from "../../data/trackerCheckIns";
 import { useAppData } from "../../state/AppDataContext";
 import { AppPalette, useAppTheme } from "../../state/AppThemeContext";
+import { painStep } from "../../theme/tokens.generated";
 import { useOnboarding } from "../../state/OnboardingContext";
 import { usePremium } from "../../hooks/usePremium";
 import { AnalyticsEvents } from "../../services/analytics/events";
@@ -23,18 +24,18 @@ import {
 } from "../../utils/recoveryInsights";
 import { spacing, typography } from "../../theme";
 
-function painColor(palette: AppPalette, pain: number) {
-  if (pain <= 3) return palette.green;
-  if (pain <= 6) return palette.amber;
-  return palette.red;
-}
+// The pain ramp comes from the design system's painScale, which is mode-paired
+// and split mark/ink — a numeral is text and needs ink, a chart bar is a fill
+// and needs mark. The version this replaces hardcoded green/amber/red, which
+// put the RESERVED safety hue on a high pain score: a "bad" data point, which
+// N3 forbids in almost exactly those words.
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString([], { month: "short", day: "numeric" });
 }
 
 export function ReportsScreen() {
-  const { palette } = useAppTheme();
+  const { palette, tokens, mode } = useAppTheme();
   const { painEntries, trackerCheckIns, completedExerciseIds, exerciseCompletions, profile } = useAppData();
   const { state: onboarding } = useOnboarding();
   const { locked } = usePremium();
@@ -137,7 +138,7 @@ export function ReportsScreen() {
 
       {!hasData ? (
         <View style={[styles.empty, { backgroundColor: palette.surface, borderColor: palette.borderSoft }]}>
-          <Ionicons name="bar-chart-outline" size={34} color={palette.blue} />
+          <Ionicons name="bar-chart-outline" size={34} color={tokens.color.accent.default} />
           <Text style={[styles.emptyTitle, { color: palette.text }]}>No check-ins yet</Text>
           <Text style={[styles.emptyText, { color: palette.textMuted }]}>
             Log a pain check-in or a swelling, walking, range-of-motion, or balance review on the Track tab. Your
@@ -153,8 +154,8 @@ export function ReportsScreen() {
             onPress={exportReport}
           />
 
-          <View style={[styles.headlineCard, { backgroundColor: palette.infoSoft, borderColor: palette.blue }]}>
-            <Text style={[styles.headlineLabel, { color: palette.blue }]}>{progression.phase.label}</Text>
+          <View style={[styles.headlineCard, { backgroundColor: tokens.color.accent.surface, borderColor: tokens.color.accent.default }]}>
+            <Text style={[styles.headlineLabel, { color: tokens.color.accent.strong }]}>{progression.phase.label}</Text>
             <Text style={[styles.headlineText, { color: palette.text }]}>{headline}</Text>
           </View>
 
@@ -194,7 +195,7 @@ export function ReportsScreen() {
 
               <View style={styles.painTopRow}>
                 <View>
-                  <Text style={[styles.bigValue, { color: painColor(palette, latestPain ?? 0) }]}>
+                  <Text style={[styles.bigValue, { color: painStep(mode, latestPain ?? 0).ink }]}>
                     {latestPain}
                     <Text style={[styles.bigValueUnit, { color: palette.textMuted }]}> /10</Text>
                   </Text>
@@ -230,8 +231,8 @@ export function ReportsScreen() {
                 const config = trackerConfigs[key];
                 return (
                   <View key={key} style={[styles.trackerRow, { borderTopColor: palette.borderSoft }]}>
-                    <View style={[styles.trackerIcon, { backgroundColor: palette.infoSoft }]}>
-                      <Ionicons name={config.icon} size={18} color={palette.blue} />
+                    <View style={[styles.trackerIcon, { backgroundColor: tokens.color.accent.surface }]}>
+                      <Ionicons name={config.icon} size={18} color={tokens.color.accent.default} />
                     </View>
                     <View style={styles.trackerCopy}>
                       <Text style={[styles.trackerTitle, { color: palette.text }]}>{config.title}</Text>
@@ -260,7 +261,7 @@ export function ReportsScreen() {
                 style={[
                   styles.progressFill,
                   {
-                    backgroundColor: palette.teal,
+                    backgroundColor: tokens.color.accent.default,
                     width: `${totalExercises ? (completedCount / totalExercises) * 100 : 0}%`
                   }
                 ]}
@@ -268,8 +269,8 @@ export function ReportsScreen() {
             </View>
           </View>
 
-          <View style={[styles.disclaimer, { backgroundColor: palette.infoSoft, borderColor: palette.blue }]}>
-            <Ionicons name="shield-checkmark" size={20} color={palette.blue} />
+          <View style={[styles.disclaimer, { backgroundColor: tokens.color.accent.surface, borderColor: tokens.color.accent.default }]}>
+            <Ionicons name="shield-checkmark" size={20} color={tokens.color.accent.default} />
             <Text style={[styles.disclaimerText, { color: palette.textMuted }]}>
               This summary is for your own tracking and education — it is not a medical assessment. Share it with a
               clinician if you have concerns.
@@ -291,8 +292,9 @@ function StatTile({ palette, value, label }: { palette: AppPalette; value: strin
 }
 
 function TrendBadge({ palette, tone, label }: { palette: AppPalette; tone: Tone; label: string }) {
-  const color = tone === "good" ? palette.green : tone === "bad" ? palette.red : palette.textMuted;
-  const bg = tone === "good" ? palette.successSoft : tone === "bad" ? palette.dangerSoft : palette.surfaceMuted;
+  const { tokens } = useAppTheme();
+  const color = tone === "good" ? tokens.pattern.insight.trendUp : tone === "bad" ? tokens.pattern.insight.trendDown : tokens.pattern.insight.trendFlat;
+  const bg = tone === "neutral" ? palette.surfaceMuted : tokens.color.accent.surface;
   const icon = tone === "good" ? "arrow-down" : tone === "bad" ? "arrow-up" : "remove";
   return (
     <View style={[styles.badge, { backgroundColor: bg }]}>
@@ -305,9 +307,10 @@ function TrendBadge({ palette, tone, label }: { palette: AppPalette; tone: Tone;
 // Dumb renderer: every insight is built in `recoveryInsights.ts`, so this only
 // picks colours from the tone and draws.
 function InsightCard({ palette, insight }: { palette: AppPalette; insight: Insight }) {
-  const accent = insight.tone === "good" ? palette.green : insight.tone === "bad" ? palette.amber : palette.blue;
-  const accentSoft =
-    insight.tone === "good" ? palette.successSoft : insight.tone === "bad" ? palette.warningSoft : palette.infoSoft;
+  const { tokens } = useAppTheme();
+  const accent =
+    insight.tone === "good" ? tokens.pattern.insight.trendUp : insight.tone === "bad" ? tokens.pattern.insight.trendDown : tokens.color.accent.default;
+  const accentSoft = tokens.color.accent.surface;
 
   return (
     <View style={[styles.insightCard, { backgroundColor: palette.surface, borderColor: palette.borderSoft }]}>
@@ -323,6 +326,7 @@ function InsightCard({ palette, insight }: { palette: AppPalette; insight: Insig
 }
 
 function PainSparkline({ palette, entries }: { palette: AppPalette; entries: { id: string; pain: number }[] }) {
+  const { mode } = useAppTheme();
   return (
     <View style={styles.sparkline}>
       {entries.map((entry) => (
@@ -331,7 +335,7 @@ function PainSparkline({ palette, entries }: { palette: AppPalette; entries: { i
             style={[
               styles.sparkBar,
               {
-                backgroundColor: painColor(palette, entry.pain),
+                backgroundColor: painStep(mode, entry.pain).mark,
                 height: `${Math.max(8, (entry.pain / 10) * 100)}%`
               }
             ]}

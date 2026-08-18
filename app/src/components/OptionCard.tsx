@@ -13,7 +13,7 @@ type OptionCardProps = {
 };
 
 export function OptionCard({ label, selected = false, onPress, subtitle, multi = false, icon }: OptionCardProps) {
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
 
   return (
     <Pressable
@@ -23,13 +23,13 @@ export function OptionCard({ label, selected = false, onPress, subtitle, multi =
       style={({ pressed }) => [
         styles.card,
         { backgroundColor: palette.surface, borderColor: palette.borderSoft },
-        selected && { backgroundColor: palette.infoSoft, borderColor: palette.blue },
+        selected && { backgroundColor: tokens.color.accent.surface, borderColor: tokens.color.accent.default },
         pressed && styles.pressed
       ]}
     >
       {icon ? (
         <View style={[styles.iconWrap, { backgroundColor: selected ? palette.surface : palette.surfaceMuted }]}>
-          <Ionicons name={icon} size={18} color={palette.blue} />
+          <Ionicons name={icon} size={18} color={tokens.color.accent.default} />
         </View>
       ) : null}
       <View style={styles.textWrap}>
@@ -40,7 +40,7 @@ export function OptionCard({ label, selected = false, onPress, subtitle, multi =
         style={[
           styles.check,
           { borderColor: palette.border },
-          selected && { backgroundColor: palette.blue, borderColor: palette.blue }
+          selected && { backgroundColor: tokens.color.accent.default, borderColor: tokens.color.accent.default }
         ]}
       >
         {selected ? <Ionicons name="checkmark" size={18} color={palette.white} /> : null}

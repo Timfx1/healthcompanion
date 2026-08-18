@@ -7,7 +7,7 @@ import { ScreenContainer } from "../../components/ScreenContainer";
 import { useOnboarding } from "../../state/OnboardingContext";
 import { AnalyticsEvents } from "../../services/analytics/events";
 import { trackButtonClick, trackEvent, trackOnboardingStepViewed } from "../../services/analytics/posthog";
-import { colors, spacing, typography } from "../../theme";
+import { colors, spacing, typography , tokens } from "../../theme";
 
 const benefits = ["Daily recovery reminders", "Exercise check-ins", "Recovery milestone reminders"];
 
@@ -31,14 +31,14 @@ export function NotificationPromptScreen() {
       <View style={styles.card}>
         {benefits.map((benefit) => (
           <View key={benefit} style={styles.benefit}>
-            <Ionicons name="notifications" size={20} color={colors.blue} />
+            <Ionicons name="notifications" size={20} color={tokens.color.accent.default} />
             <Text style={styles.benefitText}>{benefit}</Text>
           </View>
         ))}
       </View>
       <AppButton
         label="Enable Notifications"
-        style={{ backgroundColor: colors.blue, borderColor: colors.blue }}
+        style={{ backgroundColor: tokens.color.accent.default, borderColor: tokens.color.accent.default }}
         onPress={() => next("enabled")}
       />
       <AppButton label="Maybe Later" variant="secondary" onPress={() => next("later")} />

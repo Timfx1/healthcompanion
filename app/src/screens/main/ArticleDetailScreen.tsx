@@ -11,14 +11,14 @@ import { useAppData } from "../../state/AppDataContext";
 
 export function ArticleDetailScreen() {
   const route = useRoute<RouteProp<MainStackParamList, "ArticleDetail">>();
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
   const { savedArticles, toggleArticleSaved } = useAppData();
   const article = articles.find((item) => item.id === route.params.articleId) ?? articles[0];
   const saved = savedArticles.includes(article.title);
 
   return (
     <ScreenContainer>
-      <Text style={[styles.category, { color: palette.blue }]}>{article.category}</Text>
+      <Text style={[styles.category, { color: tokens.color.accent.strong }]}>{article.category}</Text>
       <Text style={[styles.title, { color: palette.text }]}>{article.title}</Text>
       <Text style={[styles.meta, { color: palette.textMuted }]}>
         {article.readingTime} · {article.source}
@@ -38,7 +38,7 @@ export function ArticleDetailScreen() {
         onPress={() => WebBrowser.openBrowserAsync(article.url)}
       />
 
-      <View style={[styles.disclaimer, { backgroundColor: palette.infoSoft, borderColor: palette.blue }]}>
+      <View style={[styles.disclaimer, { backgroundColor: tokens.color.accent.surface, borderColor: tokens.color.accent.default }]}>
         <Text style={[styles.disclaimerText, { color: palette.textMuted }]}>
           This summary is general education, not medical advice. The full article opens on {article.source}. If your
           symptoms are severe or getting worse, see a clinician.

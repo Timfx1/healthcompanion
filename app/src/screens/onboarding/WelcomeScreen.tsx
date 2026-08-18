@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { AppButton } from "../../components/AppButton";
 import { ScreenContainer } from "../../components/ScreenContainer";
-import { colors, spacing, typography } from "../../theme";
+import { colors, spacing, typography , tokens } from "../../theme";
 
 const features: { icon: keyof typeof Ionicons.glyphMap; text: string }[] = [
   { icon: "checkmark-circle", text: "Track pain and symptoms" },
@@ -27,7 +27,7 @@ export function WelcomeScreen() {
         <View style={styles.features}>
           {features.map(({ icon, text }) => (
             <View key={text} style={styles.featureRow}>
-              <Ionicons name={icon} size={20} color={colors.blue} />
+              <Ionicons name={icon} size={20} color={tokens.color.accent.default} />
               <Text style={styles.featureText}>{text}</Text>
             </View>
           ))}
@@ -36,7 +36,7 @@ export function WelcomeScreen() {
       <View style={styles.actions}>
         <AppButton
           label="Start Recovery Plan"
-          style={{ backgroundColor: colors.blue, borderColor: colors.blue }}
+          style={{ backgroundColor: tokens.color.accent.default, borderColor: tokens.color.accent.default }}
           onPress={() => navigation.navigate("SignUp")}
         />
         <AppButton label="I already have an account" variant="secondary" onPress={() => navigation.navigate("SignUp")} />
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     width: 88,
     height: 88,
     borderRadius: 26,
-    backgroundColor: colors.blue,
+    backgroundColor: tokens.color.accent.default,
     alignItems: "center",
     justifyContent: "center"
   },

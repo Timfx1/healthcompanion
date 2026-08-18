@@ -10,7 +10,7 @@ import { estimateInjuryDaysAgo } from "../../data/mockRecoveryPlan";
 import { useOnboarding } from "../../state/OnboardingContext";
 import { AnalyticsEvents } from "../../services/analytics/events";
 import { trackEvent, trackOnboardingOptionSelected, trackOnboardingStepViewed } from "../../services/analytics/posthog";
-import { colors, spacing, typography } from "../../theme";
+import { colors, spacing, typography , tokens } from "../../theme";
 
 export function InjuryTimingScreen() {
   const navigation = useNavigation<any>();
@@ -44,7 +44,7 @@ export function InjuryTimingScreen() {
       <AppButton
         label="Continue"
         disabled={!state.injuryTiming}
-        style={{ backgroundColor: colors.blue, borderColor: colors.blue }}
+        style={{ backgroundColor: tokens.color.accent.default, borderColor: tokens.color.accent.default }}
         onPress={() => {
           trackEvent(AnalyticsEvents.onboardingStepCompleted, { stepName: "Injury timing", stepNumber: 2, injuryTiming: state.injuryTiming });
           navigation.navigate("Symptoms");

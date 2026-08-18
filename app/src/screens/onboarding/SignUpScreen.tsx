@@ -6,7 +6,7 @@ import Constants from "expo-constants";
 import { CommonActions, useNavigation, useRoute } from "@react-navigation/native";
 import { AppButton } from "../../components/AppButton";
 import { ScreenContainer } from "../../components/ScreenContainer";
-import { colors, spacing, typography } from "../../theme";
+import { colors, spacing, typography , tokens } from "../../theme";
 import {
   loginWithEmail,
   signInAsGuest,
@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
   },
   modalLinkText: {
     ...typography.small,
-    color: colors.teal
+    color: tokens.color.accent.strong
   },
   modalCancel: {
     ...typography.small,

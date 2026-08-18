@@ -17,7 +17,7 @@ type NextRecoveryAreaCardProps = {
 
 export function NextRecoveryAreaCard({ sourceScreen }: NextRecoveryAreaCardProps) {
   const navigation = useNavigation<any>();
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
   const { state } = useOnboarding();
 
   useEffect(() => {
@@ -53,8 +53,8 @@ export function NextRecoveryAreaCard({ sourceScreen }: NextRecoveryAreaCardProps
 
   return (
     <View style={[styles.card, { backgroundColor: palette.surface, borderColor: palette.borderSoft }]}>
-      <View style={[styles.iconWrap, { backgroundColor: palette.infoSoft }]}>
-        <Ionicons name="body" size={22} color={palette.blue} />
+      <View style={[styles.iconWrap, { backgroundColor: tokens.color.accent.surface }]}>
+        <Ionicons name="body" size={22} color={tokens.color.accent.default} />
       </View>
       <View style={styles.copy}>
         <Text style={[styles.title, { color: palette.text }]}>Want support for another injury?</Text>

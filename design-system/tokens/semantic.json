@@ -24,7 +24,9 @@
     "accent": {
       "default": { "$type": "color", "$value": { "dark": "{color.lavender.500}", "light": "{color.lavender.500}" }, "$description": "Brand accent for NON-TEXT use: active tab, progress fill, selected outline, focus ring. Mode-invariant by design." },
       "strong":  { "$type": "color", "$value": { "dark": "{color.lavender.400}", "light": "{color.lavender.650}" }, "$description": "Accent-coloured TEXT: links, unlock pills, accumulation counters. 5.82:1 dark, 4.55:1 light. Light uses a dedicated darker step because the brand accent reaches only 4.19:1 there." },
-      "dim":     { "$type": "color", "$value": { "dark": "{color.lavender.700}", "light": "{color.lavender.700}" }, "$description": "Deep accent tint for gradient starts and tinted card fills." }
+      "dim":     { "$type": "color", "$value": { "dark": "{color.lavender.700}", "light": "{color.lavender.700}" }, "$description": "Deep accent tint for gradient starts and tinted card fills." },
+      "surface": { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint13}" }, "$description": "An accent-tinted CONTAINER: informational cards, badges, chips, callouts. This NAMES a value the system already used five times without a general name — corridor.phaseChip, accumulation.counterFill, historyFade.pillFill, report.changeBlock and state.selectedFill are all accent at 13%. Those names each claim a specific meaning, so reusing one for a plain informational card would have been misnaming rather than reuse. Nothing new was chosen here; the value was promoted to the name it had earned." },
+      "edge":    { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint27}" }, "$description": "The border that goes with accent.surface. Same 27% step as state.selectedEdge, and decorative for the same reason: the tinted fill carries the grouping, so the border is reinforcement rather than the sole affordance." }
     },
 
     "category": {

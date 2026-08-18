@@ -13,7 +13,7 @@ import { colors, spacing, typography } from "../../theme";
 
 export function SymptomsScreen() {
   const navigation = useNavigation<any>();
-  const { palette } = useAppTheme();
+  const { palette, tokens } = useAppTheme();
   const { state, toggleSymptom } = useOnboarding();
   useEffect(() => {
     trackOnboardingStepViewed("Symptoms", 3);
@@ -31,7 +31,7 @@ export function SymptomsScreen() {
         <Text style={styles.question}>What symptoms are you experiencing?</Text>
         <Text style={styles.helper}>Select all that apply.</Text>
       </View>
-      <View style={[styles.infoBox, { backgroundColor: palette.infoSoft, borderColor: palette.blue }]}>
+      <View style={[styles.infoBox, { backgroundColor: tokens.color.accent.surface, borderColor: tokens.color.accent.default }]}>
         <Text style={[styles.infoText, { color: palette.textMuted }]}>
           This app provides guidance, not a medical diagnosis.
         </Text>
@@ -48,7 +48,7 @@ export function SymptomsScreen() {
               style={({ pressed }) => [
                 styles.gridCard,
                 { backgroundColor: palette.surface, borderColor: palette.borderSoft },
-                selected && { backgroundColor: palette.infoSoft, borderColor: palette.blue },
+                selected && { backgroundColor: tokens.color.accent.surface, borderColor: tokens.color.accent.default },
                 pressed && styles.pressed
               ]}
             >
@@ -60,7 +60,7 @@ export function SymptomsScreen() {
       <AppButton
         label="Continue"
         disabled={state.symptoms.length === 0}
-        style={{ backgroundColor: colors.blue, borderColor: colors.blue }}
+        style={{ backgroundColor: tokens.color.accent.default, borderColor: tokens.color.accent.default }}
         onPress={() => {
           trackEvent(AnalyticsEvents.onboardingStepCompleted, { stepName: "Symptoms", stepNumber: 3, symptoms: state.symptoms });
           navigation.navigate("PainWalking");
