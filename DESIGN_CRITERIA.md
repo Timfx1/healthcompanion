@@ -304,6 +304,78 @@ same day. The screen adds **zero** raw literals; the ratchet stayed at 162.
 Still open, and unchanged by this work: `ShareCardScreen` remains the one app
 surface with no route and no baseline.
 
+### Open — secondary text on a 13% accent tint has now failed four times
+
+`color.text.secondary` on the standard 13% accent tint measures **4.49:1** in
+light mode. Under 4.5 by one hundredth, and it is not a one-off:
+
+| Where | Measured | What was done |
+|---|---|---|
+| `InsightSentence` trend word | 1.40:1 | used `mark` as text; moved to `ink` |
+| `corridor.phaseLabel` | 4.15:1 | `lavender.650` re-solved against the tint |
+| report change block, meta + "Steady" | 4.49:1 | moved to heading ink, smaller and lighter |
+| `AddTimelineEntry` capture-row hint | 4.49:1 | same |
+
+Four sites, one cause. `accent.surface` is a NAMED general-purpose container —
+`semantic.json` calls it "informational cards, badges, chips, callouts" and
+lists five uses — so secondary-weight text on it is an entirely ordinary thing
+to want, and the system currently cannot supply it.
+
+Each site was fixed the way `semantic.json`'s own note on the muted step already
+prescribes: *"Differentiate quiet text by WEIGHT and SIZE, not by lowering
+contrast — which is the accessible way to build hierarchy regardless."* That is
+the right local answer and the print layer reached it independently.
+
+**But the root is still there.** Measured: darkening `text.secondary`'s light
+value by 1% (`#6B6890` → `#6A678F`) clears the tint at 4.55 and improves every
+other declared backdrop — 5.24→5.32 on white, 4.92→4.99 on base. A 7% step
+(`#646186`) clears even the 27% tint at 4.56, which would make this class of
+failure unbuildable rather than fixed four times.
+
+Not done here, deliberately: it is a core semantic token and every light-mode
+baseline moves with it, which is a bigger decision than the screen that
+surfaced it. Recorded with the numbers so it can be taken on its own terms.
+
+### Resolved — the capture lane, and a save button that never worked
+
+`QuickCaptureSheet` and `AddTimelineEntry` are built. The Timeline FAB had
+carried `ACTION: Prototype stub (no action wired)` in its own comment since the
+prototype was written; it now opens the sheet.
+
+**The Home capture field's save button had no `onClick`.** The comment directly
+above it read *"BUTTON PRESS: handleCaptureSave() when captureText is truthy"*
+and the handler was never wired, so the visible ✓ did nothing for the whole life
+of the component and only the Enter key saved — on the interaction P1 is built
+around. Nothing caught it because a baseline photographs appearance, not
+behaviour. That is the Toast's dead branch again, one component over, and it is
+the second time the fix has come from extracting a component and reading what it
+actually did.
+
+**`pattern.capture.*` was defined and unused**, like `insight.*` still is. The
+screen hardcoded the same values through the legacy `D` object, so the family
+described a field nobody was drawing. Adopting it is zero-diff on every value
+except `placeholder`, which the field never set at all — the one piece of text
+guaranteed to be on screen before a user types was the one piece nothing could
+measure. The extraction moved exactly 671 pixels, all of them that placeholder.
+
+**States are derived from the text**, as the report's are from its data: `empty`
+/ `ready` / `tagged`. `ready` is the normal case — most captures recognise no
+keywords — so the tag row renders nothing at all rather than announcing "no
+tags". There is deliberately no saving state and no error state: the capture
+path cannot fail, which is the same reason the Toast has no failure branch. The
+report's export, which genuinely can fail, has one.
+
+**A spec conflict, reconciled and recorded.** §4.2 says the capture field is
+"reachable from the FAB everywhere"; §5 lists the FAB as a chooser
+(`capture/note/photo/milestone/medication/appointment`). A chooser inserts
+exactly the categorisation decision P1 forbids. Quick capture is therefore the
+first and visually dominant row — one tap to a field — while the persistent Home
+field remains the true zero-decision path.
+
+**The dark side of the 13% category tints was undeclared.** Those pairs were
+`modes: ["light"]` with a note asserting dark clears 6.5–8.1:1. A note is not a
+measurement, and the tag chips render in both modes. Now declared; all five pass.
+
 ### Open — the doctor report has no brandmark
 
 The report masthead used to carry AnklePath's app icon, inline as SVG: a teal
@@ -948,13 +1020,13 @@ The `z` order is fixed: an overlay must never be authored with an ad-hoc z-index
 
 ### Contrast manifest
 
-**121 declared pairs, 218 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
+**137 declared pairs, 241 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
 
 | Usage class | Pairs |
 |---|---|
-| `body-text` | 66 |
-| `ui-boundary` | 8 |
-| `decorative` | 13 |
+| `body-text` | 77 |
+| `ui-boundary` | 11 |
+| `decorative` | 15 |
 | `large-text` | 14 |
 | `print-body` | 13 |
 | `print-rule` | 3 |

@@ -62,15 +62,15 @@ still has AnklePath's five (`Home · Plan · Track · Learn · Profile`).
 
 | Class | Count | Screens |
 |---|---|---|
-| **Exists** | 4 | **`ReportPreview`** (7 states, 16 baselines), `ShareCardPreview` (built as `ShareCardScreen`), `PremiumTeaser`, `TrialPaywall` |
-| **Partial** — the value ships, the §5 surface does not | 2 | `QuickCaptureSheet` (Home field exists; the FAB-reachable sheet does not), `WeeklyReflection` (Home card exists; "save to timeline" has no destination) |
+| **Exists** | 6 | **`ReportPreview`** (7 states), **`QuickCaptureSheet`** (3 states), **`AddTimelineEntry`**, `ShareCardPreview` (built as `ShareCardScreen`), `PremiumTeaser`, `TrialPaywall` |
+| **Partial** — the value ships, the §5 surface does not | 1 | `WeeklyReflection` (Home card exists; "save to timeline" has no destination) |
 | **Precedent to re-domain** | 2 | `EducationArticle` ← `ArticleDetailScreen`, `Safety` ← `SafetyScreen` |
-| **Greenfield** | 9 | `JournalEntry`, `PhotoCapture`, `PhotoCompare`, `MilestoneDetail`, `ReportDateRange`, `AppointmentDetail`, `QuestionsForDoctor`, `MedicationDetail`, `AddTimelineEntry` |
+| **Greenfield** | 8 | `JournalEntry`, `PhotoCapture`, `PhotoCompare`, `MilestoneDetail`, `ReportDateRange`, `AppointmentDetail`, `QuestionsForDoctor`, `MedicationDetail` |
 
 Two things this count surfaced.
 
 **`ShareCardScreen` is the 20th surface and has no baseline.** The visual suite
-covers 27 screens × 2 modes; ShareCard is not among them, and `?screen=app:`
+covers 31 screens × 2 modes; ShareCard is not among them, and `?screen=app:`
 accepts only `home|timeline|progress|profile|checkin|paywall`. It is
 unphotographable — the exact condition that hid the dead `Toast` branch for the
 whole life of that component. `welcomeBack.*` has the same problem for a
@@ -103,7 +103,7 @@ any backend anywhere in this repository.
 
 | Feature | State | Notes |
 |---|---|---|
-| Quick Capture (P1) | **Local, mocked** | In-memory only. Phase 1 target is AsyncStorage; the capture path must never block on the network and must never fail. |
+| Quick Capture (P1) | **Built, in-memory** | The Home field, the FAB sheet and silent keyword tagging all work; nothing persists yet. Phase 1 target is AsyncStorage. The path must never block on the network and must never fail — which is why the sheet has no saving state and no error state. |
 | Corridor data (P5) | **Placeholder mock, cited** | "Common range for knee rehab, weeks 4–6" is illustrative. Real content needs source attribution per §10 before it ships. |
 | Weekly reflections (P7) | **Mock generator** | Fixed copy. The real one derives from entries. |
 | Share cards (P8) | **Local render** | In-app preview only. No OS share sheet — that is `expo-sharing` in Phase 1. |

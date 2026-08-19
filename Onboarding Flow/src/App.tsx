@@ -40,6 +40,10 @@ import type { Mode } from "./components/tokens";
 //   ?screen=app:home|timeline|progress|profile
 //   ?screen=app:checkin               MainApp with the check-in overlay open
 //   ?screen=app:paywall               MainApp with the paywall sheet open
+//   ?screen=app:add                   the FAB sheet (AddTimelineEntry)
+//   ?screen=app:capture               the quick-capture sheet, empty
+//   ?screen=app:capture-ready         typed, nothing recognised — the normal case
+//   ?screen=app:capture-tagged        typed, keywords recognised silently
 //   ?screen=app:report                the doctor report, ready state
 //   ?screen=app:report-<fixture>      one report state: empty | sparse | first
 //                                     | noChange | readyWithRedFlags
@@ -56,7 +60,8 @@ import type { Mode } from "./components/tokens";
 // ============================================================
 type Route =
   | { kind: "onboarding"; step: number }
-  | { kind: "app"; tab: Tab; overlay: "checkin" | "paywall" | null; pinToast?: boolean;
+  | { kind: "app"; tab: Tab; overlay: "checkin" | "paywall" | "add" | "capture" | null; pinToast?: boolean;
+      captureText?: string;
       report?: FixtureName | null; exportState?: ExportState };
 
 function parseRoute(): { route: Route | null; mode: Mode } {
@@ -83,6 +88,16 @@ function parseRoute(): { route: Route | null; mode: Mode } {
     // the numbers. So a route names a fixture and the screen decides what that
     // is, which means a baseline is a photograph of what the data produces
     // rather than of a boolean somebody set.
+    // The capture sheet's states are derived from its TEXT, exactly as the
+    // report's are derived from its data. So a route supplies text and the
+    // screen decides what that means — the baseline photographs a consequence,
+    // never a flag. "capture-ready" deliberately contains no keyword, because
+    // the normal case is a capture nothing is recognised in.
+    if (target === "add") return { route: { kind: "app", tab: "timeline", overlay: "add" }, mode };
+    if (target === "capture") return { route: { kind: "app", tab: "timeline", overlay: "capture" }, mode };
+    if (target === "capture-ready") return { route: { kind: "app", tab: "timeline", overlay: "capture", captureText: "took the long way round the block today" }, mode };
+    if (target === "capture-tagged") return { route: { kind: "app", tab: "timeline", overlay: "capture", captureText: "knee pain after stairs, slept badly and skipped my meds" }, mode };
+
     if (target === "report") return { route: { kind: "app", tab: "home", overlay: null, report: "ready" }, mode };
     if (target === "report-exporting") return { route: { kind: "app", tab: "home", overlay: null, report: "noChange", exportState: "working" }, mode };
     if (target === "report-failed")    return { route: { kind: "app", tab: "home", overlay: null, report: "noChange", exportState: "failed" }, mode };
@@ -117,7 +132,7 @@ export default function App() {
   if (DEV_ROUTE) {
     return DEV_ROUTE.kind === "onboarding"
       ? <Onboarding initialMode={DEV_MODE} initialScreen={DEV_ROUTE.step} />
-      : <MainApp initialMode={DEV_MODE} initialTab={DEV_ROUTE.tab} initialOverlay={DEV_ROUTE.overlay} pinToast={DEV_ROUTE.pinToast} initialReport={DEV_ROUTE.report ?? null} initialExport={DEV_ROUTE.exportState ?? "idle"} />;
+      : <MainApp initialMode={DEV_MODE} initialTab={DEV_ROUTE.tab} initialOverlay={DEV_ROUTE.overlay} pinToast={DEV_ROUTE.pinToast} initialReport={DEV_ROUTE.report ?? null} initialExport={DEV_ROUTE.exportState ?? "idle"} initialCaptureText={DEV_ROUTE.captureText ?? ""} />;
   }
 
   if (phase === "onboarding") {

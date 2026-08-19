@@ -24,6 +24,8 @@
 //   CheckInModal:    zIndex 40  (full-screen, replaces all content)
 //   ShareCardScreen: zIndex 45  (full-screen, replaces all content)
 //   ReportPreview:   zIndex 45  (full-screen, replaces all content)
+//   AddTimelineEntry:  zIndex 50  (bottom sheet — the FAB's destination)
+//   QuickCaptureSheet: zIndex 50  (bottom sheet — the Notes-app lane)
 //   PaywallSheet:    zIndex 50  (bottom sheet, semi-transparent backdrop)
 //
 // GLOBAL CONTROLS:
@@ -50,6 +52,9 @@ import PainSparklineWithCorridor from "./patterns/PainSparklineWithCorridor";
 import { cat, type Category } from "./patterns/category";
 import ReportPreview, { type ExportState } from "./ReportPreview";
 import { fixtures, type FixtureName } from "./reportFixtures";
+import CaptureField from "./patterns/CaptureField";
+import QuickCaptureSheet from "./QuickCaptureSheet";
+import AddTimelineEntry, { type EntryKind } from "./AddTimelineEntry";
 
 // Category colour access now lives in patterns/category.ts, next to the pattern
 // components that were the reason it exists.
@@ -732,23 +737,7 @@ function HomeScreen({ mode, onCheckIn, onPaywall, onReport, isWelcomeBack = fals
               TRANSITION: background 150ms on state change.
               BUTTON PRESS: handleCaptureSave() when captureText is truthy.
               No-op when empty. */}
-        <div className="flex items-center gap-2 rounded-2xl px-3"
-          style={{ height: 48, background: s(D.raised, D.lCard, mode), border: `1px solid ${s(D.border, D.lBorder, mode)}` }}>
-          <input
-            type="text" value={captureText} onChange={e => setCaptureText(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && handleCaptureSave()}
-            placeholder="Note anything… ('knee hurt after stairs')"
-            style={{ flex: 1, background: "none", border: "none", outline: "none", fontSize: scale.font.size.sm, color: s(D.text, D.lText, mode), fontFamily: "inherit" }}
-          />
-          {/* Mic/confirm button — changes icon based on captureText presence */}
-          <button className="btn-press flex items-center justify-center rounded-xl"
-            style={{ width: 32, height: 32, background: captureText ? D.accent : s(D.border, D.lBorder, mode), border: "none", cursor: "pointer", transition: `background ${scale.duration.quick}ms`, flexShrink: 0 }}>
-            {captureText
-              ? <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M2 7l4 4 6-6"/></svg>
-              : <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke={s(D.textSec, D.lTextSec, mode)} strokeWidth="1.6"><rect x="5" y="1" width="4" height="7" rx="2"/><path d="M2 7c0 3 2.5 5 5 5s5-2 5-5" strokeLinecap="round"/><path d="M7 13v-1"/></svg>
-            }
-          </button>
-        </div>
+        <CaptureField mode={mode} value={captureText} onChange={setCaptureText} onSave={handleCaptureSave} />
 
         {/* DAY COUNTER CARD: Recovery headline card. Non-interactive display.
             Background: gradient from accentD to surface (mode-aware). */}
@@ -993,7 +982,7 @@ const TIMELINE_ENTRIES: TimelineEntry[] = [
 ];
 const FILTER_CHIPS = ["All","Check-ins","Milestones","Meds","Photos","Notes"];
 
-function TimelineScreen({ mode, onShareMilestone }: { mode: Mode; onShareMilestone: (m: { title: string; day: number; date: string }) => void }) {
+function TimelineScreen({ mode, onShareMilestone, onAdd }: { mode: Mode; onShareMilestone: (m: { title: string; day: number; date: string }) => void; onAdd: () => void }) {
   const [filter, setFilter] = useState("All");
   const entries = filter === "All" ? TIMELINE_ENTRIES : TIMELINE_ENTRIES.filter(e => {
     if (filter === "Check-ins")  return e.type === "checkin";
@@ -1086,9 +1075,11 @@ function TimelineScreen({ mode, onShareMilestone }: { mode: Mode; onShareMilesto
       </div>
       {/* FAB: "+" button — add new entry.
           POSITION: absolute bottom-right, zIndex 10.
-          BUTTON: 52×52px gradient circle. ACTION: Prototype stub (no wired action). */}
+          BUTTON: 52×52px gradient circle.
+          ACTION: opens AddTimelineEntry. This was a documented stub — "ACTION:
+          Prototype stub (no action wired)" — for the whole life of the file. */}
       <div className="absolute" style={{ bottom: 100, right: 20, zIndex: scale.z.raised }}>
-        <button className="btn-press flex items-center justify-center rounded-full"
+        <button onClick={onAdd} aria-label="Add to your timeline" className="btn-press flex items-center justify-center rounded-full"
           style={{ width: 52, height: 52, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, border: "none", cursor: "pointer", boxShadow: `0 4px 20px ${D.accent}55` }}>
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round"><path d="M11 4v14M4 11h14"/></svg>
         </button>
@@ -1696,21 +1687,24 @@ export default function MainApp({
   // instead of clicking through to it, which would make baselines depend on
   // interaction timing.
   initialTab = "home" as Tab,
-  initialOverlay = null as "checkin" | "paywall" | null,
+  initialOverlay = null as "checkin" | "paywall" | "add" | "capture" | null,
   pinToast = false,
   // The report is a screen with SEVEN states and they are all reachable only
   // through data. Addressing them by fixture name is what makes each one
   // baselineable; a state with no route is a state nothing checks.
   initialReport = null as FixtureName | null,
   initialExport = "idle" as ExportState,
+  initialCaptureText = "",
 }: {
   initialMode?: Mode; initialTab?: Tab;
-  initialOverlay?: "checkin" | "paywall" | null; pinToast?: boolean;
-  initialReport?: FixtureName | null; initialExport?: ExportState;
+  initialOverlay?: "checkin" | "paywall" | "add" | "capture" | null; pinToast?: boolean;
+  initialReport?: FixtureName | null; initialExport?: ExportState; initialCaptureText?: string;
 }) {
   const [mode, setMode] = useState<Mode>(initialMode);
   const [tab, setTab] = useState<Tab>(initialTab);
   const [report, setReport] = useState<FixtureName | null>(initialReport);
+  const [addOpen, setAddOpen] = useState(initialOverlay === "add");
+  const [captureOpen, setCaptureOpen] = useState(initialOverlay === "capture");
   const [showCheckIn, setShowCheckIn] = useState(initialOverlay === "checkin");
   const [showPaywall, setShowPaywall] = useState(initialOverlay === "paywall");
   const [shareCard, setShareCard] = useState<{ title: string; day: number; date: string } | null>(null);
@@ -1745,7 +1739,7 @@ export default function MainApp({
         <div key={tab} className="flex flex-col flex-1 overflow-hidden animate-fade-in" style={{ position: "relative" }}>
           {/* TAB CONTENT: Only the active tab renders */}
           {tab === "home"     && <HomeScreen mode={mode} onCheckIn={() => setShowCheckIn(true)} onPaywall={() => setShowPaywall(true)} onReport={() => setReport("ready")} pinToast={pinToast} />}
-          {tab === "timeline" && <TimelineScreen mode={mode} onShareMilestone={m => setShareCard(m)} />}
+          {tab === "timeline" && <TimelineScreen mode={mode} onShareMilestone={m => setShareCard(m)} onAdd={() => setAddOpen(true)} />}
           {tab === "progress" && <ProgressScreen mode={mode} onPaywall={() => setShowPaywall(true)} />}
           {tab === "profile"  && <ProfileScreen mode={mode} onPaywall={() => setShowPaywall(true)} />}
 
@@ -1756,6 +1750,11 @@ export default function MainApp({
           {showCheckIn && <CheckInModal mode={mode} onClose={() => setShowCheckIn(false)} />}
           {showPaywall && <PaywallSheet mode={mode} onClose={() => setShowPaywall(false)} />}
           {shareCard   && <ShareCardScreen mode={mode} milestone={shareCard} onClose={() => setShareCard(null)} />}
+          {/* AddTimelineEntry / QuickCaptureSheet: zIndex 50 — bottom sheets.
+              Capture is core loop, so neither has a locked variant (N7). */}
+          {addOpen && <AddTimelineEntry mode={mode} onClose={() => setAddOpen(false)}
+            onPick={(kind: EntryKind) => { setAddOpen(false); if (kind === "capture") setCaptureOpen(true); }} />}
+          {captureOpen && <QuickCaptureSheet mode={mode} initialText={initialCaptureText} onClose={() => setCaptureOpen(false)} onSave={() => {}} />}
           {/* ReportPreview: zIndex 45 — full-screen. NO lock, in any state. */}
           {report && (
             <ReportPreview

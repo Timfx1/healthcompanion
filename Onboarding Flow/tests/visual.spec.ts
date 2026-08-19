@@ -88,6 +88,13 @@ const APP: Screen[] = [
   { id: "app-report-empty", route: "app:report-empty", note: "day one, two taps from Home — no shaming (P2/N2)" },
   { id: "app-report-exporting", route: "app:report-exporting", note: "export in flight" },
   { id: "app-report-failed", route: "app:report-failed", note: "export failed — the one place the report may fail" },
+  // The capture lane. States are derived from the TEXT, same discipline as the
+  // report's depth: a route supplies content and the screen decides what it
+  // means, so each baseline photographs a consequence rather than a flag.
+  { id: "app-add", route: "app:add", note: "the FAB's destination — capture first, no locked rows (N7)" },
+  { id: "app-capture", route: "app:capture", note: "quick capture, empty — save is a no-op, not a refusal" },
+  { id: "app-capture-ready", route: "app:capture-ready", note: "typed, nothing recognised — THE normal case" },
+  { id: "app-capture-tagged", route: "app:capture-tagged", note: "keywords recognised silently, editable later" },
 ];
 
 const SCREENS = [...ONBOARDING, ...APP];
