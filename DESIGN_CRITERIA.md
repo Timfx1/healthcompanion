@@ -260,6 +260,50 @@ What was actually wrong was dead code and a token family describing a design nob
 
 **`insight.*` is still defined and unused.** `insight.trendUp`/`trendDown` resolve to category **marks** while the component now correctly renders the trend word in `ink` — so adopting the family as written would reintroduce the failure that was just fixed. The family needs its trend roles repointed at `ink` before anything consumes it.
 
+### Resolved — building the report found three contrast failures nothing else would have
+
+`ReportPreview` is built: seven states, eight dev routes, sixteen baselines.
+Declaring its pairs turned up **three failures in the light mode of a screen
+that looked fine**, which is the whole argument for the manifest.
+
+| Pair | Measured | Fix |
+|---|---|---|
+| red-flag text on `safety.surface` over the report surface | **4.24:1** | the callout lost its FILL for a border; on the plain surface the same ink is 5.01 |
+| `report.meta` on the change-block tint | **4.49:1** | secondary text on the tinted block is now heading ink, smaller and lighter in weight |
+| the "Steady" word on the same tint | **4.49:1** | same |
+
+Under 4.5 by a hair is still under. The 4.49 pair is the third time this system
+has been caught by *text on a tint of its own accent* — after `InsightSentence`
+at 1.40:1 and the corridor's `phaseLabel` — and the resolution is the one the
+print layer already reached independently: **on a tinted surface, hierarchy
+comes from size and weight, not from lightness.** A lighter ink is the obvious
+move and the wrong one, twice over.
+
+Losing the red-flag fill is not a downgrade. A bordered callout is the more
+restrained form §4.7 asks of this screen, and the reserved hue stays exactly
+where N3 puts it — on this content and nowhere else.
+
+**Two things were found by LOOKING at the baseline, not by reading the code.**
+Red-flag guidance was rendering last, under key events and medications, which on
+a real report means below the fold — guidance that routes someone to care cannot
+sit under a medications table, so it now sits directly beneath the dominant
+block. And the `exporting` and `failed` routes were riding the long `ready`
+fixture, which put the export button they exist to photograph off-screen; they
+ride a short fixture now.
+
+**The states are derived from fixture DATA, never set by a flag.** `depthOf()`
+reads entry counts and spans, so a baseline named `sparse` is a photograph of
+what sparse data actually produces. The sparse report suppresses the chart
+entirely rather than drawing a direction through two points.
+
+**`coverage.mjs` and `restricted.mjs` both scan fixed file lists**, so
+`ReportPreview.tsx` was invisible to them the moment it was written — the same
+shape as every other blind spot in this section. Both lists were extended the
+same day. The screen adds **zero** raw literals; the ratchet stayed at 162.
+
+Still open, and unchanged by this work: `ShareCardScreen` remains the one app
+surface with no route and no baseline.
+
 ### Open — the doctor report has no brandmark
 
 The report masthead used to carry AnklePath's app icon, inline as SVG: a teal
@@ -904,13 +948,13 @@ The `z` order is fixed: an overlay must never be authored with an ad-hoc z-index
 
 ### Contrast manifest
 
-**104 declared pairs, 192 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
+**121 declared pairs, 218 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
 
 | Usage class | Pairs |
 |---|---|
-| `body-text` | 52 |
-| `ui-boundary` | 6 |
-| `decorative` | 12 |
+| `body-text` | 66 |
+| `ui-boundary` | 8 |
+| `decorative` | 13 |
 | `large-text` | 14 |
 | `print-body` | 13 |
 | `print-rule` | 3 |

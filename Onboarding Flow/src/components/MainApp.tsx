@@ -23,6 +23,7 @@
 //   Toast:           zIndex 60  (positioned absolute top 52px)
 //   CheckInModal:    zIndex 40  (full-screen, replaces all content)
 //   ShareCardScreen: zIndex 45  (full-screen, replaces all content)
+//   ReportPreview:   zIndex 45  (full-screen, replaces all content)
 //   PaywallSheet:    zIndex 50  (bottom sheet, semi-transparent backdrop)
 //
 // GLOBAL CONTROLS:
@@ -47,6 +48,8 @@ import Toast from "./patterns/Toast";
 import InsightSentence from "./patterns/InsightSentence";
 import PainSparklineWithCorridor from "./patterns/PainSparklineWithCorridor";
 import { cat, type Category } from "./patterns/category";
+import ReportPreview, { type ExportState } from "./ReportPreview";
+import { fixtures, type FixtureName } from "./reportFixtures";
 
 // Category colour access now lives in patterns/category.ts, next to the pattern
 // components that were the reason it exists.
@@ -654,7 +657,7 @@ function ShareCardScreen({ mode, milestone, onClose }: { mode: Mode; milestone: 
 //   When isWelcomeBack=true: greeting changes to "Good to see you again 🤗"
 //   (C3 — warm return, no mention of missed days or streak broken).
 // ============================================================
-function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false, pinToast = false }: { mode: Mode; onCheckIn: () => void; onPaywall: () => void; isWelcomeBack?: boolean; pinToast?: boolean }) {
+function HomeScreen({ mode, onCheckIn, onPaywall, onReport, isWelcomeBack = false, pinToast = false }: { mode: Mode; onCheckIn: () => void; onPaywall: () => void; onReport: () => void; isWelcomeBack?: boolean; pinToast?: boolean }) {
   const [captureText, setCaptureText] = useState("");
   // pinToast is a DEV-ROUTE affordance only (?screen=app:toast). It shows the
   // toast and schedules no dismissal, because the harness advances the clock by
@@ -890,7 +893,7 @@ function HomeScreen({ mode, onCheckIn, onPaywall, isWelcomeBack = false, pinToas
             Chevron right indicator. */}
         <div>
           <SectionLabel label="Reports" mode={mode} />
-          <Card mode={mode} onClick={() => {}} style={{ cursor: "pointer" }}>
+          <Card mode={mode} onClick={onReport} style={{ cursor: "pointer" }}>
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center rounded-xl" style={{ width: 40, height: 40, background: `${D.meds}22` }}>
                 <span style={{ fontSize: 20 }}>🩻</span>
@@ -1695,9 +1698,19 @@ export default function MainApp({
   initialTab = "home" as Tab,
   initialOverlay = null as "checkin" | "paywall" | null,
   pinToast = false,
-}: { initialMode?: Mode; initialTab?: Tab; initialOverlay?: "checkin" | "paywall" | null; pinToast?: boolean }) {
+  // The report is a screen with SEVEN states and they are all reachable only
+  // through data. Addressing them by fixture name is what makes each one
+  // baselineable; a state with no route is a state nothing checks.
+  initialReport = null as FixtureName | null,
+  initialExport = "idle" as ExportState,
+}: {
+  initialMode?: Mode; initialTab?: Tab;
+  initialOverlay?: "checkin" | "paywall" | null; pinToast?: boolean;
+  initialReport?: FixtureName | null; initialExport?: ExportState;
+}) {
   const [mode, setMode] = useState<Mode>(initialMode);
   const [tab, setTab] = useState<Tab>(initialTab);
+  const [report, setReport] = useState<FixtureName | null>(initialReport);
   const [showCheckIn, setShowCheckIn] = useState(initialOverlay === "checkin");
   const [showPaywall, setShowPaywall] = useState(initialOverlay === "paywall");
   const [shareCard, setShareCard] = useState<{ title: string; day: number; date: string } | null>(null);
@@ -1731,7 +1744,7 @@ export default function MainApp({
             position: relative is required for absolute-positioned overlays inside. */}
         <div key={tab} className="flex flex-col flex-1 overflow-hidden animate-fade-in" style={{ position: "relative" }}>
           {/* TAB CONTENT: Only the active tab renders */}
-          {tab === "home"     && <HomeScreen mode={mode} onCheckIn={() => setShowCheckIn(true)} onPaywall={() => setShowPaywall(true)} pinToast={pinToast} />}
+          {tab === "home"     && <HomeScreen mode={mode} onCheckIn={() => setShowCheckIn(true)} onPaywall={() => setShowPaywall(true)} onReport={() => setReport("ready")} pinToast={pinToast} />}
           {tab === "timeline" && <TimelineScreen mode={mode} onShareMilestone={m => setShareCard(m)} />}
           {tab === "progress" && <ProgressScreen mode={mode} onPaywall={() => setShowPaywall(true)} />}
           {tab === "profile"  && <ProfileScreen mode={mode} onPaywall={() => setShowPaywall(true)} />}
@@ -1743,6 +1756,17 @@ export default function MainApp({
           {showCheckIn && <CheckInModal mode={mode} onClose={() => setShowCheckIn(false)} />}
           {showPaywall && <PaywallSheet mode={mode} onClose={() => setShowPaywall(false)} />}
           {shareCard   && <ShareCardScreen mode={mode} milestone={shareCard} onClose={() => setShareCard(null)} />}
+          {/* ReportPreview: zIndex 45 — full-screen. NO lock, in any state. */}
+          {report && (
+            <ReportPreview
+              mode={mode}
+              data={fixtures[report]}
+              exportState={initialExport}
+              onClose={() => setReport(null)}
+              onExport={() => {}}
+              onRange={() => {}}
+            />
+          )}
         </div>
         <TabBar active={tab} onChange={handleTab} mode={mode} />
       </PhoneShell>

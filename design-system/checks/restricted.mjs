@@ -23,6 +23,11 @@ const ROOT = resolve(HERE, "../..");
 const SOURCES = [
   "Onboarding Flow/src/components/Onboarding.tsx",
   "Onboarding Flow/src/components/MainApp.tsx",
+  // A new consumer file that no gate scans is a new blind spot. ReportPreview
+  // is the doctor report and has more states than any other screen; it is
+  // listed here the day it was written rather than the day something slipped
+  // through it.
+  "Onboarding Flow/src/components/ReportPreview.tsx",
   "Onboarding Flow/src/App.tsx",
 ];
 
@@ -119,6 +124,8 @@ const N6_REPORT_SURFACES = [
   "app/src/screens/main/ReportsScreen.tsx",
   "app/src/services/report/reportHtml.ts",
   "app/src/services/report/exportReport.ts",
+  "Onboarding Flow/src/components/ReportPreview.tsx",
+  "Onboarding Flow/src/components/reportFixtures.ts",
 ];
 
 const N6_PREMIUM_OFFER_SURFACES = [

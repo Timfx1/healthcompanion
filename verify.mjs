@@ -20,7 +20,7 @@
 //                     PURPOSE (the generated palette omits every key needing a
 //                     human decision), so the COUNT is the gate, not the pass.
 //   7. typecheck    — token name typos, via as-const unions.
-//   8. visual       — 38 baselines. LAST because it is by far the slowest, and
+//   8. visual       — 54 baselines. LAST because it is by far the slowest, and
 //                     because a token-layer failure makes its result meaningless.
 //
 // USAGE:
@@ -67,7 +67,7 @@ const GATES = [
   ...(INSTALLED ? [
     { name: "typecheck", cmd: `${PNPM} exec tsc --noEmit`,                     cwd: APP,  why: "token name typos" },
     ...(FAST ? [] : [
-      { name: "visual",  cmd: `${PNPM} exec playwright test`,                  cwd: APP,  why: "38 baselines, 19 screens x 2 modes" },
+      { name: "visual",  cmd: `${PNPM} exec playwright test`,                  cwd: APP,  why: "54 baselines, 27 screens x 2 modes" },
     ]),
   ] : []),
 ];

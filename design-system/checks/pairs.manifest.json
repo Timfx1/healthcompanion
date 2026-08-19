@@ -137,6 +137,27 @@
     { "id": "PRINT rule/hairline on sheet",      "fg": "rule.hairline",  "bg": "paper.sheet", "usage": "print-decorative", "note": "Table rows and card edges. Exempt on the same argument as surface.border on screen: the layout separates these rows without the line, and a hairline forced to 3:1 would out-shout the data." },
     { "id": "PRINT painDots/track on tint",      "fg": "painDots.track", "bg": "paper.tint",  "usage": "print-decorative", "note": "The unfilled remainder is the absence of a dot, not information." },
     { "id": "PRINT paper/tint on sheet",         "fg": "paper.tint",     "bg": "paper.sheet", "usage": "print-decorative", "note": "Measured so the wash cannot creep darker: it must read as paper after a photocopy, not as a grey block." },
-    { "id": "PRINT paper/band on sheet",         "fg": "paper.band",     "bg": "paper.sheet", "usage": "print-decorative" }
+    { "id": "PRINT paper/band on sheet",         "fg": "paper.band",     "bg": "paper.sheet", "usage": "print-decorative" },
+    { "id": "report/heading on surface",        "fg": "pattern.report.heading", "bg": "pattern.report.surface", "usage": "body-text", "note": "Declared against the report's OWN surface token rather than relying on the text/primary pairs. report.heading is a ref today; if it is ever repointed, this is what notices." },
+    { "id": "report/meta on surface",           "fg": "pattern.report.meta",    "bg": "pattern.report.surface", "usage": "body-text" },
+    { "id": "report/divider on surface",        "fg": "pattern.report.divider", "bg": "pattern.report.surface", "usage": "decorative", "note": "Section rules and the range-chip outline. The layout separates without them." },
+    { "id": "report/range chip label",          "fg": "color.text.secondary",   "bg": "pattern.report.surface", "usage": "body-text", "note": "The range chip and the back control." },
+    { "id": "report/export failure message",    "fg": "color.safety.ink",       "bg": "pattern.report.surface", "usage": "body-text", "note": "The one failure this surface can legitimately report — the share sheet being unavailable. Export is free either way (N6)." },
+
+    { "id": "report/heading on changeBlock (dark)",  "fg": "pattern.report.heading", "bg": "#2B2843", "modes": ["dark"],  "usage": "body-text", "note": "THE dominant block. Backdrop is report.changeBlock (accent @13%) composited over report.surface, because a background spec must be opaque. Same composite as the corridor phase chip, and measured separately so a change to either token cannot pass on the other's evidence." },
+    { "id": "report/heading on changeBlock (light)", "fg": "pattern.report.heading", "bg": "#EEECF8", "modes": ["light"], "usage": "body-text" },
+
+    { "id": "report/improving word on changeBlock (dark)",  "fg": "color.category.mood.ink", "bg": "#2B2843", "modes": ["dark"],  "usage": "body-text", "note": "13px/700 direction word. INK, not mark — this carries the meaning and must be readable, which is the distinction InsightSentence got wrong at 1.40:1. Always paired with a glyph, so colour is reinforcement (N4)." },
+    { "id": "report/improving word on changeBlock (light)", "fg": "color.category.mood.ink", "bg": "#EEECF8", "modes": ["light"], "usage": "body-text" },
+    { "id": "report/worsening word on changeBlock (dark)",  "fg": "color.category.pain.ink", "bg": "#2B2843", "modes": ["dark"],  "usage": "body-text", "note": "Pain ink, NOT the safety hue. A direction of travel is a data point, not a red flag (N3)." },
+    { "id": "report/worsening word on changeBlock (light)", "fg": "color.category.pain.ink", "bg": "#EEECF8", "modes": ["light"], "usage": "body-text" },
+
+
+    { "id": "report/pain trend line",        "fg": "color.accent.default", "bg": "pattern.report.surface", "usage": "ui-boundary", "note": "The sparkline stroke. A sentence states the finding above it (P4), so the line is support, not the carrier." },
+    { "id": "report/red-flag heading",  "fg": "color.safety.ink",  "bg": "pattern.report.surface", "usage": "body-text", "note": "Conditional content within ready, not a state, and the ONE surface allowed the reserved hue (N3). The callout was originally FILLED with safety.surface; on that tint it measured 4.24:1 in light and failed, so the fill was dropped for a border. A bordered callout is also the more restrained form §4.7 asks for, and the hue stays exactly where N3 puts it." },
+    { "id": "report/red-flag body",     "fg": "color.text.primary", "bg": "pattern.report.surface", "usage": "body-text", "note": "Guidance somebody has to ACT on. The hue signals; the words must be maximally readable, so they take the primary ink rather than the alert colour." },
+    { "id": "report/red-flag edge",     "fg": "color.safety.mark", "bg": "pattern.report.surface", "usage": "ui-boundary", "note": "Load-bearing: with the fill gone this border is what sets the block apart from the report around it." },
+    { "id": "report/steady word on changeBlock (dark)",  "fg": "pattern.report.heading", "bg": "#2B2843", "modes": ["dark"],  "usage": "body-text", "note": "Steady gets no hue of its own — the absence of a signal should not look like one. It took text.secondary until that measured 4.49:1 on this tint in light. Under 4.5 by a hair, and a hair is still under." },
+    { "id": "report/steady word on changeBlock (light)", "fg": "pattern.report.heading", "bg": "#EEECF8", "modes": ["light"], "usage": "body-text" }
   ]
 }

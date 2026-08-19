@@ -62,15 +62,15 @@ still has AnklePath's five (`Home · Plan · Track · Learn · Profile`).
 
 | Class | Count | Screens |
 |---|---|---|
-| **Exists** | 3 | `ShareCardPreview` (built as `ShareCardScreen`), `PremiumTeaser`, `TrialPaywall` |
+| **Exists** | 4 | **`ReportPreview`** (7 states, 16 baselines), `ShareCardPreview` (built as `ShareCardScreen`), `PremiumTeaser`, `TrialPaywall` |
 | **Partial** — the value ships, the §5 surface does not | 2 | `QuickCaptureSheet` (Home field exists; the FAB-reachable sheet does not), `WeeklyReflection` (Home card exists; "save to timeline" has no destination) |
-| **Precedent to re-domain** | 3 | `EducationArticle` ← `ArticleDetailScreen`, `Safety` ← `SafetyScreen`, `ReportPreview` ← `ReportsScreen` |
+| **Precedent to re-domain** | 2 | `EducationArticle` ← `ArticleDetailScreen`, `Safety` ← `SafetyScreen` |
 | **Greenfield** | 9 | `JournalEntry`, `PhotoCapture`, `PhotoCompare`, `MilestoneDetail`, `ReportDateRange`, `AppointmentDetail`, `QuestionsForDoctor`, `MedicationDetail`, `AddTimelineEntry` |
 
 Two things this count surfaced.
 
 **`ShareCardScreen` is the 20th surface and has no baseline.** The visual suite
-covers 19 screens × 2 modes; ShareCard is not among them, and `?screen=app:`
+covers 27 screens × 2 modes; ShareCard is not among them, and `?screen=app:`
 accepts only `home|timeline|progress|profile|checkin|paywall`. It is
 unphotographable — the exact condition that hid the dead `Toast` branch for the
 whole life of that component. `welcomeBack.*` has the same problem for a
@@ -107,7 +107,7 @@ any backend anywhere in this repository.
 | Corridor data (P5) | **Placeholder mock, cited** | "Common range for knee rehab, weeks 4–6" is illustrative. Real content needs source attribution per §10 before it ships. |
 | Weekly reflections (P7) | **Mock generator** | Fixed copy. The real one derives from entries. |
 | Share cards (P8) | **Local render** | In-app preview only. No OS share sheet — that is `expo-sharing` in Phase 1. |
-| Doctor report (P6) | **Print half done** | The RN app has AnklePath’s `ReportsScreen` plus a print/PDF template. The template now draws from `tokens/print.json` — its own single-valued print layer, 7:1 body contrast, verified by rendering and by a photocopy approximation. The gate is gone (it was premium). The Recovery Companion `ReportPreview` screen is still not built. Free forever, no lock, ever — enforced by `restricted.mjs`. |
+| Doctor report (P6) | **Built** | The RN app has AnklePath’s `ReportsScreen` plus a print/PDF template. The template now draws from `tokens/print.json` — its own single-valued print layer, 7:1 body contrast, verified by rendering and by a photocopy approximation. The gate is gone (it was premium). `ReportPreview` is built — seven states, all routable and baselined. Free forever, no lock, ever — enforced by `restricted.mjs`. |
 | Photo timeline / compare | **Not built** | Compare is premium; the timeline is not. |
 | Medications, appointments | **Static mock data** | No reminders or notifications. |
 | Widgets, native voice | **Phase 2** | Deep link `recoverycompanion://capture` is reserved. Phase 1 uses OS keyboard dictation. |

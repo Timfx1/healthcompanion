@@ -25,6 +25,8 @@
 import { useState } from "react";
 import Onboarding from "./components/Onboarding";
 import MainApp, { type Tab } from "./components/MainApp";
+import { fixtures, type FixtureName } from "./components/reportFixtures";
+import type { ExportState } from "./components/ReportPreview";
 import type { Mode } from "./components/tokens";
 
 // ============================================================
@@ -38,6 +40,11 @@ import type { Mode } from "./components/tokens";
 //   ?screen=app:home|timeline|progress|profile
 //   ?screen=app:checkin               MainApp with the check-in overlay open
 //   ?screen=app:paywall               MainApp with the paywall sheet open
+//   ?screen=app:report                the doctor report, ready state
+//   ?screen=app:report-<fixture>      one report state: empty | sparse | first
+//                                     | noChange | readyWithRedFlags
+//   ?screen=app:report-exporting      the report with an export in flight
+//   ?screen=app:report-failed         the report after an export failed
 //   &mode=dark|light                  forces colour mode (default dark)
 //   &motion=off                       suppresses animations via .no-motion
 //
@@ -49,7 +56,8 @@ import type { Mode } from "./components/tokens";
 // ============================================================
 type Route =
   | { kind: "onboarding"; step: number }
-  | { kind: "app"; tab: Tab; overlay: "checkin" | "paywall" | null; pinToast?: boolean };
+  | { kind: "app"; tab: Tab; overlay: "checkin" | "paywall" | null; pinToast?: boolean;
+      report?: FixtureName | null; exportState?: ExportState };
 
 function parseRoute(): { route: Route | null; mode: Mode } {
   const q = new URLSearchParams(window.location.search);
@@ -70,6 +78,18 @@ function parseRoute(): { route: Route | null; mode: Mode } {
     const target = screen.slice(4);
     if (target === "checkin") return { route: { kind: "app", tab: "home", overlay: "checkin" }, mode };
     if (target === "paywall") return { route: { kind: "app", tab: "home", overlay: "paywall" }, mode };
+
+    // The report's states are DATA, not flags — the screen derives depth from
+    // the numbers. So a route names a fixture and the screen decides what that
+    // is, which means a baseline is a photograph of what the data produces
+    // rather than of a boolean somebody set.
+    if (target === "report") return { route: { kind: "app", tab: "home", overlay: null, report: "ready" }, mode };
+    if (target === "report-exporting") return { route: { kind: "app", tab: "home", overlay: null, report: "noChange", exportState: "working" }, mode };
+    if (target === "report-failed")    return { route: { kind: "app", tab: "home", overlay: null, report: "noChange", exportState: "failed" }, mode };
+    if (target.startsWith("report-")) {
+      const name = target.slice(7) as FixtureName;
+      if (name in fixtures) return { route: { kind: "app", tab: "home", overlay: null, report: name }, mode };
+    }
     // Home with the confirmation toast pinned visible. A TRANSIENT state needs
     // its own route or it cannot be baselined at all: it lives for 2.4s behind
     // an interaction, and the harness advances the clock past that before it
@@ -97,7 +117,7 @@ export default function App() {
   if (DEV_ROUTE) {
     return DEV_ROUTE.kind === "onboarding"
       ? <Onboarding initialMode={DEV_MODE} initialScreen={DEV_ROUTE.step} />
-      : <MainApp initialMode={DEV_MODE} initialTab={DEV_ROUTE.tab} initialOverlay={DEV_ROUTE.overlay} pinToast={DEV_ROUTE.pinToast} />;
+      : <MainApp initialMode={DEV_MODE} initialTab={DEV_ROUTE.tab} initialOverlay={DEV_ROUTE.overlay} pinToast={DEV_ROUTE.pinToast} initialReport={DEV_ROUTE.report ?? null} initialExport={DEV_ROUTE.exportState ?? "idle"} />;
   }
 
   if (phase === "onboarding") {

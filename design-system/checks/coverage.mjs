@@ -40,6 +40,11 @@ const PATTERNS_DIR = "Onboarding Flow/src/components/patterns";
 const SOURCES = [
   "Onboarding Flow/src/components/Onboarding.tsx",
   "Onboarding Flow/src/components/MainApp.tsx",
+  // A new consumer file that no gate scans is a new blind spot. ReportPreview
+  // is the doctor report and has more states than any other screen; it is
+  // listed here the day it was written rather than the day something slipped
+  // through it.
+  "Onboarding Flow/src/components/ReportPreview.tsx",
   "Onboarding Flow/src/index.css",
   ...(existsSync(resolve(ROOT, PATTERNS_DIR))
     ? readdirSync(resolve(ROOT, PATTERNS_DIR))

@@ -71,6 +71,23 @@ const APP: Screen[] = [
   { id: "app-checkin", route: "app:checkin", note: "fast-path overlay (C1)" },
   { id: "app-paywall", route: "app:paywall", note: "dismissible bottom sheet (P9)" },
   { id: "app-toast", route: "app:toast", note: "quick-capture confirmation, pinned visible" },
+
+  // The doctor report. SEVEN states, and every one of them is here on purpose.
+  //
+  // Two of this repo's known gaps are the same gap: the Toast hid a dead code
+  // path because nothing could photograph a 2.4s state, and ShareCardScreen is
+  // still unbaselined because no route reaches it. The report has more states
+  // than any other screen, so it got routes for all of them before it got a
+  // single baseline. Depth is derived from fixture DATA, never from a flag, so
+  // each of these is a photograph of what that data actually produces.
+  { id: "app-report", route: "app:report", note: "ready — change block dominant (P6, no lock)" },
+  { id: "app-report-redflags", route: "app:report-readyWithRedFlags", note: "ready + red-flag content (N3, conditional not a state)" },
+  { id: "app-report-nochange", route: "app:report-noChange", note: "anchor and data, nothing moved — the guilt-risk case (P2)" },
+  { id: "app-report-first", route: "app:report-first", note: "data but no prior visit — reframed to since-you-started" },
+  { id: "app-report-sparse", route: "app:report-sparse", note: "too little to claim a trend — degrades, never invents one" },
+  { id: "app-report-empty", route: "app:report-empty", note: "day one, two taps from Home — no shaming (P2/N2)" },
+  { id: "app-report-exporting", route: "app:report-exporting", note: "export in flight" },
+  { id: "app-report-failed", route: "app:report-failed", note: "export failed — the one place the report may fail" },
 ];
 
 const SCREENS = [...ONBOARDING, ...APP];
