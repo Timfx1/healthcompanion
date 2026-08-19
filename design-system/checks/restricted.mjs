@@ -14,22 +14,16 @@
 // ============================================================
 
 import { readFileSync, existsSync } from "node:fs";
+import { consumerFiles, describeExclusions } from "./consumerFiles.mjs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, "../..");
 
-const SOURCES = [
-  "Onboarding Flow/src/components/Onboarding.tsx",
-  "Onboarding Flow/src/components/MainApp.tsx",
-  // A new consumer file that no gate scans is a new blind spot. ReportPreview
-  // is the doctor report and has more states than any other screen; it is
-  // listed here the day it was written rather than the day something slipped
-  // through it.
-  "Onboarding Flow/src/components/ReportPreview.tsx",
-  "Onboarding Flow/src/App.tsx",
-];
+// Consumer files are DISCOVERED, not listed — a file cannot escape the
+// non-negotiables by being new. See checks/consumerFiles.mjs.
+const SOURCES = consumerFiles();
 
 const tokens = JSON.parse(readFileSync(resolve(ROOT, "design-system/dist/tokens.json"), "utf8"));
 
@@ -212,4 +206,6 @@ if (violations.length) {
 console.log("restricted-use: clean");
 console.log(`  reserved hues guarded : ${[...SAFETY_HEXES].join(", ")}`);
 console.log(`  category families     : ${Object.keys(tokens.modes.dark.color.category).length}, all complete`);
+console.log(`  files scanned         : ${SOURCES.length} (discovered, not listed)`);
+for (const e of describeExclusions()) console.log(`  excluded              : ${e.files.length} — ${e.why.split(".")[0]}`);
 console.log("  rules checked         : N1/N2 forbidden concepts, N3 reserved colour, N4 colour alone, N5 corridor range, N6 report never gated, token layering");

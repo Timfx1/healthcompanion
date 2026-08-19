@@ -17,6 +17,7 @@
 // ============================================================
 
 import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
+import { consumerFiles, describeExclusions } from "./consumerFiles.mjs";
 import { resolve, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -36,23 +37,9 @@ const LIST = process.argv.includes("--list");
 // would record progress for code that merely changed address, and would then
 // refuse to let that number go back up. Reading the directory means a file
 // cannot leave the audit by being created.
-const PATTERNS_DIR = "Onboarding Flow/src/components/patterns";
-const SOURCES = [
-  "Onboarding Flow/src/components/Onboarding.tsx",
-  "Onboarding Flow/src/components/MainApp.tsx",
-  // A new consumer file that no gate scans is a new blind spot. ReportPreview
-  // is the doctor report and has more states than any other screen; it is
-  // listed here the day it was written rather than the day something slipped
-  // through it.
-  "Onboarding Flow/src/components/ReportPreview.tsx",
-  "Onboarding Flow/src/index.css",
-  ...(existsSync(resolve(ROOT, PATTERNS_DIR))
-    ? readdirSync(resolve(ROOT, PATTERNS_DIR))
-        .filter((f) => /\.(tsx?|css)$/.test(f))
-        .sort()
-        .map((f) => `${PATTERNS_DIR}/${f}`)
-    : []),
-];
+// Consumer files are DISCOVERED, not listed. The hand-written list this
+// replaces had already gone stale twice — see checks/consumerFiles.mjs.
+const SOURCES = consumerFiles();
 
 // Reuse the comment stripper's contract: comments are blanked space-for-space
 // so offsets and line numbers survive. Without this the huge annotation blocks
@@ -218,6 +205,8 @@ if (LIST) {
 
 const total = Object.values(counts).reduce((a, b) => a + b, 0);
 console.log(`\ntotal raw literals: ${total}`);
+console.log(`  files scanned         : ${SOURCES.length} (discovered, not listed)`);
+for (const e of describeExclusions()) console.log(`  excluded              : ${e.files.length} — ${e.why.split(".")[0]}`);
 if (over) {
   console.error(`\n${over} category(ies) over budget. The ratchet may only tighten — replace the literals with tokens.`);
   process.exit(1);
