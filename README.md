@@ -14,7 +14,7 @@ Being precise about this, because the gap matters:
 
 | | Status |
 |---|---|
-| **Design system** (`design-system/`) | Real. One token source, two platforms, eight gates. |
+| **Design system** (`design-system/`) | Real. One token source, two platforms **plus paper**, eight gates. |
 | **Web prototype** (`Onboarding Flow/`) | Real, and the reference implementation — 12 onboarding screens + 5 tabs, both colour modes. A Figma Make export, since evolved. |
 | **React Native app** (`app/`) | **Colour re-domain complete.** The AnklePath `ActivatePayment` tree, copied in with fresh history. All 172 colour references resolve to Recovery Companion roles and the app typechecks clean. Screens are still AnklePath's. |
 | **§5 detail/modal screens** | **3 of 17 exist, 2 partial, 3 have precedent, 9 greenfield** — counted below. Includes the Doctor Report, the flagship. |
@@ -35,10 +35,11 @@ one red this system owns is reserved for red-flag guidance. The **splash and
 plan-loading gradients** still run AnklePath blue and are waiting on a deliberate
 brand treatment; replacing them is a new decision, not a mapping.
 
-`checks/redomain.mjs` holds palette sites at 0 and budgets the **89 hardcoded hex
+`checks/redomain.mjs` holds palette sites at 0 and budgets the **32 hardcoded hex
 literals** the compiler cannot see — a raw `#2F7DE1` in a gradient is just a
-string to it. 57 of those are the doctor-report HTML template, which wants its
-own print palette.
+string to it. It was 89 until the doctor-report template moved to its own print
+palette; what remains is the deferred brand gradients. That budget is now
+actually enforced — it had been silently floored against its own count.
 
 ---
 
@@ -106,7 +107,7 @@ any backend anywhere in this repository.
 | Corridor data (P5) | **Placeholder mock, cited** | "Common range for knee rehab, weeks 4–6" is illustrative. Real content needs source attribution per §10 before it ships. |
 | Weekly reflections (P7) | **Mock generator** | Fixed copy. The real one derives from entries. |
 | Share cards (P8) | **Local render** | In-app preview only. No OS share sheet — that is `expo-sharing` in Phase 1. |
-| Doctor report (P6) | **In progress** | The RN app has AnklePath's `ReportsScreen` + a print/PDF template, now un-gated (it was premium — see `DESIGN_CRITERIA.md` §11). The Recovery Companion report preview and its `report.*` surface are not built. Free forever, no lock, ever — enforced by `restricted.mjs`, not by review. |
+| Doctor report (P6) | **Print half done** | The RN app has AnklePath’s `ReportsScreen` plus a print/PDF template. The template now draws from `tokens/print.json` — its own single-valued print layer, 7:1 body contrast, verified by rendering and by a photocopy approximation. The gate is gone (it was premium). The Recovery Companion `ReportPreview` screen is still not built. Free forever, no lock, ever — enforced by `restricted.mjs`. |
 | Photo timeline / compare | **Not built** | Compare is premium; the timeline is not. |
 | Medications, appointments | **Static mock data** | No reminders or notifications. |
 | Widgets, native voice | **Phase 2** | Deep link `recoverycompanion://capture` is reserved. Phase 1 uses OS keyboard dictation. |

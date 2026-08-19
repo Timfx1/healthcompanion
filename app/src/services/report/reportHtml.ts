@@ -2,6 +2,22 @@ import { PainEntry, ExerciseCompletion, TrackerCheckIn } from "../../state/AppDa
 import { trackerConfigs } from "../../data/trackerCheckIns";
 import { exercises } from "../../data/mockRecoveryPlan";
 import { HIGHER_IS_BETTER, Insight, TRACKER_ORDER, daysTracked } from "../../utils/recoveryInsights";
+import { printTokens as T } from "../../theme/tokens.print.generated";
+
+// The report's own palette. Not the app's screen tokens and not a third colour
+// mode — paper is a different medium, held to 7:1 body contrast because it has
+// no brightness control, no zoom, no theme fallback, and gets photocopied.
+// See design-system/tokens/print.json.
+
+// `Tone` says good/bad/neutral; the print layer says improving/worsening/
+// steady, because a report states what changed and does not grade the person
+// who lived it. The rename belongs on the shared type eventually — it is used
+// by ReportsScreen too, so it is not done here.
+const TREND_CLASS: Record<Insight["tone"], string> = {
+  good: "improving",
+  bad: "worsening",
+  neutral: "steady",
+};
 
 // Builds the printable recovery report as a single self-contained HTML string.
 // Pure: no React, no file system, no network — so it can be opened straight in a
@@ -45,18 +61,6 @@ function round1(value: number): number {
   return Math.round(value * 10) / 10;
 }
 
-/**
- * The AnklePath app icon, redrawn as inline SVG: the teal ring on the dark
- * rounded square. Inline rather than embedding assets/icon.png, which would need
- * expo-file-system + expo-asset and base64 reading; this stays crisp at print
- * resolution with no extra dependencies.
- */
-const LOGO_SVG = `
-<svg class="logo" width="34" height="34" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <rect width="64" height="64" rx="15" fill="#0E1E32"/>
-  <ellipse cx="32" cy="32.5" rx="16.5" ry="20.5" fill="none" stroke="#3DD2C0" stroke-width="9"/>
-</svg>`;
-
 /** Ten dots, the first `score` filled. Reads severity without doing arithmetic. */
 function painDots(score: number): string {
   const filled = Math.round(Math.max(0, Math.min(10, score)));
@@ -91,8 +95,8 @@ function painChartSvg(entries: PainEntry[]): string {
   const grid = [0, 5, 10]
     .map((value) => {
       const y = pad.top + (1 - value / 10) * plotH;
-      return `<line x1="${pad.left}" y1="${round1(y)}" x2="${width - pad.right}" y2="${round1(y)}" stroke="#E4EAF1" stroke-width="1"/>
-        <text x="${pad.left - 7}" y="${round1(y) + 3.5}" text-anchor="end" font-size="9" fill="#93A3B4">${value}</text>`;
+      return `<line x1="${pad.left}" y1="${round1(y)}" x2="${width - pad.right}" y2="${round1(y)}" stroke="${T.rule.hairline}" stroke-width="1"/>
+        <text x="${pad.left - 7}" y="${round1(y) + 3.5}" text-anchor="end" font-size="9" fill="${T.ink.secondary}">${value}</text>`;
     })
     .join("");
 
@@ -100,19 +104,19 @@ function painChartSvg(entries: PainEntry[]): string {
   const line =
     entries.length === 1
       ? `<line x1="${pad.left}" y1="${round1(points[0].y)}" x2="${width - pad.right}" y2="${round1(points[0].y)}"
-           stroke="#C8D4E0" stroke-width="1.5" stroke-dasharray="4 4"/>`
+           stroke="${T.rule.strong}" stroke-width="1.5" stroke-dasharray="4 4"/>`
       : `<path d="${points.map((p, i) => `${i === 0 ? "M" : "L"}${round1(p.x)},${round1(p.y)}`).join(" ")}"
-           fill="none" stroke="#1D6FB8" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>`;
+           fill="none" stroke="${T.accent.stroke}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>`;
 
   const dots = points
-    .map((p) => `<circle cx="${round1(p.x)}" cy="${round1(p.y)}" r="3.4" fill="#1D6FB8" stroke="#FFFFFF" stroke-width="1.5"/>`)
+    .map((p) => `<circle cx="${round1(p.x)}" cy="${round1(p.y)}" r="3.4" fill="${T.accent.stroke}" stroke="${T.paper.sheet}" stroke-width="1.5"/>`)
     .join("");
 
   const caption =
     entries.length === 1
-      ? `<text x="${width - pad.right}" y="${height - 5}" text-anchor="end" font-size="9" fill="#93A3B4">One check-in so far</text>`
-      : `<text x="${pad.left}" y="${height - 5}" font-size="9" fill="#93A3B4">${escapeHtml(formatShortDate(entries[0].createdAt))}</text>
-         <text x="${width - pad.right}" y="${height - 5}" text-anchor="end" font-size="9" fill="#93A3B4">${escapeHtml(
+      ? `<text x="${width - pad.right}" y="${height - 5}" text-anchor="end" font-size="9" fill="${T.ink.secondary}">One check-in so far</text>`
+      : `<text x="${pad.left}" y="${height - 5}" font-size="9" fill="${T.ink.secondary}">${escapeHtml(formatShortDate(entries[0].createdAt))}</text>
+         <text x="${width - pad.right}" y="${height - 5}" text-anchor="end" font-size="9" fill="${T.ink.secondary}">${escapeHtml(
            formatShortDate(entries[entries.length - 1].createdAt)
          )}</text>`;
 
@@ -129,10 +133,10 @@ function adherenceRing(done: number, total: number): string {
   const filled = round1(percent * circumference);
 
   return `<svg width="74" height="74" viewBox="0 0 74 74" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${done} of ${total} exercises complete">
-    <circle cx="37" cy="37" r="${radius}" fill="none" stroke="#E4EAF1" stroke-width="8"/>
-    <circle cx="37" cy="37" r="${radius}" fill="none" stroke="#17A08C" stroke-width="8" stroke-linecap="round"
+    <circle cx="37" cy="37" r="${radius}" fill="none" stroke="${T.rule.hairline}" stroke-width="8"/>
+    <circle cx="37" cy="37" r="${radius}" fill="none" stroke="${T.trend.improving.ink}" stroke-width="8" stroke-linecap="round"
       stroke-dasharray="${filled} ${round1(circumference)}" transform="rotate(-90 37 37)"/>
-    <text x="37" y="41" text-anchor="middle" font-size="15" font-weight="700" fill="#132434">${done}/${total}</text>
+    <text x="37" y="41" text-anchor="middle" font-size="15" font-weight="700" fill="${T.ink.primary}">${done}/${total}</text>
   </svg>`;
 }
 
@@ -143,7 +147,7 @@ function buildInsights(insights: Insight[]): string {
   return insights
     .map(
       (insight) => `
-      <div class="callout callout--${insight.tone}">
+      <div class="callout callout--${TREND_CLASS[insight.tone]}">
         <span class="callout__head">${escapeHtml(insight.headline)}</span>
         <span class="callout__body">${escapeHtml(insight.detail)}</span>
       </div>`
@@ -161,7 +165,7 @@ function buildTrackerRows(checkIns: TrackerCheckIn[]): string {
     const delta = latest.value - earliest.value;
     const improving = HIGHER_IS_BETTER[key] ? delta > 0 : delta < 0;
     const label = entries.length < 2 || delta === 0 ? "Steady" : improving ? "Improving" : "Watch";
-    const tone = label === "Improving" ? "good" : label === "Watch" ? "warn" : "flat";
+    const tone = label === "Improving" ? "improving" : label === "Watch" ? "worsening" : "steady";
 
     return `<li class="measure">
       <div class="measure__copy">
@@ -221,7 +225,7 @@ export function buildReportHtml(data: ReportData, now = new Date()): string {
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>AnklePath recovery report</title>
+<title>Recovery Companion report</title>
 <style>
   /* WebKit ignores @page margins here, so the sheet carries the padding. */
   @page { size: A4; margin: 0; }
@@ -231,8 +235,8 @@ export function buildReportHtml(data: ReportData, now = new Date()): string {
   html, body {
     margin: 0;
     padding: 0;
-    background: #FFFFFF;
-    color: #132434;
+    background: ${T.paper.sheet};
+    color: ${T.ink.primary};
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     font-size: 10.5pt;
     line-height: 1.5;
@@ -250,21 +254,21 @@ export function buildReportHtml(data: ReportData, now = new Date()): string {
     justify-content: space-between;
     gap: 12mm;
     padding-bottom: 3.5mm;
-    border-bottom: 2px solid #1D6FB8;
+    border-bottom: 2px solid ${T.accent.stroke};
   }
   .brand { display: flex; align-items: center; gap: 3mm; }
-  .logo { display: block; flex: 0 0 auto; }
+
   .brand__name {
     font-size: 19pt;
     font-weight: 800;
     letter-spacing: -0.4pt;
     line-height: 1.1;
-    color: #1D6FB8;
+    color: ${T.accent.ink};
   }
-  .brand__tag { font-size: 7.5pt; color: #7C8CA0; letter-spacing: .2pt; }
+  .brand__tag { font-size: 7.5pt; color: ${T.ink.secondary}; letter-spacing: .2pt; }
   .masthead__right { text-align: right; }
   .masthead__title { font-size: 11pt; font-weight: 700; }
-  .masthead__date { font-size: 8.5pt; color: #7C8CA0; }
+  .masthead__date { font-size: 8.5pt; color: ${T.ink.secondary}; }
 
   /* ---------- identity ---------- */
   .identity {
@@ -275,11 +279,11 @@ export function buildReportHtml(data: ReportData, now = new Date()): string {
     margin-top: 4mm;
   }
   .identity__who { font-size: 12pt; font-weight: 700; }
-  .identity__meta { font-size: 8.5pt; color: #7C8CA0; margin-top: .6mm; }
+  .identity__meta { font-size: 8.5pt; color: ${T.ink.secondary}; margin-top: .6mm; }
   .phasepill {
     flex: 0 0 auto;
-    background: #E8F4F1;
-    color: #0F7A69;
+    background: ${T.paper.band};
+    color: ${T.accent.ink};
     border-radius: 100px;
     padding: 1.6mm 4mm;
     font-size: 8.5pt;
@@ -291,25 +295,25 @@ export function buildReportHtml(data: ReportData, now = new Date()): string {
   .stats { display: flex; gap: 3.5mm; margin-top: 5mm; }
   .stat {
     flex: 1;
-    border: 1px solid #E4EAF1;
+    border: 1px solid ${T.rule.hairline};
     border-radius: 3mm;
     padding: 3.5mm 4mm;
-    background: #FBFCFD;
+    background: ${T.paper.tint};
   }
-  .stat--pain { background: #FDF3EF; border-color: #F3D9CD; }
+  .stat--pain { background: ${T.paper.tint}; border-color: ${T.rule.hairline}; }
   .stat__value { font-size: 21pt; font-weight: 800; line-height: 1; letter-spacing: -0.6pt; }
-  .stat__value .of { font-size: 11pt; font-weight: 600; color: #93A3B4; }
+  .stat__value .of { font-size: 11pt; font-weight: 600; color: ${T.ink.secondary}; }
   .stat__label {
     font-size: 7pt;
     letter-spacing: .8pt;
     text-transform: uppercase;
-    color: #7C8CA0;
+    color: ${T.ink.secondary};
     font-weight: 700;
     margin-top: 1.4mm;
   }
   .dots { display: flex; gap: 1.1mm; margin-top: 2.4mm; }
-  .dot { width: 2.4mm; height: 2.4mm; border-radius: 50%; background: #EFDCD3; }
-  .dot--on { background: #C9542A; }
+  .dot { width: 2.4mm; height: 2.4mm; border-radius: 50%; background: ${T.painDots.track}; }
+  .dot--on { background: ${T.painDots.filled}; }
 
   /* ---------- sections ---------- */
   section { margin-top: 6mm; page-break-inside: avoid; }
@@ -318,23 +322,23 @@ export function buildReportHtml(data: ReportData, now = new Date()): string {
     font-weight: 750;
     margin: 0 0 2.5mm;
     padding-left: 2.4mm;
-    border-left: 2.5pt solid #17A08C;
+    border-left: 2.5pt solid ${T.accent.stroke};
     line-height: 1.25;
   }
-  .empty { font-size: 8.5pt; color: #7C8CA0; margin: 1.5mm 0 0; }
+  .empty { font-size: 8.5pt; color: ${T.ink.secondary}; margin: 1.5mm 0 0; }
 
   .callout {
-    border: 1px solid #E4EAF1;
-    border-left: 2.5pt solid #1D6FB8;
+    border: 1px solid ${T.rule.hairline};
+    border-left: 2.5pt solid ${T.accent.stroke};
     border-radius: 2mm;
     padding: 2.6mm 3.4mm;
     margin-bottom: 2mm;
-    background: #FBFCFD;
+    background: ${T.paper.tint};
   }
-  .callout--good { border-left-color: #17A08C; }
-  .callout--bad { border-left-color: #C9542A; }
+  .callout--improving { border-left-color: ${T.trend.improving.ink}; }
+  .callout--worsening { border-left-color: ${T.trend.worsening.ink}; }
   .callout__head { display: block; font-weight: 700; font-size: 9.5pt; }
-  .callout__body { display: block; font-size: 8.5pt; color: #61738A; margin-top: .5mm; }
+  .callout__body { display: block; font-size: 8.5pt; color: ${T.ink.secondary}; margin-top: .5mm; }
 
   /* ---------- two-column base ---------- */
   .cols { display: flex; gap: 6mm; margin-top: 6mm; align-items: flex-start; }
@@ -348,11 +352,11 @@ export function buildReportHtml(data: ReportData, now = new Date()): string {
     justify-content: space-between;
     gap: 3mm;
     padding: 2mm 0;
-    border-bottom: 1px solid #EEF2F6;
+    border-bottom: 1px solid ${T.rule.hairline};
   }
   .measure:last-child { border-bottom: 0; }
   .measure__name { display: block; font-size: 9pt; font-weight: 650; }
-  .measure__value { display: block; font-size: 8.5pt; color: #7C8CA0; }
+  .measure__value { display: block; font-size: 8.5pt; color: ${T.ink.secondary}; }
   .pill {
     flex: 0 0 auto;
     border-radius: 100px;
@@ -360,12 +364,12 @@ export function buildReportHtml(data: ReportData, now = new Date()): string {
     font-size: 7.5pt;
     font-weight: 700;
   }
-  .pill--good { background: #E4F3EC; color: #17805F; }
-  .pill--warn { background: #FBEADF; color: #B4551F; }
-  .pill--flat { background: #EFF3F7; color: #7C8CA0; }
+  .pill--improving { background: ${T.trend.improving.band}; color: ${T.trend.improving.ink}; }
+  .pill--worsening { background: ${T.trend.worsening.band}; color: ${T.trend.worsening.ink}; }
+  .pill--steady { background: ${T.trend.steady.band}; color: ${T.trend.steady.ink}; }
 
   .ring { display: flex; flex-direction: column; align-items: center; gap: 2mm; }
-  .ring__label { font-size: 8pt; color: #7C8CA0; text-align: center; }
+  .ring__label { font-size: 8pt; color: ${T.ink.secondary}; text-align: center; }
 
   /* ---------- table ---------- */
   table { width: 100%; border-collapse: collapse; font-size: 9pt; margin-top: 2mm; }
@@ -374,28 +378,28 @@ export function buildReportHtml(data: ReportData, now = new Date()): string {
     font-size: 7pt;
     letter-spacing: .7pt;
     text-transform: uppercase;
-    color: #93A3B4;
+    color: ${T.ink.secondary};
     font-weight: 700;
     padding: 0 2.5mm 1.4mm 0;
-    border-bottom: 1px solid #E4EAF1;
+    border-bottom: 1px solid ${T.rule.hairline};
   }
-  td { padding: 1.7mm 2.5mm 1.7mm 0; border-bottom: 1px solid #F2F5F8; }
+  td { padding: 1.7mm 2.5mm 1.7mm 0; border-bottom: 1px solid ${T.rule.hairline}; }
   td.num { font-variant-numeric: tabular-nums; }
-  td .of { color: #93A3B4; font-size: 8pt; }
-  td.muted { color: #7C8CA0; }
+  td .of { color: ${T.ink.secondary}; font-size: 8pt; }
+  td.muted { color: ${T.ink.secondary}; }
 
   /* ---------- footer, repeated every page ---------- */
   .footer {
     position: fixed;
     left: 0; right: 0; bottom: 0;
     padding: 3mm 14mm 4mm;
-    border-top: 1px solid #E4EAF1;
-    background: #FFFFFF;
+    border-top: 1px solid ${T.rule.hairline};
+    background: ${T.paper.sheet};
     font-size: 7pt;
     line-height: 1.45;
-    color: #8B9AAB;
+    color: ${T.ink.secondary};
   }
-  .footer b { color: #61738A; }
+  .footer b { color: ${T.ink.secondary}; }
 </style>
 </head>
 <body>
@@ -403,10 +407,10 @@ export function buildReportHtml(data: ReportData, now = new Date()): string {
 
   <header class="masthead">
     <div class="brand">
-      ${LOGO_SVG}
+
       <div>
-        <div class="brand__name">AnklePath</div>
-        <div class="brand__tag">Ankle injury recovery tracking</div>
+        <div class="brand__name">Recovery Companion</div>
+        <div class="brand__tag">Recovery tracking</div>
       </div>
     </div>
     <div class="masthead__right">
@@ -473,9 +477,9 @@ export function buildReportHtml(data: ReportData, now = new Date()): string {
 <footer class="footer">
   <b>This summary is for your own tracking and education — it is not a medical assessment. Share it with a
   clinician if you have concerns.</b>
-  AnklePath is not a medical device and does not diagnose, treat, or provide clinical advice. Nothing in this
+  Recovery Companion is not a medical device and does not diagnose, treat, or provide clinical advice. Nothing in this
   report should be read as clearance to return to sport or activity.
-  Generated by AnklePath on ${escapeHtml(formatDate(now.toISOString()))}.
+  Generated by Recovery Companion on ${escapeHtml(formatDate(now.toISOString()))}.
 </footer>
 
 </body>

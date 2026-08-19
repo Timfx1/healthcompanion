@@ -22,10 +22,10 @@ export async function exportRecoveryReport(data: ReportData): Promise<void> {
   await Sharing.shareAsync(uri, {
     mimeType: "application/pdf",
     UTI: "com.adobe.pdf",
-    dialogTitle: "Share your AnklePath recovery report"
+    dialogTitle: "Share your Recovery Companion report"
   });
 
   if (__DEV__) {
-    console.log("[AnklePath/Report] PDF exported", { platform: Platform.OS, uri });
+    console.log("[RecoveryCompanion/Report] PDF exported", { platform: Platform.OS, uri });
   }
 }

@@ -1,8 +1,9 @@
 {
   "$note": "React Native port debt. BOTH NUMBERS MAY ONLY DECREASE.",
-  "$generated": "2026-08-18",
+  "$generated": "2026-08-19",
   "total": 0,
   "byKey": {},
   "$palette": "0 — the colour re-domain is COMPLETE. All 172 AnklePath colour references now resolve to Recovery Companion roles. The mechanism was the generated palette omitting every key that carried meaning, so each site failed to compile until a person decided what it meant; it has now done its job. The budget stays at 0 so no new palette.blue can appear.",
-  "$literals": "89 hex literals the COMPILER CANNOT SEE — a raw #2F7DE1 in a gradient is just a string to it. Two groups, both deliberately unfixed:  (1) BRAND, awaiting a decision — the splash and plan-loading gradients still run AnklePath blue, and what replaces them is a new brand treatment rather than a mapping. (2) PRINT — 57 of the 89 are in services/report/reportHtml.ts, a standalone HTML template for the doctor report, which needs its own print palette rather than the app tokens."
+  "$literals": "32 hex literals the COMPILER CANNOT SEE — a raw #2F7DE1 in a gradient is just a string to it. Was 89. The 57 in services/report/reportHtml.ts are gone: the doctor report now draws from tokens/print.json, its own single-valued print layer. What remains is BRAND, awaiting a decision — the splash and plan-loading gradients still run AnklePath blue, and what replaces them is a new brand treatment rather than a mapping. NOTE: the `literals` key above is the enforced floor. It did not exist before 2026-08-19, and because the check read `budget.literals ?? literals` it had been silently budgeting whatever it found — a real number reported, nothing enforced.",
+  "literals": 32
 }

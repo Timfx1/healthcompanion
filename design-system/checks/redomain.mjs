@@ -63,7 +63,7 @@ function litFiles(dir, acc) {
   for (const e of readdirSync(dir)) {
     const full = dir + "/" + e;
     if (statSync(full).isDirectory()) litFiles(full, acc);
-    else if ((e.endsWith(".ts") || e.endsWith(".tsx")) && !e.includes("tokens.generated")) acc.push(full);
+    else if ((e.endsWith(".ts") || e.endsWith(".tsx")) && !e.includes(".generated.")) acc.push(full);
   }
   return acc;
 }
@@ -122,7 +122,16 @@ if (unrelated.length) {
   process.exit(1);
 }
 
-const litBudget = budget.literals ?? literals;
+// This read `budget.literals ?? literals` — and the budget file carries the
+// count only in "$literals", a PROSE note whose $ prefix meant the lookup
+// always missed. The fallback then set the budget to whatever was found, so
+// the ratchet could never fail: it printed a real number and enforced nothing.
+// A missing key is now fatal rather than self-satisfying.
+if (budget.literals === undefined) {
+  console.error("redomain: the budget file has no literals key, so the ratchet would floor itself against its own count. Add one.");
+  process.exit(1);
+}
+const litBudget = budget.literals;
 console.log(`           ${literals} hardcoded hex literals  (budget ${litBudget})`);
 if (LIST) {
   console.log("");
