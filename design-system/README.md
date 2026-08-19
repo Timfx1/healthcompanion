@@ -36,7 +36,7 @@ node design-system/build/emit-docs.mjs       # regenerate the DESIGN_CRITERIA ap
 node design-system/build/emit-docs.mjs --check
 node design-system/checks/contrast.mjs       # WCAG AA audit, both modes
 node design-system/checks/contrast.mjs --all # include passing pairs
-node design-system/checks/restricted.mjs     # non-negotiables N1-N5 in consumer code
+node design-system/checks/restricted.mjs     # non-negotiables N1-N6 in consumer code
 node design-system/checks/coverage.mjs       # the literal ratchet
 node design-system/checks/coverage.mjs --list   # ... and what is still hardcoded
 node design-system/extraction/harvest.mjs    # re-inventory hardcoded literals

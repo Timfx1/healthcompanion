@@ -27,7 +27,7 @@ These come from the product principles (P1–P10) in the master spec. They are r
 | N3 | **Warm alert colour is reserved.** The safety hue appears only on genuine red-flag content ("when to contact a doctor"). Never decorative, never for emphasis, never for a "bad" data point. | A health app that cries wolf in decoration cannot be trusted when it means it. | `restricted.mjs` fails if the safety value resolves outside the `safety.*` family. |
 | N4 | **Never meaning by colour alone.** Every colour-carried meaning is paired with an icon or a text label. | WCAG 1.4.1; also required for the 8% of users who cannot use the distinction at all. | Every `category.*` family must define `mark` + `ink` + `icon` + `label`. A missing sibling is a build error. |
 | N5 | **Ranges, never targets.** The recovery corridor is always a band with a range label. There is no target line, no goal marker, no pass/fail. | The corridor answers "am I on track?" without letting the user fail a benchmark nobody told them about. | No `corridor.target` token exists, so a target line is unbuildable. |
-| N6 | **The doctor report is never gated.** No lock badge, no paywall, no premium treatment anywhere on the report or its export. | P6. It is the category's emotional peak and the primary word-of-mouth trigger. | Lock tokens are forbidden in report surfaces; checked in review, and the report has no locked variant to apply. |
+| N6 | **The doctor report is never gated.** No lock badge, no paywall, no premium treatment anywhere on the report or its export. | P6. It is the category's emotional peak and the primary word-of-mouth trigger. | `restricted.mjs` fails if a declared report surface references a gating symbol, or a declared premium-offer surface names the report. Was "checked in review" until an audit found ten violations — see §11. |
 | N7 | **The core loop is never gated.** Daily check-in, quick capture, timeline, journal, basic pain chart, medications and reminders, appointments, safety content. | P9. The Medisafe core-feature paywall is the cautionary tale. | Same as N6 — no locked variants exist for these surfaces. |
 | N8 | **Both colour modes, every screen.** No screen ships in one mode only. | Half the palette going unverified is how the light-mode contrast failures in §11 happened. | Semantic tokens are mode-paired; a missing light value is a schema failure at build time. |
 
@@ -260,6 +260,61 @@ What was actually wrong was dead code and a token family describing a design nob
 
 **`insight.*` is still defined and unused.** `insight.trendUp`/`trendDown` resolve to category **marks** while the component now correctly renders the trend word in `ink` — so adopting the family as written would reintroduce the failure that was just fixed. The family needs its trend roles repointed at `ink` before anything consumes it.
 
+### Resolved — N6 was enforced "in review", and review failed ten times
+
+The doctor report is free forever (P6/N6): no lock badge, no paywall, no premium
+treatment anywhere on it or its export. A repo-wide audit found **ten sites**
+saying otherwise, across three categories.
+
+| Where | Site | What it did |
+|---|---|---|
+| Live gating | `ReportsScreen.tsx` | `usePremium().locked` → early-return a `PremiumLockCard` **instead of the report** |
+| Live gating | `HomeDashboardScreen.tsx` | upsell card titled "Unlock your recovery report" |
+| Live gating | `ProfileScreen.tsx` | premium row reading "Unlock exportable reports…" |
+| Sold as premium | `config/paywall.ts` | `PAYWALL_COPY.benefits` included "Exportable recovery reports" |
+| Sold as premium | RN `PremiumTeaserScreen.tsx` | same string in the teaser list |
+| Sold as premium | prototype `PremiumTeaserScreen` | **a lock badge rendered on a "Doctor report PDF" row** |
+| Sold as premium | prototype `PaywallScreen` | "Doctor report PDF" ticked in the paid benefits list |
+| Wrong policy | `app/README.md`, `FACELESS_ADS_PROMPT.md`, and the comment above the gate | stated the report was premium |
+
+Three things are worth recording beyond the fix.
+
+**It was latent, not visible, and that is worse.** `PREMIUM_GATING_ENABLED` is
+`PAYWALL_ENABLED && BILLING_ENABLED`, both env-defaulted false, so `locked` was
+always false and nobody could see the gate. It would have activated on the day
+billing was switched on — the day nobody is re-reading the non-negotiables.
+
+**Two of the ten were photographed and still passed.** The lock badge on the
+report row sat inside `ob-10-premium-teaser-{light,dark}` for as long as those
+baselines have existed. A visual baseline proves a screen has not *changed*; it
+cannot notice that what it has been faithfully reproducing is wrong. This is the
+same class of blind spot as the hand-maintained contrast manifest, and it is now
+the second time it has been the answer.
+
+**The correction already existed in the repo and stopped halfway.**
+`FIGMA_PROMPT_2_HOME_MAIN` asked for *"EXPORT button carries the lock badge
+(value first, gate at output)"*. `FIGMA_DESIGN_ADJUSTMENTS` later corrected it to
+*"the ENTIRE doctor report (incl. its export button) show NO lock badges
+anywhere"*. The correction reached Home — `MainApp.tsx` still carries the
+"NO lock badge" comment — and reached nothing else. Notably the AnklePath Figma
+design for the report has **no lock anywhere**: the gate was added in
+implementation, not inherited from a design.
+
+N6 is now a rule in `restricted.mjs` beside N1–N5. A declared **report surface**
+may not reference a gating symbol (`usePremium`, `PremiumLockCard`, `isPremium`,
+`lock.*`…); a declared **premium-offer surface** may not name the report. Both
+run on comment-stripped source, so code may document N6 as loudly as it likes
+without tripping it — verified by reintroducing each violation and confirming it
+fires, and by confirming a comment that correctly states N6 does not.
+
+**Known limitation, stated rather than hidden:** both file lists are
+hand-maintained, exactly like `pairs.manifest.json`. A report surface nobody adds
+to the list is a report surface nobody checks. The prototype's Home report row
+is deliberately *not* covered, because `MainApp.tsx` legitimately uses
+`LockedCard` for premium insights on the same screen — file-level granularity is
+too coarse there, and pretending otherwise would produce a check that had to be
+suppressed.
+
 ### Resolved — the `corridor.*` reconciliation
 
 The corridor family diverged from what the chart painted, and the answer was not "the tokens are right" or "the code is right". It was one of each, plus two things neither had:
@@ -288,7 +343,7 @@ This gap is no longer theoretical: it hid the Toast's dead code path and unused 
 | Check | What it catches |
 |---|---|
 | `checks/contrast.mjs` | Any approved pair falling below its threshold, per mode, alpha-composited |
-| `checks/restricted.mjs` | Safety colour escaping its family; incomplete `category.*` families; primitives referenced from screens; forbidden token names (`target`, `streak`, `missed`) |
+| `checks/restricted.mjs` | Safety colour escaping its family; incomplete `category.*` families; primitives referenced from screens; forbidden token names (`target`, `streak`, `missed`); N6 — a gating symbol on a report surface, or the report named on a premium-offer surface |
 | `checks/coverage.mjs` | New raw hex, `rgba()`, duration, z-index, radius or font size in consumer code. The budget may only shrink. |
 | `build/build.mjs --check` | Generated artifacts diverging from the token source. (This is the drift gate; there is no separate `drift.mjs`.) |
 | `build/emit-docs.mjs --check` | The appendix below diverging from the tokens — so this document cannot quietly start describing a palette that no longer exists |

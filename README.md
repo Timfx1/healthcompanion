@@ -14,10 +14,10 @@ Being precise about this, because the gap matters:
 
 | | Status |
 |---|---|
-| **Design system** (`design-system/`) | Real. One token source, two platforms, seven gates. |
+| **Design system** (`design-system/`) | Real. One token source, two platforms, eight gates. |
 | **Web prototype** (`Onboarding Flow/`) | Real, and the reference implementation — 12 onboarding screens + 5 tabs, both colour modes. A Figma Make export, since evolved. |
 | **React Native app** (`app/`) | **Colour re-domain complete.** The AnklePath `ActivatePayment` tree, copied in with fresh history. All 172 colour references resolve to Recovery Companion roles and the app typechecks clean. Screens are still AnklePath's. |
-| **16 of 17 detail/modal screens** (§5) | Designed nowhere — not in Figma, not in code. Includes the Doctor Report, the flagship. |
+| **§5 detail/modal screens** | **3 of 17 exist, 2 partial, 3 have precedent, 9 greenfield** — counted below. Includes the Doctor Report, the flagship. |
 
 `tokens.native.ts` is now consumed by `app/`, vendored as
 `app/src/theme/tokens.generated.ts`.
@@ -41,6 +41,43 @@ string to it. 57 of those are the doctor-report HTML template, which wants its
 own print palette.
 
 ---
+
+---
+
+## Screen inventory against spec §5
+
+Counted from the code, not from memory — an earlier version of this file claimed
+"16 of 17 designed nowhere", which was wrong in both directions.
+
+**Onboarding (13 in spec).** 12 exist and are baselined in the prototype;
+`SignUp` exists only in the RN app and has no prototype route or baseline. The RN
+stack has 13 screens but they are AnklePath's decomposition — `InjuryType` /
+`InjuryTiming` / `PainWalking` plus a `Consent` step, and **no `ConditionDetail`**.
+
+**Main tabs (5).** All five exist and are baselined in the prototype. The RN app
+still has AnklePath's five (`Home · Plan · Track · Learn · Profile`).
+
+**Detail/modal (17).**
+
+| Class | Count | Screens |
+|---|---|---|
+| **Exists** | 3 | `ShareCardPreview` (built as `ShareCardScreen`), `PremiumTeaser`, `TrialPaywall` |
+| **Partial** — the value ships, the §5 surface does not | 2 | `QuickCaptureSheet` (Home field exists; the FAB-reachable sheet does not), `WeeklyReflection` (Home card exists; "save to timeline" has no destination) |
+| **Precedent to re-domain** | 3 | `EducationArticle` ← `ArticleDetailScreen`, `Safety` ← `SafetyScreen`, `ReportPreview` ← `ReportsScreen` |
+| **Greenfield** | 9 | `JournalEntry`, `PhotoCapture`, `PhotoCompare`, `MilestoneDetail`, `ReportDateRange`, `AppointmentDetail`, `QuestionsForDoctor`, `MedicationDetail`, `AddTimelineEntry` |
+
+Two things this count surfaced.
+
+**`ShareCardScreen` is the 20th surface and has no baseline.** The visual suite
+covers 19 screens × 2 modes; ShareCard is not among them, and `?screen=app:`
+accepts only `home|timeline|progress|profile|checkin|paywall`. It is
+unphotographable — the exact condition that hid the dead `Toast` branch for the
+whole life of that component. `welcomeBack.*` has the same problem for a
+different reason: it is a *state* of Home rather than a §5 screen, so nothing
+routes to it either.
+
+**`ReportsScreen` was not a colour re-domain.** It gated the report behind
+`usePremium()`, which N6 forbids outright. See `DESIGN_CRITERIA.md` §11.
 
 ## Quick start
 
@@ -69,7 +106,7 @@ any backend anywhere in this repository.
 | Corridor data (P5) | **Placeholder mock, cited** | "Common range for knee rehab, weeks 4–6" is illustrative. Real content needs source attribution per §10 before it ships. |
 | Weekly reflections (P7) | **Mock generator** | Fixed copy. The real one derives from entries. |
 | Share cards (P8) | **Local render** | In-app preview only. No OS share sheet — that is `expo-sharing` in Phase 1. |
-| Doctor report (P6) | **Not built** | Linked from Home and Profile; the destination does not exist. Free forever, no lock, ever. |
+| Doctor report (P6) | **In progress** | The RN app has AnklePath's `ReportsScreen` + a print/PDF template, now un-gated (it was premium — see `DESIGN_CRITERIA.md` §11). The Recovery Companion report preview and its `report.*` surface are not built. Free forever, no lock, ever — enforced by `restricted.mjs`, not by review. |
 | Photo timeline / compare | **Not built** | Compare is premium; the timeline is not. |
 | Medications, appointments | **Static mock data** | No reminders or notifications. |
 | Widgets, native voice | **Phase 2** | Deep link `recoverycompanion://capture` is reserved. Phase 1 uses OS keyboard dictation. |
@@ -96,7 +133,8 @@ Enforced by the shape of the token set, not by review. From
 - **Never meaning by colour alone.** Every `category.*` family must define
   `mark` + `ink` + `icon` + `label` or the build fails.
 - **Ranges, never targets.** No `corridor.target` token exists.
-- **The doctor report and the core loop are never gated.** Free forever.
+- **The doctor report and the core loop are never gated.** Free forever — and
+  N6 is now a check, after an audit found ten places that gated or sold it.
 - **Both colour modes, every screen.** A role missing its light value is a build
   failure.
 
