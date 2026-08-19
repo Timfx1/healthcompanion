@@ -77,7 +77,7 @@ export function ProfileScreen() {
   const premiumSubtitle = isPremium
     ? "Premium active — thank you for your support"
     : gatingActive
-      ? "Unlock exportable reports & the extended library"
+      ? "Advanced insights, full history, and photo compare"
       : "Free plan - Premium coming soon";
 
   const emailDeletionRequest = () => {

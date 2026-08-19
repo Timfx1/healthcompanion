@@ -87,9 +87,9 @@ export function HomeDashboardScreen() {
             <Ionicons name="sparkles" size={20} color={tokens.color.accent.default} />
           </View>
           <View style={styles.upgradeCopy}>
-            <Text style={[styles.upgradeTitle, { color: palette.text }]}>Unlock your recovery report</Text>
+            <Text style={[styles.upgradeTitle, { color: palette.text }]}>Go deeper with Premium</Text>
             <Text style={[styles.upgradeText, { color: palette.textMuted }]}>
-              Plus return-to-sport readiness and the extended exercise library.
+              Advanced insights, full history, and photo compare.
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={palette.textSubtle} />

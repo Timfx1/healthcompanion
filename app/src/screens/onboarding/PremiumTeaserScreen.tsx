@@ -17,7 +17,7 @@ const features = [
   "Advanced progress insights",
   "Smarter rehab progression",
   "Return-to-sport readiness tools",
-  "Exportable recovery reports",
+  "Photo progress compare",
   "Extended exercise library"
 ];
 

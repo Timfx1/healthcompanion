@@ -419,7 +419,10 @@ Billing cannot be fully tested in Expo Go. Test purchases in a development build
 
 ## Notes
 
-- Premium features (exportable reports, extended exercise library) are fully wired but only lock once `PAYWALL_ENABLED` and `BILLING_ENABLED` are both `true`.
+- Premium features (advanced insights, full history, photo compare) are fully wired but only lock once `PAYWALL_ENABLED` and `BILLING_ENABLED` are both `true`.
+- The doctor report is NOT among them and never can be. It is free forever (N6),
+  including its export. `checks/n6.mjs` fails the build if a premium or lock term
+  reaches a report surface.
 - The paywall keeps a "Continue with Free Plan" option, and the app remains fully usable in guest/offline mode.
 - RevenueCat is installed but inactive unless billing is enabled.
 - Appfigures is intentionally not installed.

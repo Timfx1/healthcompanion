@@ -3,14 +3,12 @@ import { Alert, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AppButton } from "../../components/AppButton";
 import { ScreenContainer } from "../../components/ScreenContainer";
-import { PremiumLockCard } from "../../components/PremiumLockCard";
 import { exercises } from "../../data/mockRecoveryPlan";
 import { trackerConfigs } from "../../data/trackerCheckIns";
 import { useAppData } from "../../state/AppDataContext";
 import { AppPalette, useAppTheme } from "../../state/AppThemeContext";
 import { painStep } from "../../theme/tokens.generated";
 import { useOnboarding } from "../../state/OnboardingContext";
-import { usePremium } from "../../hooks/usePremium";
 import { AnalyticsEvents } from "../../services/analytics/events";
 import { trackButtonClick, trackEvent } from "../../services/analytics/posthog";
 import { exportRecoveryReport } from "../../services/report/exportReport";
@@ -38,38 +36,16 @@ export function ReportsScreen() {
   const { palette, tokens, mode } = useAppTheme();
   const { painEntries, trackerCheckIns, completedExerciseIds, exerciseCompletions, profile } = useAppData();
   const { state: onboarding } = useOnboarding();
-  const { locked } = usePremium();
   const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
-    if (!locked) trackEvent(AnalyticsEvents.insightsViewed, { checkIns: painEntries.length + trackerCheckIns.length });
-  }, [locked]);
+    trackEvent(AnalyticsEvents.insightsViewed, { checkIns: painEntries.length + trackerCheckIns.length });
+  }, []);
 
-  // Exportable recovery reports are a Premium feature. Free users still keep every
-  // check-in they logged — they just see an upsell here until they upgrade.
-  if (locked) {
-    return (
-      <ScreenContainer>
-        <Text style={[styles.title, { color: palette.text }]}>Recovery report</Text>
-        <Text style={[styles.subtitle, { color: palette.textMuted }]}>
-          A shareable summary of your healing journey — pain trends, mobility, and adherence in one place.
-        </Text>
-        <View style={{ marginTop: spacing.md }}>
-          <PremiumLockCard
-            title="Unlock your recovery report"
-            subtitle="Turn your check-ins into a clear, exportable summary you can share with a clinician."
-            benefits={[
-              "Pain trend over time",
-              "Mobility & strength progress",
-              "Exercise adherence",
-              "Clinician-ready summary"
-            ]}
-            sourceScreen="Reports"
-          />
-        </View>
-      </ScreenContainer>
-    );
-  }
+  // N6: the doctor report is never gated. There is deliberately no `locked`
+  // branch here, and no lock token this surface could apply — free forever
+  // means the export button too. AnklePath gated this screen behind
+  // usePremium(); that gate was removed, not disabled. See DESIGN_CRITERIA §11.
 
   const hasData = painEntries.length > 0 || trackerCheckIns.length > 0;
 

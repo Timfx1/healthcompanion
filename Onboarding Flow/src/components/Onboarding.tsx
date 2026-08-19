@@ -1579,8 +1579,11 @@ function FreePlanScreen({ mode, onNext }: { mode: Mode; onNext: () => void }) {
 //   - "✦ PREMIUM" gradient badge
 //   - Headline: "Go deeper with Premium"
 //   - 5 locked feature rows (52px, opacity 0.7):
-//     Advanced insights / Full history / Doctor report /
+//     Advanced insights / Full history / Education deep-dives /
 //     Photo compare / Multiple profiles
+//   NOTE: the doctor report is NOT here and must never be. N6 - it is free
+//   forever, so selling it on a premium surface is a violation even though
+//   no lock is applied to the report screen itself.
 //   - Lock badge on each row (24×24px, D.border bg, lock SVG)
 //   - "Start 14-day free trial" primary button
 //   - "Continue with free plan" secondary button
@@ -1603,8 +1606,8 @@ function FreePlanScreen({ mode, onNext }: { mode: Mode; onNext: () => void }) {
 function PremiumTeaserScreen({ mode, onNext, onSkip }: { mode: Mode; onNext: () => void; onSkip: () => void }) {
   const premiumFeatures = [
     { icon: "🔬", label: "Advanced insights & correlations", color: D.meds, locked: true },
-    { icon: "📜", label: "Full history export", color: D.sleep, locked: true },
-    { icon: "🩻", label: "Doctor report PDF", color: D.energy, locked: true },
+    { icon: "📜", label: "Full history", color: D.sleep, locked: true },
+    { icon: "📚", label: "Education deep-dives", color: D.energy, locked: true },
     { icon: "📷", label: "Photo progress compare", color: D.pain, locked: true },
     { icon: "♾️", label: "Multiple recovery profiles", color: D.mood, locked: true },
   ];
@@ -1739,8 +1742,8 @@ function PaywallScreen({ mode, onNext, onSkip }: { mode: Mode; onNext: () => voi
         <div className="animate-fade-up flex flex-col gap-2" style={{ animationDelay: "140ms" }}>
           {[
             { icon: "🔬", label: "Advanced insights", color: D.meds },
-            { icon: "📜", label: "Full history & export", color: D.sleep },
-            { icon: "🩻", label: "Doctor report PDF", color: D.energy },
+            { icon: "📜", label: "Full history", color: D.sleep },
+            { icon: "📚", label: "Education deep-dives", color: D.energy },
             { icon: "📷", label: "Photo progress compare", color: D.pain },
             { icon: "♾️", label: "Multiple recoveries", color: D.mood },
           ].map((f, i) => (

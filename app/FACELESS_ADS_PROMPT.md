@@ -40,7 +40,7 @@ If you have web search or research tools available, **use them** to (a) analyze 
 - **Recovery reports** — an exportable summary of your pain logs, symptoms, and tracker trends that you can **show your physio or doctor** (for your own tracking and communication — not a medical assessment).
 - **Progress & motivation** — watch swelling drop, pain scores fall, the day counter climb, and exercises get checked off.
 - **Sign-in options:** Apple, Google, Email, or continue as guest.
-- **Premium (optional):** 14-day free trial, then a monthly subscription. Premium adds advanced progress insights, smarter rehab progression, return-to-sport readiness tools, exportable reports, and an extended exercise library.
+- **Premium (optional):** 14-day free trial, then a monthly subscription. Premium adds advanced progress insights, full history depth, photo progress compare, and multiple simultaneous recoveries. The doctor report and its export are free forever and are never part of the premium offer.
 
 **Positioning & tone:** Calm, credible, supportive, "physio-informed friend in your pocket." Reassuring without being clinical. The core emotional promise: **replace panic and guesswork with a clear plan and peace of mind.**
 
