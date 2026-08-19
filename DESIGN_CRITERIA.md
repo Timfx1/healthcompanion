@@ -496,6 +496,33 @@ Product concepts with fixed contracts, defined once so they cannot drift between
 | `toast.surface` | `#252438` | `#252438` |
 | `toast.label` | `#FFFFFF` | `#FFFFFF` |
 
+### Print (paper)
+
+A SEPARATE domain, not a third colour mode — single-valued, because paper has no dark counterpart. Body copy is held to **7:1**, not 4.5:1: paper offers no brightness control, no zoom and no theme fallback, and a clinical report gets photocopied. WCAG relative luminance is greyscale luminance, so a pair meeting its ratio here also survives a black-and-white copy.
+
+| Role | Value | On paper |
+|---|---|---|
+| `paper.sheet` | `#FFFFFF` |  |
+| `paper.tint` | `#F7F6FB` |  |
+| `paper.band` | `#EFEDF7` |  |
+| `ink.primary` | `#1A1830` |  |
+| `ink.secondary` | `#4E4C69` | Replaces four greys whose worst case was 2.36:1 |
+| `accent.ink` | `#4F4783` |  |
+| `accent.stroke` | `#7C6FCD` | Data stroke, not text — 3:1 floor applies |
+| `accent.tint` | `#F0EDFB` |  |
+| `rule.strong` | `#6B6890` |  |
+| `rule.hairline` | `#E4E1F5` | Exempt; the layout separates without it |
+| `trend.improving.ink` | `#285B39` |  |
+| `trend.improving.band` | `#EAF3ED` |  |
+| `trend.worsening.ink` | `#843456` |  |
+| `trend.worsening.band` | `#F7EDF1` |  |
+| `trend.steady.ink` | `#4E4C69` |  |
+| `trend.steady.band` | `#EFEDF7` |  |
+| `painDots.filled` | `#1A1830` | No hue: severity is read by counting |
+| `painDots.track` | `#DEDBEE` |  |
+
+Emitted to `dist/tokens.print.ts`. Validated by V6 (single-value) and V6b (the reserved alert hue is off limits on paper too).
+
 ### Type
 
 | Role | Size | Weight | Line height | Tracking |
@@ -547,7 +574,7 @@ The `z` order is fixed: an overlay must never be authored with an ad-hoc z-index
 
 ### Contrast manifest
 
-**84 declared pairs, 152 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
+**104 declared pairs, 192 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
 
 | Usage class | Pairs |
 |---|---|
@@ -555,5 +582,8 @@ The `z` order is fixed: an overlay must never be authored with an ad-hoc z-index
 | `ui-boundary` | 6 |
 | `decorative` | 12 |
 | `large-text` | 14 |
+| `print-body` | 13 |
+| `print-rule` | 3 |
+| `print-decorative` | 4 |
 
 This measures the pairs the manifest DECLARES, not the pairs the app renders. An undeclared combination is unmeasured, not passing — see §11.

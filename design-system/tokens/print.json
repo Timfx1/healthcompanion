@@ -1,0 +1,65 @@
+{
+  "$layer": "print",
+  "$intent": "The doctor report as it exists on PAPER. A separate domain, not a third colour mode.",
+
+  "$why": "Print is not dark mode's sibling. It has no viewer-adjustable brightness, no zoom, no ability to fall back to another theme, and it is routinely photocopied or faxed — which crushes midtones. The audience is a clinician scanning for 60 seconds, often over 40, under whatever lighting the room has. Every one of those pushes the same direction: paper needs MORE contrast than a screen, not the same.",
+
+  "$notModePaired": "Deliberately. Semantic tokens are { dark, light } and the build fails one that is not (V1). Print roles carry a SINGLE value, because a light value on a surface that has no dark counterpart would be a lie the schema forced us to tell. This layer is validated by its own rule instead.",
+
+  "$refsResolveInLight": "A ref like {color.text.primary} is resolved in LIGHT mode, because paper is a light substrate. Refs are used only where print genuinely inherits the screen decision; everywhere the medium diverges the value is solved against paper and stated literally, so nothing silently tracks a screen change that paper did not ask for.",
+
+  "$greyscale": "WCAG relative luminance IS greyscale luminance, so any pair meeting its ratio here also survives a black-and-white photocopy. That is a property of the maths, not a claim — but it is why no separate mono audit is needed.",
+
+  "$hierarchyRule": "In print, hierarchy comes from SIZE and WEIGHT, not lightness. The template this replaces used four greys (#132434 / #61738A / #7C8CA0 / #93A3B4) to build a type hierarchy; three of them landed between 2.5:1 and 3.4:1 as 8-9pt body copy. Print gets TWO inks, both high-contrast, and lets the type scale do the work greys were doing badly.",
+
+  "paper": {
+    "$intent": "The sheet and the two washes allowed on it.",
+    "sheet": { "$type": "color", "$value": "#FFFFFF", "$description": "The page. Not off-white: any tint here is ink the printer must lay down across the whole sheet." },
+    "tint":  { "$type": "color", "$value": "#F7F6FB", "$description": "Stat cards and callout fills. A faint accent wash. Pale enough (1.07:1 vs sheet) that a photocopy renders it as paper rather than as a grey block." },
+    "band":  { "$type": "color", "$value": "#EFEDF7", "$description": "Chips and pills — the one place a filled shape carries a label. 1.15:1 vs sheet." }
+  },
+
+  "ink": {
+    "$intent": "Text. Two roles, both cleared for body copy on every backdrop in this layer.",
+    "primary":   { "$type": "ref", "$value": "{color.text.primary}", "$description": "Inherited from the light-mode ink — paper and a light screen want the same near-black indigo. 17.25 sheet / 16.04 tint / 14.89 band." },
+    "secondary": { "$type": "color", "$value": "#4E4C69", "$description": "Meta, labels, table cells, footer, axis labels. Solved against the BAND, the darkest thing it sits on, and used everywhere: 8.20 sheet / 7.62 tint / 7.08 band. Replaces four greys whose worst case was 2.36:1." }
+  },
+
+  "accent": {
+    "$intent": "The one hue that carries data, derived from the Recovery Companion accent rather than AnklePath's slate blue.",
+    "ink":    { "$type": "color", "$value": "#4F4783", "$description": "Accent AS TEXT — the wordmark and section emphasis. 8.20 sheet / 7.08 band." },
+    "stroke": { "$type": "color", "$value": "#7C6FCD", "$description": "The pain line and the masthead rule. 4.19:1 — a data stroke, not text, and comfortably above the 3:1 non-text floor." },
+    "tint":   { "$type": "ref",   "$value": "{color.paper.100}", "$description": "Wash behind the block that gets extra weight." }
+  },
+
+  "rule": {
+    "$intent": "Lines. Split by whether the line MEANS something.",
+    "strong":   { "$type": "color", "$value": "#6B6890", "$description": "The chart's dashed reference baseline. 5.24:1 — it tells the reader where zero is, so it is a meaningful non-text element and held to 3:1." },
+    "hairline": { "$type": "color", "$value": "#E4E1F5", "$description": "Table rows and card edges. 1.28:1 and deliberately exempt: the layout separates these rows without the line, exactly as the screen system treats surface.border. A hairline forced to 3:1 would out-shout the data." }
+  },
+
+  "trend": {
+    "$intent": "Direction of change, for the block a clinician reads first.",
+    "$naming": "improving / worsening / steady — named by DIRECTION, never good/bad. The report states what changed; it does not grade the person who lived it. The template this replaces used .callout--good and .callout--bad.",
+    "$notSafety": "None of these is the reserved alert hue. N3 keeps that for red-flag guidance, and a high pain score is a data point, not a red flag — the same rule that already removed a hardcoded red from the pain ramp in ReportsScreen.",
+    "improving": {
+      "ink":  { "$type": "color", "$value": "#285B39", "$description": "7.94 sheet / 7.01 on its own band." },
+      "band": { "$type": "color", "$value": "#EAF3ED" }
+    },
+    "worsening": {
+      "ink":  { "$type": "color", "$value": "#843456", "$description": "8.06 sheet / 7.04 on its own band. The screen system's pain ink, darkened for paper." },
+      "band": { "$type": "color", "$value": "#F7EDF1" }
+    },
+    "steady": {
+      "ink":  { "$type": "color", "$value": "#4E4C69", "$description": "Same ink as body text — steady is the absence of a signal, so it gets no colour of its own." },
+      "band": { "$type": "color", "$value": "#EFEDF7" }
+    }
+  },
+
+  "painDots": {
+    "$intent": "Ten dots, the first N filled. Severity is read by COUNTING, not by hue.",
+    "$why": "The template filled these with an orange-red that darkened with the score — meaning-by-colour on a bad data point, which N3 forbids and which a black-and-white photocopy destroys anyway. The count already carries the value and a numeral sits beside it, so the fill needs no hue at all.",
+    "filled": { "$type": "ref",   "$value": "{color.text.primary}", "$description": "17.25:1. Reads at a glance and survives any reproduction." },
+    "track":  { "$type": "color", "$value": "#DEDBEE", "$description": "1.36:1, print-decorative. The unfilled remainder is the absence of a dot, not information." }
+  }
+}

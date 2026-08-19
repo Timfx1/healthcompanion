@@ -4,8 +4,15 @@
     "body-text": "4.5:1 — normal body copy. NOTE: weight 600 does NOT qualify for the large-text exemption; only bold (700) does.",
     "large-text": "3.0:1 — >=18.66px bold or >=24px regular",
     "ui-boundary": "3.0:1 — WCAG 1.4.11 non-text: controls, focus rings, meaningful borders",
-    "decorative": "exempt — measured and reported, never failed"
+    "decorative": "exempt — measured and reported, never failed",
+
+    "print-body": "7.0:1 — body copy ON PAPER. Held to the AAA figure rather than AA, and not out of perfectionism: paper has no brightness control, no zoom and no theme fallback, and a clinical report gets photocopied, which crushes midtones. WCAG's 4.5 assumes an emissive display the reader can adjust.",
+    "print-large": "4.5:1 — print headings >=18.66px bold or >=24px regular. Declared by NO pair today, because every large element in the report already uses an ink that clears the stricter body bar. Kept so a future one has a class to land in instead of inventing a threshold.",
+    "print-rule": "3.0:1 — print non-text that MEANS something: data strokes, the chart's reference baseline, the pain dots.",
+    "print-decorative": "exempt — measured and reported, never failed. Hairlines and washes the layout does not depend on."
   },
+
+  "$printNote": "Print pairs do NOT declare `modes`. Their usage class selects the print token set, and contrast.mjs throws if a print pair declares modes or a screen pair asks for the print set — so a print colour can never be measured against the dark screen palette by accident.",
 
   "pairs": [
     { "id": "text/primary on base",      "fg": "color.text.primary",   "bg": "color.surface.base",   "usage": "body-text" },
@@ -106,6 +113,30 @@
     { "id": "pattern/historyFade pill label",   "fg": "pattern.historyFade.pillLabel", "bg": "color.surface.raised", "usage": "body-text" },
     { "id": "pattern/accumulation counter",     "fg": "pattern.accumulation.counterLabel", "bg": "color.surface.raised", "usage": "body-text" },
     { "id": "pattern/lock badge glyph",         "fg": "pattern.lock.badgeGlyph",   "bg": "pattern.lock.badgeFill", "usage": "ui-boundary" },
-    { "id": "pattern/toast label",              "fg": "pattern.toast.label",       "bg": "pattern.toast.surface", "usage": "body-text" }
+    { "id": "pattern/toast label",              "fg": "pattern.toast.label",       "bg": "pattern.toast.surface", "usage": "body-text" },
+
+    { "id": "PRINT ink/primary on sheet",        "fg": "ink.primary",   "bg": "paper.sheet", "usage": "print-body", "note": "Body copy, headings and the pain-dot numerals. Inherited from the light-mode ink." },
+    { "id": "PRINT ink/primary on tint",         "fg": "ink.primary",   "bg": "paper.tint",  "usage": "print-body" },
+    { "id": "PRINT ink/primary on band",         "fg": "ink.primary",   "bg": "paper.band",  "usage": "print-body" },
+    { "id": "PRINT ink/secondary on sheet",      "fg": "ink.secondary", "bg": "paper.sheet", "usage": "print-body", "note": "Meta, labels, table cells, axis labels, footer. Replaces FOUR greys from the AnklePath template whose worst case was 2.36:1 as 11pt copy." },
+    { "id": "PRINT ink/secondary on tint",       "fg": "ink.secondary", "bg": "paper.tint",  "usage": "print-body" },
+    { "id": "PRINT ink/secondary on band",       "fg": "ink.secondary", "bg": "paper.band",  "usage": "print-body", "note": "The binding case — ink.secondary was solved against THIS, the darkest thing it sits on, not against the sheet." },
+    { "id": "PRINT accent/ink on sheet",         "fg": "accent.ink",    "bg": "paper.sheet", "usage": "print-body", "note": "The wordmark and section emphasis. AnklePath's #1D6FB8 reached 5.23:1 here." },
+    { "id": "PRINT accent/ink on band",          "fg": "accent.ink",    "bg": "paper.band",  "usage": "print-body" },
+
+    { "id": "PRINT trend/improving on its band", "fg": "trend.improving.ink", "bg": "trend.improving.band", "usage": "print-body" },
+    { "id": "PRINT trend/improving on sheet",    "fg": "trend.improving.ink", "bg": "paper.sheet",          "usage": "print-body", "note": "Declared because a trend word also appears inline, off its band." },
+    { "id": "PRINT trend/worsening on its band", "fg": "trend.worsening.ink", "bg": "trend.worsening.band", "usage": "print-body" },
+    { "id": "PRINT trend/worsening on sheet",    "fg": "trend.worsening.ink", "bg": "paper.sheet",          "usage": "print-body" },
+    { "id": "PRINT trend/steady on its band",    "fg": "trend.steady.ink",    "bg": "trend.steady.band",    "usage": "print-body" },
+
+    { "id": "PRINT accent/stroke on sheet",      "fg": "accent.stroke", "bg": "paper.sheet", "usage": "print-rule", "note": "The pain line and the masthead rule. Data, not text." },
+    { "id": "PRINT rule/strong on sheet",        "fg": "rule.strong",   "bg": "paper.sheet", "usage": "print-rule", "note": "The chart's dashed reference baseline. It tells the reader where zero is, so it is meaningful non-text." },
+    { "id": "PRINT painDots/filled on tint",     "fg": "painDots.filled", "bg": "paper.tint", "usage": "print-rule", "note": "The dots sit on the pain stat card, not the sheet. Severity is read by COUNTING them — the fill carries no hue, so it survives a photocopy and does not paint a bad data point (N3)." },
+
+    { "id": "PRINT rule/hairline on sheet",      "fg": "rule.hairline",  "bg": "paper.sheet", "usage": "print-decorative", "note": "Table rows and card edges. Exempt on the same argument as surface.border on screen: the layout separates these rows without the line, and a hairline forced to 3:1 would out-shout the data." },
+    { "id": "PRINT painDots/track on tint",      "fg": "painDots.track", "bg": "paper.tint",  "usage": "print-decorative", "note": "The unfilled remainder is the absence of a dot, not information." },
+    { "id": "PRINT paper/tint on sheet",         "fg": "paper.tint",     "bg": "paper.sheet", "usage": "print-decorative", "note": "Measured so the wash cannot creep darker: it must read as paper after a photocopy, not as a grey block." },
+    { "id": "PRINT paper/band on sheet",         "fg": "paper.band",     "bg": "paper.sheet", "usage": "print-decorative" }
   ]
 }

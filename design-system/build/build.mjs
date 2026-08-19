@@ -36,6 +36,7 @@ const load = (f) => JSON.parse(readFileSync(resolve(DS, "tokens", f), "utf8"));
 const primitives = load("primitives.json");
 const semantic = load("semantic.json");
 const patterns = load("patterns.json");
+const print = load("print.json");
 
 const errors = [];
 const fail = (msg) => errors.push(msg);
@@ -169,6 +170,27 @@ walk(primitives, (path, node) => {
   if (node.$type === "shadow" && node.$value?.spread) fail(`V5 shadow spread: ${path.join(".")} uses spread, which React Native cannot express`);
 });
 
+// V6 — the print layer is single-valued. V1 requires semantic colours to be
+// { dark, light }; print roles must be the opposite, because paper has no dark
+// counterpart and a mode-paired print token would be a value nobody could ever
+// render. This is the rule that REPLACES V1 for this layer, not an exemption
+// from it — the layer is still validated, just against the right property.
+walk(print, (path, node) => {
+  const v = node.$value;
+  if (v && typeof v === "object" && !Array.isArray(v) && MODES.some((m) => m in v)) {
+    fail(`V6 print single-value: print.${path.join(".")} is mode-paired. Print has no dark mode; solve one value against paper.`);
+  }
+});
+
+// V6b — print may not reach for the reserved alert hue either. N3 is about what
+// a colour MEANS, and meaning does not change with the medium.
+walk(print, (path, node) => {
+  const r = resolveValue(node, "light");
+  if (typeof r === "string" && ALERT_HEXES.has(r.slice(0, 7).toUpperCase())) {
+    fail(`V6b reserved colour: print.${path.join(".")} resolves to the safety hue ${r}. Reserved for red-flag guidance, on paper as on screen.`);
+  }
+});
+
 // ── Resolve everything ──────────────────────────────────────────────────────
 const resolved = { $generated: "design-system/build/build.mjs", modes: {} };
 for (const mode of MODES) {
@@ -179,6 +201,8 @@ for (const mode of MODES) {
     pattern: resolveValue(patterns, mode),
   };
 }
+resolved.print = resolveValue(print, "light");
+
 resolved.primitive = {
   space: resolveValue(primitives.space, "dark"),
   radius: resolveValue(primitives.radius, "dark"),
@@ -354,11 +378,29 @@ function emitNative() {
   return ts;
 }
 
+// The print surface. A separate artifact rather than a branch inside the native
+// emitter, because a consumer that imports this should not also be handed a
+// dark theme it must remember not to use.
+function emitPrint() {
+  let ts = BANNER("ts");
+  ts += `// The doctor report on PAPER. Single-valued: there is no mode argument
+// here and there should never be one. See tokens/print.json for why, and
+// checks/pairs.manifest.json for the print-* usage classes these are measured
+// against (7:1 body copy, not 4.5:1 — paper offers no brightness control, no
+// zoom, no theme fallback, and is routinely photocopied).
+
+`;
+  ts += `export const printTokens = ${JSON.stringify(resolved.print, null, 2)} as const;\n\n`;
+  ts += `export type PrintTokens = typeof printTokens;\n`;
+  return ts;
+}
+
 const artifacts = {
   "tokens.json": JSON.stringify(resolved, null, 2) + "\n",
   "tokens.css": emitCss(),
   "tokens.web.ts": emitWeb(),
   "tokens.native.ts": emitNative(),
+  "tokens.print.ts": emitPrint(),
 };
 
 // Consumer copies. The generated artifacts are vendored into the web prototype
@@ -372,6 +414,7 @@ const CONSUMERS = {
   // as the web copies: Metro resolves poorly across a project root, and the app
   // should not depend on a sibling directory's layout.
   "app/src/theme/tokens.generated.ts": artifacts["tokens.native.ts"],
+  "app/src/theme/tokens.print.generated.ts": artifacts["tokens.print.ts"],
 };
 const REPO = resolve(DS, "..");
 
@@ -395,9 +438,9 @@ if (CHECK) {
 } else {
   for (const [path, content] of targets) writeFileSync(path, content, "utf8");
   const colorCount = Object.keys(resolved.modes.dark.color).length;
-  console.log(`Built ${targets.length} artifacts (4 in dist/, 2 vendored into the web prototype, 1 into the RN app).`);
+  console.log(`Built ${targets.length} artifacts (5 in dist/, 2 vendored into the web prototype, 2 into the RN app).`);
   console.log(`  colour role groups : ${colorCount}`);
   console.log(`  pattern families   : ${Object.keys(resolved.modes.dark.pattern).length}`);
   console.log(`  legacy D keys      : ${Object.keys(D).length}`);
-  console.log(`  validations passed : V1 mode-pairing, V2 category completeness, V3 reserved colour, V4 forbidden names, V5 shadow spread`);
+  console.log(`  validations passed : V1 mode-pairing, V2 category completeness, V3 reserved colour, V4 forbidden names, V5 shadow spread, V6 print single-value`);
 }

@@ -35,7 +35,16 @@ const ROOT = resolve(HERE, "../..");
 const AS_JSON = process.argv.includes("--json");
 const SHOW_ALL = process.argv.includes("--all");
 
-const THRESHOLDS = { "body-text": 4.5, "large-text": 3.0, "ui-boundary": 3.0, decorative: 0 };
+const THRESHOLDS = {
+  "body-text": 4.5, "large-text": 3.0, "ui-boundary": 3.0, decorative: 0,
+  // Print is held higher than screen, and the reason is not perfectionism.
+  // Paper has no brightness control, no zoom, no theme fallback, and a clinical
+  // report gets photocopied — which crushes midtones. WCAG 4.5:1 assumes an
+  // emissive display the reader can adjust; paper offers none of that, so body
+  // copy is held to the AAA figure instead.
+  "print-body": 7.0, "print-large": 4.5, "print-rule": 3.0, "print-decorative": 0,
+};
+const isPrintUsage = (u) => u.startsWith("print-");
 
 // ── Token source ────────────────────────────────────────────────────────────
 // Reads the GENERATED, RESOLVED tokens rather than parsing a source file. This
@@ -62,6 +71,24 @@ function loadTokens() {
     };
     walk(tree, []);
     byMode[mode] = flat;
+  }
+  // The print layer is a SIBLING of doc.modes, not a member of it — print is a
+  // medium, not a third colour mode, and filing it under `modes` would make the
+  // token file argue against the decision it implements. It is merged in here
+  // under its own key so that every piece of machinery below (spec resolution,
+  // compositing, debt, reporting) applies unchanged.
+  if (doc.print) {
+    const flat = {};
+    const walk = (node, path) => {
+      if (typeof node === "string") {
+        if (/^#[0-9A-Fa-f]{6,8}$/.test(node)) flat[path.join(".")] = normalizeHex(node);
+        return;
+      }
+      if (!node || typeof node !== "object") return;
+      for (const [k, v] of Object.entries(node)) walk(v, [...path, k]);
+    };
+    walk(doc.print, []);
+    byMode.print = flat;
   }
   return byMode;
 }
@@ -149,7 +176,13 @@ for (const pair of manifest.pairs) {
   const threshold = THRESHOLDS[usage];
   if (threshold === undefined) throw new Error(`Pair "${pair.id}": unknown usage class "${usage}"`);
 
-  for (const mode of pair.modes ?? ["dark", "light"]) {
+  // A print pair does not declare modes: the usage class already says which
+  // token set it belongs to. That removes the one way this could go wrong —
+  // a print colour measured against the dark screen palette, or vice versa.
+  if (isPrintUsage(usage) && pair.modes) throw new Error(`Pair "${pair.id}": a print-* pair must not declare "modes" — its usage class selects the print token set.`);
+  if (!isPrintUsage(usage) && (pair.modes ?? []).includes("print")) throw new Error(`Pair "${pair.id}": declares the print token set but uses a screen usage class "${usage}".`);
+
+  for (const mode of isPrintUsage(usage) ? ["print"] : pair.modes ?? ["dark", "light"]) {
     // Backdrops must be opaque — you cannot measure contrast against something
     // see-through without knowing what is behind it.
     const bg = resolveSpec(pair.bg, tokens, mode);
@@ -168,7 +201,7 @@ for (const pair of manifest.pairs) {
       composited: fgRaw.a < 1 ? rgbToHex(fg) : null,
       ratio: Math.round(ratio * 100) / 100,
       threshold,
-      pass: usage === "decorative" ? null : ratio >= threshold,
+      pass: threshold === 0 ? null : ratio >= threshold,
       note: pair.note ?? null,
       // Debt is scoped PER MODE, not per pair. Most of the known failures fail
       // on light only and pass comfortably on dark — marking the whole pair as
@@ -202,13 +235,15 @@ if (AS_JSON) {
   console.log(JSON.stringify({ $generated: new Date().toISOString(), summary: { total: results.length, failures: failures.length }, results }, null, 2));
 } else {
   const shown = SHOW_ALL ? results : results.filter((r) => r.pass !== true);
-  const byMode = { dark: [], light: [] };
+  const byMode = {};
   for (const r of shown) (byMode[r.mode] ??= []).push(r);
 
-  for (const mode of ["dark", "light"]) {
+  // Iterate what actually ran, not a hardcoded pair of modes — print is a third
+  // token set and would otherwise be measured and then silently not shown.
+  for (const mode of ["dark", "light", "print"]) {
     const rows = byMode[mode] ?? [];
     if (!rows.length) continue;
-    console.log(`\n${mode.toUpperCase()} MODE`);
+    console.log(`\n${mode === "print" ? "PRINT (paper — not a mode)" : mode.toUpperCase() + " MODE"}`);
     console.log("  ratio    req   verdict  pair");
     for (const r of rows.sort((a, b) => a.ratio - b.ratio)) {
       const verdict = r.pass === null ? "exempt " : r.pass ? "PASS   " : "FAIL   ";
