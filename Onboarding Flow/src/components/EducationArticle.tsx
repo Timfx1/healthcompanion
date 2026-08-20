@@ -35,6 +35,7 @@
 // ============================================================
 
 import { theme, scale, type Mode } from "./tokens";
+import DetailScreen from "./patterns/DetailScreen";
 import { type Article } from "./educationContent";
 
 export type Access = "free" | "deepDiveLocked" | "deepDiveOpen";
@@ -63,22 +64,8 @@ export default function EducationArticle({ mode, article, hasPremium = false, sa
   const visible = locked ? article.body.slice(0, 1) : article.body;
 
   return (
-    <div className="absolute inset-0 flex flex-col animate-fade-up"
-      // A full-screen reading surface sits on "raised", matching ReportPreview.
-      // On EducationArticle that is load-bearing rather than cosmetic: the
-      // historyFade gradient resolves to surface.raised, so fading over "base"
-      // would end on a colour the page never reaches.
-      style={{ background: t.color.surface.raised, zIndex: scale.z.feature }}>
-
-      <div className="flex items-center gap-2 px-5 shrink-0"
-        style={{ height: 56, borderBottom: `1px solid ${t.color.surface.border}` }}>
-        <button onClick={onClose} className="btn-press flex items-center"
-          style={{ background: "none", border: "none", cursor: "pointer", color: t.color.text.secondary }}>
-          <span style={{ fontSize: scale.font.size.base }}>←</span>
-        </button>
-        <div className="flex-1" style={{ fontSize: scale.font.size.md, fontWeight: 600, color: t.color.text.primary }}>
-          Learn
-        </div>
+    <DetailScreen mode={mode} title="Learn" onClose={onClose} gap={3}
+      action={
         <button onClick={onToggleSave} aria-label={saved ? "Saved" : "Save article"}
           className="btn-press flex items-center gap-1"
           style={{ background: "none", border: "none", cursor: "pointer" }}>
@@ -87,9 +74,7 @@ export default function EducationArticle({ mode, article, hasPremium = false, sa
             {saved ? "★ Saved" : "☆ Save"}
           </span>
         </button>
-      </div>
-
-      <div className="flex-1 overflow-y-auto px-5 pb-8 pt-4 flex flex-col gap-3">
+      }>
 
         <div style={{ fontSize: scale.font.size["2xs"], fontWeight: 700, letterSpacing: scale.font.tracking.wide, color: t.color.accent.strong, textTransform: "uppercase" }}>
           {article.category}
@@ -160,7 +145,6 @@ export default function EducationArticle({ mode, article, hasPremium = false, sa
             getting worse, see a clinician.
           </div>
         </div>
-      </div>
-    </div>
+    </DetailScreen>
   );
 }

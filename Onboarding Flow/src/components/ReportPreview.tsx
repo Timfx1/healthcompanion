@@ -61,6 +61,7 @@
 // ============================================================
 
 import { D, c as s, theme, scale, type Mode } from "./tokens";
+import DetailScreen from "./patterns/DetailScreen";
 import { cat } from "./patterns/category";
 
 export type Depth = "empty" | "sparse" | "first" | "ready";
@@ -124,21 +125,10 @@ export default function ReportPreview({ mode, data, exportState = "idle", onClos
   const dim = s(D.textSec, D.lTextSec, mode);
 
   return (
-    <div className="absolute inset-0 flex flex-col animate-fade-up"
-      style={{ background: R.surface, zIndex: scale.z.feature }}>
-
-      {/* HEADER. Back, title, and nothing else — no badge, no crown, no
-          "upgrade" affordance. There is nowhere on this screen for one. */}
-      <div className="flex items-center gap-2 px-5 shrink-0"
-        style={{ height: 56, borderBottom: `1px solid ${R.divider}` }}>
-        <button onClick={onClose} className="btn-press flex items-center gap-2"
-          style={{ background: "none", border: "none", cursor: "pointer", color: dim }}>
-          <span style={{ fontSize: scale.font.size.base }}>←</span>
-        </button>
-        <div style={{ fontSize: scale.font.size.md, fontWeight: 600, color: R.heading }}>Doctor report</div>
-      </div>
-
-      <div className="flex-1 overflow-y-auto px-5 pb-8 pt-4 flex flex-col gap-4">
+    // The header is the shared DetailScreen shell. It was hand-rolled here
+    // first, then twice more, which is how the shell came to exist. No badge,
+    // no crown, no upgrade affordance — there is nowhere on this screen for one.
+    <DetailScreen mode={mode} title="Doctor report" onClose={onClose}>
 
         {/* RANGE CHIP. States what the range YIELDED, not just what it is, so
             narrowing to a window with nothing in it explains itself instead of
@@ -255,8 +245,7 @@ export default function ReportPreview({ mode, data, exportState = "idle", onClos
             Free, always. Your report stays on your device.
           </div>
         </div>
-      </div>
-    </div>
+    </DetailScreen>
   );
 }
 

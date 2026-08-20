@@ -123,7 +123,7 @@
     "scrim":       { "$type": "ref", "$value": "{color.state.scrim}" },
     "handle":      { "$type": "ref", "$value": "{color.surface.border}" },
     "savingsFill": { "$type": "colorAlpha", "$value": { "base": "{color.category.mood.mark}", "alpha": "{alpha.tint20}" } },
-    "savingsLabel":{ "$type": "ref", "$value": "{color.category.mood.mark}" }
+    "savingsLabel":{ "$type": "ref", "$value": "{color.category.mood.ink}", "$description": "INK, not mark. This referenced {color.category.mood.mark} — a FILL — and used it as text: 1.58:1 against the sheet in light, and 1.45:1 on its own savings tint. The same mark-as-text mistake InsightSentence made, and the same figure as the dayCard and share.* bugs. It survived because the SCREEN already drew mood.ink; the defect lived entirely in a definition nothing rendered. Found by checks/consumption.mjs, which exists because this had already happened three times." }
   },
 
   "capture": {

@@ -826,7 +826,7 @@ const THEMES = {
         "scrim": "#0000008C",
         "handle": "#E4E1F5",
         "savingsFill": "#A8D9B833",
-        "savingsLabel": "#A8D9B8"
+        "savingsLabel": "#35784B"
       },
       "capture": {
         "field": "#FFFFFF",

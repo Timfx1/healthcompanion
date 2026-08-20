@@ -503,6 +503,71 @@ which is exactly when it is cheapest to remove and hardest to notice. Migrating
 them should be zero-diff against the baselines; if it is not, the difference is
 itself the finding.
 
+### Resolved — "defined" is not evidence, and it is now a gate
+
+Four token families have shipped a defect while looking perfectly well-defined,
+and every one survived for the same reason: nothing rendered them, so nothing
+could disagree.
+
+| Family | Defect | Why it survived |
+|---|---|---|
+| `toast.*` | mode-paired to a WHITE pill | the screen forced the dark value with a hardcoded argument |
+| `capture.*` | `placeholder` never set at all | the screen hardcoded the same values through the legacy `D` object |
+| `share.*` | **1.58:1** in light — the dayCard bug, unfixed | `ShareCardScreen` hardcodes `#fff` |
+| `paywall.savingsLabel` | **1.58:1** — a category MARK used as TEXT | the screen already drew `mood.ink` |
+
+`checks/consumption.mjs` makes the chain mechanical:
+
+    defined → consumed → rendered → measured
+
+**DORMANCY is checked per family.** Role-level dormancy was tried first and
+abandoned — screens alias a family once (`const R = theme(mode).pattern.report`)
+and then write `R.surface`, which no source scan can follow without a parser. It
+reported 38 dormant roles, most of them false. A check that cries wolf gets
+ignored, which is the exact failure this file exists to prevent, so it does not
+get to commit it.
+
+**MEASUREMENT is checked per role**, and that IS reliable, because it reads the
+manifest rather than the source. It is the sharper of the two: `savingsLabel` was
+a colour role no pair named, and role-level measurement is what surfaces that
+class.
+
+**RENDERED is not mechanised**, and saying so is part of the design. "Has a dev
+route and a baseline" lives in the visual harness, not the token layer. This
+closes two of the four arrows and leaves the other two visible rather than
+implying they are covered.
+
+The first run found `paywall.savingsLabel` at 1.58:1 immediately — a role
+referencing `category.mood.mark`, a FILL, and rendering it as TEXT. Repointed at
+`mood.ink`: **4.88 / 5.33 light, 6.38 / 10.46 dark**.
+
+It also found the paywall SHEET had never been named by any pair despite
+rendering since the prototype was written, and that **16 colour roles were
+unmeasured**. All 16 are now declared — 61 of 61 — which surfaced one more gap
+worth its own note: a TRANSLUCENT token used as a backdrop cannot appear as a
+`bg` spec, because the contrast check requires opacity, so those pairs carry a
+pre-composited literal and the link back to the token lived only in prose. The
+manifest now takes a `composited` field, and that link is machine-readable.
+
+**Three families remain dormant: `insight`, `fastPath`, `welcomeBack`.**
+`fastPath` is the surprise — P3 makes it "the largest, first-rendered element of
+the Check-in tab", and the check-in screen hardcodes instead. On the record above,
+a dormant family is not a neutral fact.
+
+### Resolved — the shared header, migrated with zero diff
+
+`ReportPreview`, `SafetyScreen` and `EducationArticle` now use the same
+`DetailScreen` shell as the five timeline details. **All 26 affected baselines
+passed unchanged** — the migration is genuinely zero-diff, which is the only
+evidence worth having that an extraction changed nothing.
+
+Migrating found one thing designing had not: three of the four screens wanted a
+different body rhythm (`gap-3`, `gap-4`, `gap-5`), so the shell asks rather than
+assumes. The gap classes are written as literals in a lookup, not built with a
+template string — Tailwind scans source for whole class names, so `gap-${n}` is
+invisible to it and the rule may simply not exist in the output, a failure that
+looks like a layout bug and reads like nothing at all.
+
 ### Open — the doctor report has no brandmark
 
 The report masthead used to carry AnklePath's app icon, inline as SVG: a teal
@@ -1056,7 +1121,7 @@ Product concepts with fixed contracts, defined once so they cannot drift between
 | `paywall.scrim` | `#0000008C` | `#0000008C` |
 | `paywall.handle` | `#2E2C45` | `#E4E1F5` |
 | `paywall.savingsFill` | `#A8D9B833` | `#A8D9B833` |
-| `paywall.savingsLabel` | `#A8D9B8` | `#A8D9B8` |
+| `paywall.savingsLabel` | `#A8D9B8` | `#35784B` |
 | `capture.field` | `#1E1D2E` | `#FFFFFF` |
 | `capture.edge` | `#2E2C45` | `#E4E1F5` |
 | `capture.placeholder` | `#8D89A8` | `#716AA9` |
@@ -1147,13 +1212,13 @@ The `z` order is fixed: an overlay must never be authored with an ad-hoc z-index
 
 ### Contrast manifest
 
-**158 declared pairs, 279 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
+**171 declared pairs, 303 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
 
 | Usage class | Pairs |
 |---|---|
-| `body-text` | 94 |
+| `body-text` | 99 |
 | `ui-boundary` | 13 |
-| `decorative` | 17 |
+| `decorative` | 25 |
 | `large-text` | 14 |
 | `print-body` | 13 |
 | `print-rule` | 3 |

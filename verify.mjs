@@ -14,7 +14,10 @@
 //                     stale, every later result describes a build nobody has.
 //   2. docs         — same argument for DESIGN_CRITERIA's generated appendix.
 //   3. contrast     — reads the resolved tokens; fails on regressions only.
-//   4. restricted   — the non-negotiables (N1-N5) in consumer code.
+//   4. restricted   — the non-negotiables (N1-N7) in consumer code.
+//   5. consumption  — defined -> consumed -> rendered -> measured. A token
+//                     family is not trustworthy because it is DEFINED; four
+//                     have now shipped a defect while nothing rendered them.
 //   5. coverage     — the literal ratchet.
 //   6. redomain     — the RN re-domain ratchet. The app typecheck is RED ON
 //                     PURPOSE (the generated palette omits every key needing a
@@ -61,7 +64,8 @@ const GATES = [
   { name: "drift",      cmd: "node design-system/build/build.mjs --check",     cwd: ROOT, why: "generated artifacts match the token source" },
   { name: "docs",       cmd: "node design-system/build/emit-docs.mjs --check", cwd: ROOT, why: "DESIGN_CRITERIA appendix matches the tokens" },
   { name: "contrast",   cmd: "node design-system/checks/contrast.mjs",         cwd: ROOT, why: "WCAG AA over the declared pair manifest, both modes" },
-  { name: "restricted", cmd: "node design-system/checks/restricted.mjs",       cwd: ROOT, why: "non-negotiables N1-N5 in consumer code" },
+  { name: "restricted", cmd: "node design-system/checks/restricted.mjs",       cwd: ROOT, why: "non-negotiables N1-N7 in consumer code" },
+  { name: "consumption", cmd: "node design-system/checks/consumption.mjs",     cwd: ROOT, why: "defined -> consumed -> rendered -> measured" },
   { name: "coverage",   cmd: "node design-system/checks/coverage.mjs",         cwd: ROOT, why: "raw-literal ratchet" },
   { name: "redomain",   cmd: "node design-system/checks/redomain.mjs",         cwd: ROOT, why: "RN re-domain ratchet (skips if app/ is not installed)" },
   ...(INSTALLED ? [

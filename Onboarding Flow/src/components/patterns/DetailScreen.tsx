@@ -16,11 +16,22 @@
 
 import { theme, scale, type Mode } from "../tokens";
 
-export default function DetailScreen({ mode, title, onClose, action, children }: {
+// Written out as literals rather than built with a template string. Tailwind
+// scans SOURCE for whole class names, so `gap-${n}` is invisible to it and the
+// rule may simply not exist in the output — a failure that looks like a layout
+// bug and reads like nothing at all.
+const GAP = { 3: "gap-3", 4: "gap-4", 5: "gap-5" } as const;
+
+export default function DetailScreen({ mode, title, onClose, action, gap = 4, children }: {
   mode: Mode;
   title: string;
   onClose: () => void;
   action?: React.ReactNode;
+  /** Vertical rhythm between body blocks. Three of the first four screens to
+   *  adopt this shell wanted a different value — a reading surface breathes
+   *  differently from a list of red flags — so the shell asks rather than
+   *  assumes. Discovered by migrating, not by designing. */
+  gap?: 3 | 4 | 5;
   children: React.ReactNode;
 }) {
   const t = theme(mode);
@@ -42,7 +53,7 @@ export default function DetailScreen({ mode, title, onClose, action, children }:
         {action}
       </div>
 
-      <div className="flex-1 overflow-y-auto px-5 pb-8 pt-4 flex flex-col gap-4">
+      <div className={`flex-1 overflow-y-auto px-5 pb-8 pt-4 flex flex-col ${GAP[gap]}`}>
         {children}
       </div>
     </div>

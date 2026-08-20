@@ -14,7 +14,7 @@ Being precise about this, because the gap matters:
 
 | | Status |
 |---|---|
-| **Design system** (`design-system/`) | Real. One token source, two platforms **plus paper**, eight gates. |
+| **Design system** (`design-system/`) | Real. One token source, two platforms **plus paper**, nine gates. |
 | **Web prototype** (`Onboarding Flow/`) | Real, and the reference implementation — 12 onboarding screens + 5 tabs, both colour modes. A Figma Make export, since evolved. |
 | **React Native app** (`app/`) | **Colour re-domain complete.** The AnklePath `ActivatePayment` tree, copied in with fresh history. All 172 colour references resolve to Recovery Companion roles and the app typechecks clean. Screens are still AnklePath's. |
 | **§5 detail/modal screens** | **3 of 17 exist, 2 partial, 3 have precedent, 9 greenfield** — counted below. Includes the Doctor Report, the flagship. |

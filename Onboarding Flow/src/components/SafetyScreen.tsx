@@ -30,6 +30,7 @@
 // ============================================================
 
 import { theme, scale, type Mode } from "./tokens";
+import DetailScreen from "./patterns/DetailScreen";
 import { TIERS, NEEDS_CLINICAL_REVIEW, type Urgency } from "./safetyContent";
 
 export default function SafetyScreen({ mode, onClose, onQuestions }: {
@@ -45,23 +46,7 @@ export default function SafetyScreen({ mode, onClose, onQuestions }: {
   const flagged = (u: Urgency) => u !== "routine";
 
   return (
-    <div className="absolute inset-0 flex flex-col animate-fade-up"
-      // A full-screen reading surface sits on "raised", matching ReportPreview,
-      // so the safety tints composite over a known backdrop rather than the page.
-      style={{ background: t.color.surface.raised, zIndex: scale.z.feature }}>
-
-      <div className="flex items-center gap-2 px-5 shrink-0"
-        style={{ height: 56, borderBottom: `1px solid ${t.color.surface.border}` }}>
-        <button onClick={onClose} className="btn-press flex items-center"
-          style={{ background: "none", border: "none", cursor: "pointer", color: t.color.text.secondary }}>
-          <span style={{ fontSize: scale.font.size.base }}>←</span>
-        </button>
-        <div style={{ fontSize: scale.font.size.md, fontWeight: 600, color: t.color.text.primary }}>
-          When to contact a doctor
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-y-auto px-5 pb-8 pt-4 flex flex-col gap-5">
+    <DetailScreen mode={mode} title="When to contact a doctor" onClose={onClose} gap={5}>
 
         <div style={{ fontSize: scale.font.size.sm, color: t.color.text.secondary, lineHeight: 1.55 }}>
           Most recoveries have rough days that are completely normal. These are the
@@ -141,7 +126,6 @@ export default function SafetyScreen({ mode, onClose, onQuestions }: {
             </div>
           )}
         </div>
-      </div>
-    </div>
+    </DetailScreen>
   );
 }
