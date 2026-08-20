@@ -62,15 +62,15 @@ still has AnklePath's five (`Home · Plan · Track · Learn · Profile`).
 
 | Class | Count | Screens |
 |---|---|---|
-| **Exists** | 8 | **`ReportPreview`** (7 states), **`QuickCaptureSheet`** (3 states), **`AddTimelineEntry`**, **`Safety`**, **`EducationArticle`** (3 access states × saved), `ShareCardPreview` (built as `ShareCardScreen`), `PremiumTeaser`, `TrialPaywall` |
+| **Exists** | 13 | **`ReportPreview`** (7 states), **`QuickCaptureSheet`** (3 states), **`AddTimelineEntry`**, **`Safety`**, **`EducationArticle`** (3 access states × saved), **`JournalEntry`** (3), **`MilestoneDetail`**, **`MedicationDetail`** (2), **`AppointmentDetail`** (2), **`QuestionsForDoctor`** (2), `ShareCardPreview` (built as `ShareCardScreen`), `PremiumTeaser`, `TrialPaywall` |
 | **Partial** — the value ships, the §5 surface does not | 1 | `WeeklyReflection` (Home card exists; "save to timeline" has no destination) |
 | **Precedent to re-domain** | 0 | — both done. |
-| **Greenfield** | 8 | `JournalEntry`, `PhotoCapture`, `PhotoCompare`, `MilestoneDetail`, `ReportDateRange`, `AppointmentDetail`, `QuestionsForDoctor`, `MedicationDetail` |
+| **Greenfield** | 3 | `PhotoCapture`, `PhotoCompare`, `ReportDateRange` |
 
 Two things this count surfaced.
 
 **`ShareCardScreen` is the 20th surface and has no baseline.** The visual suite
-covers 36 screens × 2 modes; ShareCard is not among them, and `?screen=app:`
+covers 47 screens × 2 modes; ShareCard is not among them, and `?screen=app:`
 accepts only `home|timeline|progress|profile|checkin|paywall`. It is
 unphotographable — the exact condition that hid the dead `Toast` branch for the
 whole life of that component. `welcomeBack.*` has the same problem for a
@@ -110,7 +110,7 @@ any backend anywhere in this repository.
 | Share cards (P8) | **Local render** | In-app preview only. No OS share sheet — that is `expo-sharing` in Phase 1. |
 | Doctor report (P6) | **Built** | The RN app has AnklePath’s `ReportsScreen` plus a print/PDF template. The template now draws from `tokens/print.json` — its own single-valued print layer, 7:1 body contrast, verified by rendering and by a photocopy approximation. The gate is gone (it was premium). `ReportPreview` is built — seven states, all routable and baselined. Free forever, no lock, ever — enforced by `restricted.mjs`. |
 | Photo timeline / compare | **Not built** | Compare is premium; the timeline is not. |
-| Medications, appointments | **Static mock data** | No reminders or notifications. |
+| Medications, appointments | **Built, static mock data** | Detail screens exist for both. No reminders or notifications yet. Adherence is shown as accumulation and rest — a count of doses logged, never a percentage, because a percentage is a count of what did not happen (P2/N1/N2). |
 | Widgets, native voice | **Phase 2** | Deep link `recoverycompanion://capture` is reserved. Phase 1 uses OS keyboard dictation. |
 | Auth, sync, billing | **Phase 2** | No Firebase, no RevenueCat, no writes. Guest mode is the only mode. |
 | Insights / correlations | **Rule-based mock** | Advanced correlations are premium; AI is Phase 3. |

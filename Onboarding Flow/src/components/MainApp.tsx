@@ -24,6 +24,8 @@
 //   CheckInModal:    zIndex 40  (full-screen, replaces all content)
 //   ShareCardScreen: zIndex 45  (full-screen, replaces all content)
 //   ReportPreview:   zIndex 45  (full-screen, replaces all content)
+//   Timeline details:  zIndex 45  (journal, milestone, medication,
+//                                  appointment, questions — one at a time)
 //   AddTimelineEntry:  zIndex 50  (bottom sheet — the FAB's destination)
 //   QuickCaptureSheet: zIndex 50  (bottom sheet — the Notes-app lane)
 //   PaywallSheet:    zIndex 50  (bottom sheet, semi-transparent backdrop)
@@ -58,6 +60,23 @@ import AddTimelineEntry, { type EntryKind } from "./AddTimelineEntry";
 import SafetyScreen from "./SafetyScreen";
 import EducationArticle from "./EducationArticle";
 import { ARTICLES } from "./educationContent";
+import JournalEntryScreen from "./JournalEntryScreen";
+import MilestoneDetail from "./MilestoneDetail";
+import MedicationDetail from "./MedicationDetail";
+import AppointmentDetail from "./AppointmentDetail";
+import QuestionsForDoctor from "./QuestionsForDoctor";
+import * as TF from "./timelineFixtures";
+
+// The detail layer's addressable states. Exported because App.tsx routes to
+// them by name: a state with no route is a state nothing checks, and these five
+// screens carry eleven between them.
+export type DetailKey =
+  | "journalNew" | "journalReading" | "journalPromoted"
+  | "milestone" | "milestoneAuto"
+  | "medication" | "medicationNew"
+  | "appointmentUpcoming" | "appointmentPast"
+  | "questions" | "questionsEmpty";
+
 
 // Category colour access now lives in patterns/category.ts, next to the pattern
 // components that were the reason it exists.
@@ -1704,11 +1723,13 @@ export default function MainApp({
   initialArticle = null as string | null,
   initialSaved = false,
   initialPremium = false,
+  initialDetail = null as DetailKey | null,
 }: {
   initialMode?: Mode; initialTab?: Tab;
   initialOverlay?: "checkin" | "paywall" | "add" | "capture" | null; pinToast?: boolean;
   initialReport?: FixtureName | null; initialExport?: ExportState; initialCaptureText?: string;
   initialSafety?: boolean; initialArticle?: string | null; initialSaved?: boolean; initialPremium?: boolean;
+  initialDetail?: DetailKey | null;
 }) {
   const [mode, setMode] = useState<Mode>(initialMode);
   const [tab, setTab] = useState<Tab>(initialTab);
@@ -1717,6 +1738,7 @@ export default function MainApp({
   const [captureOpen, setCaptureOpen] = useState(initialOverlay === "capture");
   const [safetyOpen, setSafetyOpen] = useState(initialSafety);
   const [articleId, setArticleId] = useState<string | null>(initialArticle);
+  const [detail, setDetail] = useState<DetailKey | null>(initialDetail);
   const [savedArticles, setSavedArticles] = useState<string[]>(initialSaved ? [initialArticle ?? ""] : []);
   const [showCheckIn, setShowCheckIn] = useState(initialOverlay === "checkin");
   const [showPaywall, setShowPaywall] = useState(initialOverlay === "paywall");
@@ -1766,12 +1788,21 @@ export default function MainApp({
           {/* AddTimelineEntry / QuickCaptureSheet: zIndex 50 — bottom sheets.
               Capture is core loop, so neither has a locked variant (N7). */}
           {addOpen && <AddTimelineEntry mode={mode} onClose={() => setAddOpen(false)}
-            onPick={(kind: EntryKind) => { setAddOpen(false); if (kind === "capture") setCaptureOpen(true); }} />}
+            onPick={(kind: EntryKind) => {
+              setAddOpen(false);
+              // Every row now lands somewhere except photo, which waits on
+              // PhotoCapture — the one entry kind still without a destination.
+              if (kind === "capture") setCaptureOpen(true);
+              else if (kind === "note") setDetail("journalNew");
+              else if (kind === "milestone") setDetail("milestone");
+              else if (kind === "medication") setDetail("medication");
+              else if (kind === "appointment") setDetail("appointmentUpcoming");
+            }} />}
           {captureOpen && <QuickCaptureSheet mode={mode} initialText={initialCaptureText} onClose={() => setCaptureOpen(false)} onSave={() => {}} />}
           {/* Safety: zIndex 45 — full-screen. Core loop, never gated (N7).
               EducationArticle: zIndex 45 — the one surface here that MAY gate,
               because P9 puts education deep-dives in premium. */}
-          {safetyOpen && <SafetyScreen mode={mode} onClose={() => setSafetyOpen(false)} onQuestions={() => setSafetyOpen(false)} />}
+          {safetyOpen && <SafetyScreen mode={mode} onClose={() => setSafetyOpen(false)} onQuestions={() => { setSafetyOpen(false); setDetail("questions"); }} />}
           {articleId && (() => {
             const article = ARTICLES.find((a) => a.id === articleId) ?? ARTICLES[0];
             return (
@@ -1785,6 +1816,19 @@ export default function MainApp({
               />
             );
           })()}
+          {/* The timeline detail layer: zIndex 45, one at a time. All five are
+              core loop and free forever (N7) — none takes a locked variant. */}
+          {detail === "journalNew"      && <JournalEntryScreen mode={mode} entry={TF.journalBlank}     onClose={() => setDetail(null)} onPromote={() => setDetail("milestone")} />}
+          {detail === "journalReading"  && <JournalEntryScreen mode={mode} entry={TF.journalExisting}  onClose={() => setDetail(null)} onPromote={() => setDetail("milestone")} />}
+          {detail === "journalPromoted" && <JournalEntryScreen mode={mode} entry={TF.journalPromoted}  onClose={() => setDetail(null)} onPromote={() => {}} />}
+          {detail === "milestone"       && <MilestoneDetail mode={mode} milestone={TF.milestonePromoted} onClose={() => setDetail(null)} onShare={() => { setDetail(null); setShareCard({ title: TF.milestonePromoted.title, day: TF.milestonePromoted.dayN, date: TF.milestonePromoted.date }); }} />}
+          {detail === "milestoneAuto"   && <MilestoneDetail mode={mode} milestone={TF.milestoneAuto}     onClose={() => setDetail(null)} onShare={() => setDetail(null)} />}
+          {detail === "medication"      && <MedicationDetail mode={mode} medication={TF.medDue}         onClose={() => setDetail(null)} />}
+          {detail === "medicationNew"   && <MedicationDetail mode={mode} medication={TF.medNoHistory}   onClose={() => setDetail(null)} />}
+          {detail === "appointmentUpcoming" && <AppointmentDetail mode={mode} appointment={TF.apptUpcoming} onClose={() => setDetail(null)} onQuestions={() => setDetail("questions")} onReport={() => { setDetail(null); setReport("ready"); }} />}
+          {detail === "appointmentPast"     && <AppointmentDetail mode={mode} appointment={TF.apptPast}     onClose={() => setDetail(null)} onQuestions={() => setDetail("questions")} onReport={() => { setDetail(null); setReport("ready"); }} />}
+          {detail === "questions"       && <QuestionsForDoctor mode={mode} questions={TF.questionsSome} onClose={() => setDetail(null)} />}
+          {detail === "questionsEmpty"  && <QuestionsForDoctor mode={mode} questions={TF.questionsNone} onClose={() => setDetail(null)} />}
           {/* ReportPreview: zIndex 45 — full-screen. NO lock, in any state. */}
           {report && (
             <ReportPreview

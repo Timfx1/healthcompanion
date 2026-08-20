@@ -375,7 +375,7 @@ const THEMES = {
         "cardFrom": "#3D3668",
         "cardTo": "#1E1D2E",
         "title": "#F0EFFE",
-        "meta": "#9B97B8",
+        "meta": "#B0ACCF",
         "brandmark": "#F0EFFE55",
         "aspectRatio": 0.5625
       },
@@ -774,10 +774,10 @@ const THEMES = {
       },
       "share": {
         "cardFrom": "#3D3668",
-        "cardTo": "#FFFFFF",
-        "title": "#1A1830",
-        "meta": "#6B6890",
-        "brandmark": "#1A183055",
+        "cardTo": "#1E1D2E",
+        "title": "#F0EFFE",
+        "meta": "#B0ACCF",
+        "brandmark": "#F0EFFE55",
         "aspectRatio": 0.5625
       },
       "report": {

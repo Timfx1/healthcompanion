@@ -83,13 +83,15 @@
 
   "share": {
     "$intent": "Milestone artifacts people choose to send. The honest growth loop.",
-    "$contract": "Dignified, story-friendly ratio, light brandmark, beautiful in both modes. STRICTLY user-initiated — no share prompts anywhere.",
-    "$status": "RESERVED — ShareCardScreen exists in code but has no Figma frame.",
-    "cardFrom":   { "$type": "ref", "$value": "{color.accent.dim}" },
-    "cardTo":     { "$type": "ref", "$value": "{color.surface.raised}" },
-    "title":      { "$type": "ref", "$value": "{color.text.primary}" },
-    "meta":       { "$type": "ref", "$value": "{color.text.secondary}" },
-    "brandmark":  { "$type": "colorAlpha", "$value": { "base": "{color.text.primary}", "alpha": "{alpha.tint33}" }, "$description": "Light touch. The user's milestone is the subject; the app is a footnote." },
+    "$contract": "Dignified, story-friendly ratio, light brandmark, MODE-INVARIANT. STRICTLY user-initiated — no share prompts anywhere.",
+    "$status": "RESERVED — ShareCardScreen exists in code but has no Figma frame, and still has no dev route or baseline. MilestoneDetail is the first surface to consume this family.",
+    "$bug": "This family carried the SAME defect as dayCard, and it was never fixed because nothing consumed it. `cardFrom` referenced {color.accent.dim} — mode-invariant, a deep indigo — while `title` referenced {color.text.primary}, which flips to near-black in light. Light mode therefore put #1A1830 on #3D3668: 1.58:1, the identical figure §11 records as the worst contrast in the system. accent.dim's own note already said 'NOT safe behind secondary text'. It survived because ShareCardScreen hardcodes #fff and never rendered these tokens — the Toast situation exactly: the screen was right and the family was wrong.",
+    "$why": "The resolution is NOT dayCard's, though. A share card is an ARTIFACT that leaves the app: the recipient never sees the sender's colour mode, so a card that changes with it is inventing a variable the medium does not have. The screen always drew one dark card in both modes, and the tokens now say what it always did — the same reasoning that made the Toast mode-invariant.",
+    "cardFrom":   { "$type": "ref", "$value": "{color.lavender.700}", "$description": "Mode-invariant BY DECISION. Was {color.accent.dim}, which resolves to the same hex but implied it should track the accent." },
+    "cardTo":     { "$type": "ref", "$value": "{color.indigo.800}",   "$description": "Mode-invariant. Was {color.surface.raised}, which flipped to white in light and gave the title nothing to sit on." },
+    "title":      { "$type": "ref", "$value": "{color.ink.50}",       "$description": "9.60 on cardFrom, 14.55 on cardTo. Was {color.text.primary}." },
+    "meta":       { "$type": "ref", "$value": "{color.paper.400}",    "$description": "5.01 on cardFrom, 7.59 on cardTo. Was {color.text.secondary}, which reached 3.90 at the gradient START even in dark — a failure that existed on BOTH sides and was declared on neither." },
+    "brandmark":  { "$type": "colorAlpha", "$value": { "base": "{color.ink.50}", "alpha": "{alpha.tint33}" }, "$description": "Light touch. The user's milestone is the subject; the app is a footnote." },
     "aspectRatio":{ "$type": "number", "$value": 0.5625, "$description": "9:16 story ratio." }
   },
 

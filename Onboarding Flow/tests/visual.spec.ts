@@ -103,6 +103,21 @@ const APP: Screen[] = [
   { id: "app-article-saved", route: "app:article-saved", note: "the same article, saved — icon plus word (N4)" },
   { id: "app-article-locked", route: "app:article-locked", note: "premium deep dive: value before the gate, soft fade, no wall (P9/§9)" },
   { id: "app-article-unlocked", route: "app:article-unlocked", note: "the same deep dive with premium held" },
+  // The timeline detail set. Eleven states across five screens, every one of
+  // them derived from fixture data — a date decides upcoming vs past, a log
+  // length decides whether a medication has history, the presence of text
+  // decides whether the journal is composing or reading.
+  { id: "app-journal-new", route: "app:detail-journalNew", note: "composing — save inert until there is text" },
+  { id: "app-journal-reading", route: "app:detail-journalReading", note: "an existing entry, with promote-to-milestone (§4.5)" },
+  { id: "app-journal-promoted", route: "app:detail-journalPromoted", note: "already a milestone — promotion is one-way and says so" },
+  { id: "app-milestone", route: "app:detail-milestone", note: "promoted milestone, share card offered never pushed (P8)" },
+  { id: "app-milestone-auto", route: "app:detail-milestoneAuto", note: "auto-generated Day 30, no note — conditional content" },
+  { id: "app-medication", route: "app:detail-medication", note: "dose due, log as accumulation + rest — no streak, no adherence score (P2/N1/N2)" },
+  { id: "app-medication-new", route: "app:detail-medicationNew", note: "nothing logged yet — day one, not a shortfall" },
+  { id: "app-appointment-upcoming", route: "app:detail-appointmentUpcoming", note: "upcoming + 2-day report nudge (§4.10)" },
+  { id: "app-appointment-past", route: "app:detail-appointmentPast", note: "past — notes-after and follow-up lead instead" },
+  { id: "app-questions", route: "app:detail-questions", note: "questions list, answered kept visible" },
+  { id: "app-questions-empty", route: "app:detail-questionsEmpty", note: "empty — the state most people meet first" },
 ];
 
 const SCREENS = [...ONBOARDING, ...APP];

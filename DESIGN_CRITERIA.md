@@ -428,6 +428,81 @@ returns free / deepDiveLocked / deepDiveOpen, so `app-article-locked` and
 flags — the report's depth pattern, reused. Saved is a boolean over any of the
 three, exactly as the report's export state is orthogonal to its depth.
 
+### Resolved — `share.*` carried the dayCard bug, unfixed, in a second family
+
+Building `MilestoneDetail` made it the first surface ever to consume `share.*`,
+and the family turned out to be broken in light mode at **1.58:1** — the exact
+figure §11 already records as the worst contrast in the system.
+
+The mechanism was identical to dayCard's. `cardFrom` referenced
+`{color.accent.dim}`, which is mode-invariant, while `title` referenced
+`{color.text.primary}`, which flips to near-black in light. So light mode put
+`#1A1830` on `#3D3668`. `accent.dim`'s own token note has said *"NOT safe behind
+secondary text … use lavender.750 where text sits on top"* the whole time.
+
+**It survived because nothing rendered it.** `ShareCardScreen` hardcodes `#fff`,
+so the screen drew a legible card while the tokens described an unreadable one —
+the Toast situation exactly: *the screen was right and the family was wrong.*
+`share.*` is now the third defined-and-unused family to be found carrying a
+defect, after `toast.*` and `capture.*`. `insight.*` is still on that list.
+
+`meta` was failing too, and worse than it looked: `text.secondary` measured
+**3.90:1 at the gradient start in DARK**, so this was never a light-mode-only
+problem. Neither stop had ever been declared.
+
+**The fix is NOT dayCard's, and the difference matters.** dayCard is a screen
+element, so its light mode was made pale-to-white with dark text. A share card is
+an ARTIFACT that leaves the app — the recipient never sees the sender's colour
+mode, so a card that changes with it is inventing a variable the medium does not
+have. `share.*` is now mode-invariant, which is what `ShareCardScreen` always
+drew and the same reasoning that made the Toast mode-invariant. Both gradient
+stops are declared as backdrops, because a gradient needs both endpoints — the
+lesson dayCard already paid for once.
+
+One consequence worth recording: the Day-N pill on that card originally used
+`accumulation.counterLabel` and measured 2.65:1, because `accumulation.*` is
+mode-PAIRED while the card is now mode-INVARIANT. On a mode-invariant artifact,
+only mode-invariant tokens are safe. **The card owns its palette** — nothing but
+`share.*` renders on it.
+
+### Resolved — the timeline detail set, and the nesting mistake made twice
+
+`JournalEntry`, `MilestoneDetail`, `MedicationDetail`, `AppointmentDetail` and
+`QuestionsForDoctor` are built: eleven states across five screens, all derived
+from fixture data and all routable. `AddTimelineEntry` now lands somewhere for
+every row except photo, and Safety's "Add this to my questions" has a
+destination.
+
+**`MedicationDetail` is where P2 was easiest to break, and the token contracts
+decided it rather than taste.** Taken doses render as `accumulation.*`, whose
+contract is "dots that only ever accrue" — so no streak exists and none can be
+built. Skipped doses render as `rest.*`, whose contract is "never red, never
+labelled 'missed', NEVER COUNTED" — so the screen shows *"5 logged"* and no
+adherence percentage, because a percentage is a count of what did not happen
+wearing a different hat. The rows say "Not taken", never "missed". The safety
+hue appears nowhere near any of it: a missed painkiller is not a red flag (N3).
+
+**A shared `DetailScreen` shell** now owns the header these screens were all
+about to hand-roll. ReportPreview, Safety and EducationArticle each already had
+their own copy; three was where drift starts and eight would have guaranteed it.
+Those three are not yet migrated — recorded below as an open item rather than
+churned at the end of a long session.
+
+**The nested-pill mistake was made twice.** `AppointmentDetail`'s report nudge
+put an accent-filled pill inside an accent-filled card, exactly as
+`EducationArticle` had: 4.28 dark / 3.95 light, a failure invented by layout
+rather than by tokens. Replaced with the CTA gradient — and `accent.strong` was
+tried first and rejected, because `text.onAccent` on it measures **2.84:1** in
+dark while `cta.label` on the gradient was already solved and declared.
+
+### Open — three screens have not adopted the DetailScreen shell
+
+`ReportPreview`, `SafetyScreen` and `EducationArticle` still carry their own copy
+of the header the shell now owns. The duplication is small and identical today,
+which is exactly when it is cheapest to remove and hardest to notice. Migrating
+them should be zero-diff against the baselines; if it is not, the difference is
+itself the finding.
+
 ### Open — the doctor report has no brandmark
 
 The report masthead used to carry AnklePath's app icon, inline as SVG: a teal
@@ -966,10 +1041,10 @@ Product concepts with fixed contracts, defined once so they cannot drift between
 | `fastPath.same.mark` | `#9EC3F5` | `#9EC3F5` |
 | `fastPath.worse.mark` | `#F2A69E` | `#F2A69E` |
 | `share.cardFrom` | `#3D3668` | `#3D3668` |
-| `share.cardTo` | `#1E1D2E` | `#FFFFFF` |
-| `share.title` | `#F0EFFE` | `#1A1830` |
-| `share.meta` | `#9B97B8` | `#6B6890` |
-| `share.brandmark` | `#F0EFFE55` | `#1A183055` |
+| `share.cardTo` | `#1E1D2E` | `#1E1D2E` |
+| `share.title` | `#F0EFFE` | `#F0EFFE` |
+| `share.meta` | `#B0ACCF` | `#B0ACCF` |
+| `share.brandmark` | `#F0EFFE55` | `#F0EFFE55` |
 | `report.surface` | `#1E1D2E` | `#FFFFFF` |
 | `report.heading` | `#F0EFFE` | `#1A1830` |
 | `report.meta` | `#9B97B8` | `#6B6890` |
@@ -1072,13 +1147,13 @@ The `z` order is fixed: an overlay must never be authored with an ad-hoc z-index
 
 ### Contrast manifest
 
-**146 declared pairs, 255 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
+**158 declared pairs, 279 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
 
 | Usage class | Pairs |
 |---|---|
-| `body-text` | 85 |
-| `ui-boundary` | 12 |
-| `decorative` | 15 |
+| `body-text` | 94 |
+| `ui-boundary` | 13 |
+| `decorative` | 17 |
 | `large-text` | 14 |
 | `print-body` | 13 |
 | `print-rule` | 3 |

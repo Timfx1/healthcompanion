@@ -24,7 +24,7 @@
 
 import { useState } from "react";
 import Onboarding from "./components/Onboarding";
-import MainApp, { type Tab } from "./components/MainApp";
+import MainApp, { type Tab, type DetailKey } from "./components/MainApp";
 import { fixtures, type FixtureName } from "./components/reportFixtures";
 import type { ExportState } from "./components/ReportPreview";
 import type { Mode } from "./components/tokens";
@@ -44,6 +44,13 @@ import type { Mode } from "./components/tokens";
 //   ?screen=app:capture               the quick-capture sheet, empty
 //   ?screen=app:capture-ready         typed, nothing recognised — the normal case
 //   ?screen=app:capture-tagged        typed, keywords recognised silently
+//   ?screen=app:detail-<key>          one timeline detail state. Keys are the
+//                                     DetailKey union in MainApp — journalNew,
+//                                     journalReading, journalPromoted,
+//                                     milestone, milestoneAuto, medication,
+//                                     medicationNew, appointmentUpcoming,
+//                                     appointmentPast, questions,
+//                                     questionsEmpty.
 //   ?screen=app:safety                when to contact a doctor (N3, N7)
 //   ?screen=app:article               a free article, unsaved
 //   ?screen=app:article-saved         the same article, saved
@@ -67,7 +74,7 @@ type Route =
   | { kind: "onboarding"; step: number }
   | { kind: "app"; tab: Tab; overlay: "checkin" | "paywall" | "add" | "capture" | null; pinToast?: boolean;
       captureText?: string; safety?: boolean; article?: string | null;
-      saved?: boolean; premium?: boolean;
+      saved?: boolean; premium?: boolean; detail?: DetailKey | null;
       report?: FixtureName | null; exportState?: ExportState };
 
 function parseRoute(): { route: Route | null; mode: Mode } {
@@ -102,6 +109,15 @@ function parseRoute(): { route: Route | null; mode: Mode } {
     // Access is derived from the article's tier and the entitlement, so a route
     // supplies BOTH and the screen decides. "article-unlocked" is the same deep
     // dive as "article-locked" with premium held — one fixture, two truths.
+    // Every detail state gets a route. Their states are derived from fixture
+    // data — a date decides whether an appointment is upcoming or past, a log
+    // length decides whether a medication has history — so these are addresses
+    // for consequences, not switches.
+    if (target.startsWith("detail-")) {
+      const key = target.slice(7) as DetailKey;
+      return { route: { kind: "app", tab: "timeline", overlay: null, detail: key }, mode };
+    }
+
     if (target === "safety") return { route: { kind: "app", tab: "profile", overlay: null, safety: true }, mode };
     if (target === "article") return { route: { kind: "app", tab: "profile", overlay: null, article: "is-this-normal-week-6" }, mode };
     if (target === "article-saved") return { route: { kind: "app", tab: "profile", overlay: null, article: "is-this-normal-week-6", saved: true }, mode };
@@ -147,7 +163,7 @@ export default function App() {
   if (DEV_ROUTE) {
     return DEV_ROUTE.kind === "onboarding"
       ? <Onboarding initialMode={DEV_MODE} initialScreen={DEV_ROUTE.step} />
-      : <MainApp initialMode={DEV_MODE} initialTab={DEV_ROUTE.tab} initialOverlay={DEV_ROUTE.overlay} pinToast={DEV_ROUTE.pinToast} initialReport={DEV_ROUTE.report ?? null} initialExport={DEV_ROUTE.exportState ?? "idle"} initialCaptureText={DEV_ROUTE.captureText ?? ""} initialSafety={DEV_ROUTE.safety ?? false} initialArticle={DEV_ROUTE.article ?? null} initialSaved={DEV_ROUTE.saved ?? false} initialPremium={DEV_ROUTE.premium ?? false} />;
+      : <MainApp initialMode={DEV_MODE} initialTab={DEV_ROUTE.tab} initialOverlay={DEV_ROUTE.overlay} pinToast={DEV_ROUTE.pinToast} initialReport={DEV_ROUTE.report ?? null} initialExport={DEV_ROUTE.exportState ?? "idle"} initialCaptureText={DEV_ROUTE.captureText ?? ""} initialSafety={DEV_ROUTE.safety ?? false} initialArticle={DEV_ROUTE.article ?? null} initialSaved={DEV_ROUTE.saved ?? false} initialPremium={DEV_ROUTE.premium ?? false} initialDetail={DEV_ROUTE.detail ?? null} />;
   }
 
   if (phase === "onboarding") {

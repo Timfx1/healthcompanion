@@ -205,6 +205,14 @@ const N7_CORE_LOOP_SURFACES = [
   "Onboarding Flow/src/components/QuickCaptureSheet.tsx",
   "Onboarding Flow/src/components/AddTimelineEntry.tsx",
   "Onboarding Flow/src/components/patterns/CaptureField.tsx",
+  // The timeline detail set. §9 puts journal, medications and reminders, and
+  // appointments on the free-forever list by name; milestones and the questions
+  // list are part of the same loop. None of the five takes a locked variant.
+  "Onboarding Flow/src/components/JournalEntryScreen.tsx",
+  "Onboarding Flow/src/components/MilestoneDetail.tsx",
+  "Onboarding Flow/src/components/MedicationDetail.tsx",
+  "Onboarding Flow/src/components/AppointmentDetail.tsx",
+  "Onboarding Flow/src/components/QuestionsForDoctor.tsx",
 ];
 
 n6Scan(N7_CORE_LOOP_SURFACES, N6_GATING_SYMBOLS, "N7 core loop gated",
