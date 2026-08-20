@@ -44,6 +44,11 @@ import type { Mode } from "./components/tokens";
 //   ?screen=app:capture               the quick-capture sheet, empty
 //   ?screen=app:capture-ready         typed, nothing recognised — the normal case
 //   ?screen=app:capture-tagged        typed, keywords recognised silently
+//   ?screen=app:safety                when to contact a doctor (N3, N7)
+//   ?screen=app:article               a free article, unsaved
+//   ?screen=app:article-saved         the same article, saved
+//   ?screen=app:article-locked        a premium deep dive, gated softly (P9)
+//   ?screen=app:article-unlocked      the same deep dive, with premium
 //   ?screen=app:report                the doctor report, ready state
 //   ?screen=app:report-<fixture>      one report state: empty | sparse | first
 //                                     | noChange | readyWithRedFlags
@@ -61,7 +66,8 @@ import type { Mode } from "./components/tokens";
 type Route =
   | { kind: "onboarding"; step: number }
   | { kind: "app"; tab: Tab; overlay: "checkin" | "paywall" | "add" | "capture" | null; pinToast?: boolean;
-      captureText?: string;
+      captureText?: string; safety?: boolean; article?: string | null;
+      saved?: boolean; premium?: boolean;
       report?: FixtureName | null; exportState?: ExportState };
 
 function parseRoute(): { route: Route | null; mode: Mode } {
@@ -93,6 +99,15 @@ function parseRoute(): { route: Route | null; mode: Mode } {
     // screen decides what that means — the baseline photographs a consequence,
     // never a flag. "capture-ready" deliberately contains no keyword, because
     // the normal case is a capture nothing is recognised in.
+    // Access is derived from the article's tier and the entitlement, so a route
+    // supplies BOTH and the screen decides. "article-unlocked" is the same deep
+    // dive as "article-locked" with premium held — one fixture, two truths.
+    if (target === "safety") return { route: { kind: "app", tab: "profile", overlay: null, safety: true }, mode };
+    if (target === "article") return { route: { kind: "app", tab: "profile", overlay: null, article: "is-this-normal-week-6" }, mode };
+    if (target === "article-saved") return { route: { kind: "app", tab: "profile", overlay: null, article: "is-this-normal-week-6", saved: true }, mode };
+    if (target === "article-locked") return { route: { kind: "app", tab: "profile", overlay: null, article: "loading-and-tissue-adaptation" }, mode };
+    if (target === "article-unlocked") return { route: { kind: "app", tab: "profile", overlay: null, article: "loading-and-tissue-adaptation", premium: true }, mode };
+
     if (target === "add") return { route: { kind: "app", tab: "timeline", overlay: "add" }, mode };
     if (target === "capture") return { route: { kind: "app", tab: "timeline", overlay: "capture" }, mode };
     if (target === "capture-ready") return { route: { kind: "app", tab: "timeline", overlay: "capture", captureText: "took the long way round the block today" }, mode };
@@ -132,7 +147,7 @@ export default function App() {
   if (DEV_ROUTE) {
     return DEV_ROUTE.kind === "onboarding"
       ? <Onboarding initialMode={DEV_MODE} initialScreen={DEV_ROUTE.step} />
-      : <MainApp initialMode={DEV_MODE} initialTab={DEV_ROUTE.tab} initialOverlay={DEV_ROUTE.overlay} pinToast={DEV_ROUTE.pinToast} initialReport={DEV_ROUTE.report ?? null} initialExport={DEV_ROUTE.exportState ?? "idle"} initialCaptureText={DEV_ROUTE.captureText ?? ""} />;
+      : <MainApp initialMode={DEV_MODE} initialTab={DEV_ROUTE.tab} initialOverlay={DEV_ROUTE.overlay} pinToast={DEV_ROUTE.pinToast} initialReport={DEV_ROUTE.report ?? null} initialExport={DEV_ROUTE.exportState ?? "idle"} initialCaptureText={DEV_ROUTE.captureText ?? ""} initialSafety={DEV_ROUTE.safety ?? false} initialArticle={DEV_ROUTE.article ?? null} initialSaved={DEV_ROUTE.saved ?? false} initialPremium={DEV_ROUTE.premium ?? false} />;
   }
 
   if (phase === "onboarding") {

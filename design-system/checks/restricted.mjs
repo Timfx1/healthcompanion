@@ -184,6 +184,32 @@ n6Scan(N6_PREMIUM_OFFER_SURFACES, N6_REPORT_TERMS, "N6 report sold",
   "A premium-offer surface must never name the doctor report. Selling a free feature is premium treatment");
 
 
+// ── N7 — the core loop is never gated ───────────────────────────────────────
+// Same mechanism as N6, one principle over. §9's free-forever list is the daily
+// check-in, quick capture, timeline, journal, basic pain chart, medications and
+// reminders, appointments, SAFETY CONTENT, and the whole doctor report.
+//
+// Worth being precise about why this is a separate list from the report's. The
+// report may not be gated because it is the flagship (P6). The core loop may not
+// be gated because gating it is the Medisafe failure — the cautionary tale P9
+// names by hand. Different reasons, same enforcement, and a surface can move
+// between free and premium only by someone editing this list on purpose.
+//
+// EducationArticle is deliberately NOT here. P9 puts education deep-dives in
+// premium, so that screen is the one place in the product where lock.* is legal,
+// and it is the reason this check names surfaces rather than banning the tokens
+// outright.
+const N7_CORE_LOOP_SURFACES = [
+  "Onboarding Flow/src/components/SafetyScreen.tsx",
+  "Onboarding Flow/src/components/safetyContent.ts",
+  "Onboarding Flow/src/components/QuickCaptureSheet.tsx",
+  "Onboarding Flow/src/components/AddTimelineEntry.tsx",
+  "Onboarding Flow/src/components/patterns/CaptureField.tsx",
+];
+
+n6Scan(N7_CORE_LOOP_SURFACES, N6_GATING_SYMBOLS, "N7 core loop gated",
+  "A core-loop surface must never reference a gating symbol. Free forever is P9, and gating the core loop is the failure that principle was written about");
+
 // N4 — never meaning by colour alone. Verified structurally: every category
 // family must expose an icon and a label alongside its colours, so a component
 // always has a non-colour channel available.
@@ -208,4 +234,4 @@ console.log(`  reserved hues guarded : ${[...SAFETY_HEXES].join(", ")}`);
 console.log(`  category families     : ${Object.keys(tokens.modes.dark.color.category).length}, all complete`);
 console.log(`  files scanned         : ${SOURCES.length} (discovered, not listed)`);
 for (const e of describeExclusions()) console.log(`  excluded              : ${e.files.length} — ${e.why.split(".")[0]}`);
-console.log("  rules checked         : N1/N2 forbidden concepts, N3 reserved colour, N4 colour alone, N5 corridor range, N6 report never gated, token layering");
+console.log("  rules checked         : N1/N2 forbidden concepts, N3 reserved colour, N4 colour alone, N5 corridor range, N6 report never gated, N7 core loop never gated, token layering");

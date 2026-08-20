@@ -376,6 +376,58 @@ field remains the true zero-decision path.
 `modes: ["light"]` with a note asserting dark clears 6.5–8.1:1. A note is not a
 measurement, and the tag chips render in both modes. Now declared; all five pass.
 
+### Resolved — Safety and EducationArticle, and N7 becomes enforceable
+
+Both screens are built, and `safety.*` finally has the consumer it was reserved
+for. Profile's "When to contact a doctor" and "Education hub" rows navigate;
+they had been stubs with no handler.
+
+**N3 is now applied WITHIN the screen that owns the hue, not just to it.** The
+red flags are tiered — emergency, same-day, routine — and only the first two
+carry the reserved colour. A screen that owns the alert hue is the easiest place
+in the product to start crying wolf with it, and a flat list (which is what the
+AnklePath screen rendered) makes "call an ambulance" and "mention it next time"
+look identical at exactly the moment a reader is least able to triage.
+
+**N7 is now a check, not a memory.** `restricted.mjs` gained a core-loop rule
+beside the N6 report rule: a declared core-loop surface may not reference a
+gating symbol. Different reasons, same enforcement — the report may not be gated
+because it is the flagship (P6); the core loop may not be gated because gating it
+is the Medisafe failure P9 names by hand. Verified by adding a `usePremium`
+import to `SafetyScreen` and watching it fire.
+
+`EducationArticle` is deliberately **not** on that list. P9 puts education
+deep-dives in premium, so it is the one surface in the product where `lock.*` is
+legal — which is precisely why the check names surfaces instead of banning the
+tokens outright.
+
+**Two contrast failures, both invented by layout rather than by tokens.**
+
+The unlock pill was nested inside an accent card, which tinted its backdrop
+twice: 4.28 dark and **3.95 light**. `historyFade` is contracted as "a gradient
+fade plus an INLINE pill" and its colours are solved for sitting on the surface,
+so the card was removed rather than the pattern bent. 4.97 / 4.57 after.
+
+Per-item source attribution sat inside the tinted red-flag rows and measured
+4.28 dark / **4.10 light** in `text.muted` — and `text.secondary` reached only
+4.44 there, so neither ink clears AA on the warm safety tint. Attribution moved
+to the page at the foot of each tier, where both are comfortable. §10 requires
+sources; it does not require one under every line, and a citation beneath each
+row is noise on a screen somebody reads while worried. The per-item `source`
+field stays in `safetyContent.ts`, which is what a clinical reviewer needs.
+
+**The content is placeholder, cited, and says so.** `NEEDS_CLINICAL_REVIEW` is
+exported and rendered, so the screen states that it is pending review rather
+than implying sign-off. No item names a condition — "calf pain with swelling" is
+an observation a reader can make, "this could be a DVT" is a diagnosis this app
+does not make (§10). Same standard as the corridor data.
+
+**Access is derived, saved is orthogonal.** `accessOf(article, hasPremium)`
+returns free / deepDiveLocked / deepDiveOpen, so `app-article-locked` and
+`app-article-unlocked` are the SAME fixture under two truths rather than two
+flags — the report's depth pattern, reused. Saved is a boolean over any of the
+three, exactly as the report's export state is orthogonal to its depth.
+
 ### Open — the doctor report has no brandmark
 
 The report masthead used to carry AnklePath's app icon, inline as SVG: a teal
@@ -1020,12 +1072,12 @@ The `z` order is fixed: an overlay must never be authored with an ad-hoc z-index
 
 ### Contrast manifest
 
-**137 declared pairs, 241 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
+**146 declared pairs, 255 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
 
 | Usage class | Pairs |
 |---|---|
-| `body-text` | 77 |
-| `ui-boundary` | 11 |
+| `body-text` | 85 |
+| `ui-boundary` | 12 |
 | `decorative` | 15 |
 | `large-text` | 14 |
 | `print-body` | 13 |

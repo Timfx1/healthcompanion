@@ -62,15 +62,15 @@ still has AnklePath's five (`Home · Plan · Track · Learn · Profile`).
 
 | Class | Count | Screens |
 |---|---|---|
-| **Exists** | 6 | **`ReportPreview`** (7 states), **`QuickCaptureSheet`** (3 states), **`AddTimelineEntry`**, `ShareCardPreview` (built as `ShareCardScreen`), `PremiumTeaser`, `TrialPaywall` |
+| **Exists** | 8 | **`ReportPreview`** (7 states), **`QuickCaptureSheet`** (3 states), **`AddTimelineEntry`**, **`Safety`**, **`EducationArticle`** (3 access states × saved), `ShareCardPreview` (built as `ShareCardScreen`), `PremiumTeaser`, `TrialPaywall` |
 | **Partial** — the value ships, the §5 surface does not | 1 | `WeeklyReflection` (Home card exists; "save to timeline" has no destination) |
-| **Precedent to re-domain** | 2 | `EducationArticle` ← `ArticleDetailScreen`, `Safety` ← `SafetyScreen` |
+| **Precedent to re-domain** | 0 | — both done. |
 | **Greenfield** | 8 | `JournalEntry`, `PhotoCapture`, `PhotoCompare`, `MilestoneDetail`, `ReportDateRange`, `AppointmentDetail`, `QuestionsForDoctor`, `MedicationDetail` |
 
 Two things this count surfaced.
 
 **`ShareCardScreen` is the 20th surface and has no baseline.** The visual suite
-covers 31 screens × 2 modes; ShareCard is not among them, and `?screen=app:`
+covers 36 screens × 2 modes; ShareCard is not among them, and `?screen=app:`
 accepts only `home|timeline|progress|profile|checkin|paywall`. It is
 unphotographable — the exact condition that hid the dead `Toast` branch for the
 whole life of that component. `welcomeBack.*` has the same problem for a
@@ -105,6 +105,7 @@ any backend anywhere in this repository.
 |---|---|---|
 | Quick Capture (P1) | **Built, in-memory** | The Home field, the FAB sheet and silent keyword tagging all work; nothing persists yet. Phase 1 target is AsyncStorage. The path must never block on the network and must never fail — which is why the sheet has no saving state and no error state. |
 | Corridor data (P5) | **Placeholder mock, cited** | "Common range for knee rehab, weeks 4–6" is illustrative. Real content needs source attribution per §10 before it ships. |
+| Safety + education content | **Placeholder mock, cited** | Every red flag and article names a source, and `NEEDS_CLINICAL_REVIEW` is rendered on the Safety screen so it states that it is pending review rather than implying sign-off. No item names a condition (§10). |
 | Weekly reflections (P7) | **Mock generator** | Fixed copy. The real one derives from entries. |
 | Share cards (P8) | **Local render** | In-app preview only. No OS share sheet — that is `expo-sharing` in Phase 1. |
 | Doctor report (P6) | **Built** | The RN app has AnklePath’s `ReportsScreen` plus a print/PDF template. The template now draws from `tokens/print.json` — its own single-valued print layer, 7:1 body contrast, verified by rendering and by a photocopy approximation. The gate is gone (it was premium). `ReportPreview` is built — seven states, all routable and baselined. Free forever, no lock, ever — enforced by `restricted.mjs`. |
@@ -130,7 +131,8 @@ Enforced by the shape of the token set, not by review. From
   token, so a breakable chain cannot be built.
 - **Gaps are rest, never failure.** Never red, never "missed".
 - **The warm alert colour is reserved** for genuine red-flag content. A health
-  app that cries wolf in decoration cannot be trusted when it means it.
+  app that cries wolf in decoration cannot be trusted when it means it. Applied
+  within the Safety screen too: only the emergency and same-day tiers carry it.
 - **Never meaning by colour alone.** Every `category.*` family must define
   `mark` + `ink` + `icon` + `label` or the build fails.
 - **Ranges, never targets.** No `corridor.target` token exists.

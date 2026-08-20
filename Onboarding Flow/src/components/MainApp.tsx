@@ -55,6 +55,9 @@ import { fixtures, type FixtureName } from "./reportFixtures";
 import CaptureField from "./patterns/CaptureField";
 import QuickCaptureSheet from "./QuickCaptureSheet";
 import AddTimelineEntry, { type EntryKind } from "./AddTimelineEntry";
+import SafetyScreen from "./SafetyScreen";
+import EducationArticle from "./EducationArticle";
+import { ARTICLES } from "./educationContent";
 
 // Category colour access now lives in patterns/category.ts, next to the pattern
 // components that were the reason it exists.
@@ -1486,19 +1489,20 @@ function ProgressScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void
 //   When to contact a doctor / Medical disclaimer.
 //   Each: emoji icon + label + chevron right. 50px height.
 //   No lock badges — all menu items are accessible (C8).
-//   ACTION: Prototype stubs — no navigation implemented.
+//   ACTION: "When to contact a doctor" and "Education hub" now navigate.
+//   The rest remain stubs.
 //
 // FOOTER: "Recovery Companion v1.0.0 · Not medical advice" (11px muted).
 // ============================================================
-function ProfileScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void }) {
-  const rows = [
+function ProfileScreen({ mode, onPaywall, onSafety, onArticle }: { mode: Mode; onPaywall: () => void; onSafety: () => void; onArticle: () => void }) {
+  const rows: { icon: string; label: string; go?: () => void }[] = [
     { icon: "🔄", label: "Manage recoveries" },
     { icon: "💊", label: "Medications" },
     { icon: "📅", label: "Appointments" },
     { icon: "🩻", label: "Doctor reports" },
-    { icon: "📚", label: "Education hub" },
+    { icon: "📚", label: "Education hub", go: onArticle },
     { icon: "⚙️", label: "Settings" },
-    { icon: "🚨", label: "When to contact a doctor" },
+    { icon: "🚨", label: "When to contact a doctor", go: onSafety },
     { icon: "🔒", label: "Medical disclaimer" },
   ];
   return (
@@ -1533,11 +1537,12 @@ function ProfileScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void 
         </button>
 
         {/* MENU CARD: 8 rows in a single card, separated by borderBottom lines.
-            All rows are prototype stubs — no navigation implemented. */}
+            "When to contact a doctor" and "Education hub" navigate; the
+            rest are still stubs. */}
         <Card mode={mode} style={{ padding: 0, overflow: "hidden" }}>
           {rows.map((row, i) => (
             // Each row: 50px height, borderBottom separates items (except last).
-            <button key={i} className="btn-press flex items-center gap-3 w-full px-4"
+            <button key={i} onClick={row.go} className="btn-press flex items-center gap-3 w-full px-4"
               style={{ height: 50, borderBottom: i < rows.length - 1 ? `1px solid ${s(D.border, D.lBorder, mode)}` : "none", background: "none", border: i < rows.length - 1 ? `1px solid ${s(D.border, D.lBorder, mode)}` : "none", borderLeft: "none", borderRight: "none", borderTop: "none", cursor: "pointer", textAlign: "left" }}>
               <span style={{ fontSize: scale.font.size.lg, width: 24, textAlign: "center" }}>{row.icon}</span>
               <span style={{ fontSize: scale.font.size.base, fontWeight: 500, color: s(D.text, D.lText, mode), flex: 1 }}>{row.label}</span>
@@ -1695,16 +1700,24 @@ export default function MainApp({
   initialReport = null as FixtureName | null,
   initialExport = "idle" as ExportState,
   initialCaptureText = "",
+  initialSafety = false,
+  initialArticle = null as string | null,
+  initialSaved = false,
+  initialPremium = false,
 }: {
   initialMode?: Mode; initialTab?: Tab;
   initialOverlay?: "checkin" | "paywall" | "add" | "capture" | null; pinToast?: boolean;
   initialReport?: FixtureName | null; initialExport?: ExportState; initialCaptureText?: string;
+  initialSafety?: boolean; initialArticle?: string | null; initialSaved?: boolean; initialPremium?: boolean;
 }) {
   const [mode, setMode] = useState<Mode>(initialMode);
   const [tab, setTab] = useState<Tab>(initialTab);
   const [report, setReport] = useState<FixtureName | null>(initialReport);
   const [addOpen, setAddOpen] = useState(initialOverlay === "add");
   const [captureOpen, setCaptureOpen] = useState(initialOverlay === "capture");
+  const [safetyOpen, setSafetyOpen] = useState(initialSafety);
+  const [articleId, setArticleId] = useState<string | null>(initialArticle);
+  const [savedArticles, setSavedArticles] = useState<string[]>(initialSaved ? [initialArticle ?? ""] : []);
   const [showCheckIn, setShowCheckIn] = useState(initialOverlay === "checkin");
   const [showPaywall, setShowPaywall] = useState(initialOverlay === "paywall");
   const [shareCard, setShareCard] = useState<{ title: string; day: number; date: string } | null>(null);
@@ -1741,7 +1754,7 @@ export default function MainApp({
           {tab === "home"     && <HomeScreen mode={mode} onCheckIn={() => setShowCheckIn(true)} onPaywall={() => setShowPaywall(true)} onReport={() => setReport("ready")} pinToast={pinToast} />}
           {tab === "timeline" && <TimelineScreen mode={mode} onShareMilestone={m => setShareCard(m)} onAdd={() => setAddOpen(true)} />}
           {tab === "progress" && <ProgressScreen mode={mode} onPaywall={() => setShowPaywall(true)} />}
-          {tab === "profile"  && <ProfileScreen mode={mode} onPaywall={() => setShowPaywall(true)} />}
+          {tab === "profile"  && <ProfileScreen mode={mode} onPaywall={() => setShowPaywall(true)} onSafety={() => setSafetyOpen(true)} onArticle={() => setArticleId(ARTICLES[0].id)} />}
 
           {/* OVERLAYS: Mounted conditionally. Z-index hierarchy defined at file top.
               CheckInModal: zIndex 40 — full-screen, check-in flow.
@@ -1755,6 +1768,23 @@ export default function MainApp({
           {addOpen && <AddTimelineEntry mode={mode} onClose={() => setAddOpen(false)}
             onPick={(kind: EntryKind) => { setAddOpen(false); if (kind === "capture") setCaptureOpen(true); }} />}
           {captureOpen && <QuickCaptureSheet mode={mode} initialText={initialCaptureText} onClose={() => setCaptureOpen(false)} onSave={() => {}} />}
+          {/* Safety: zIndex 45 — full-screen. Core loop, never gated (N7).
+              EducationArticle: zIndex 45 — the one surface here that MAY gate,
+              because P9 puts education deep-dives in premium. */}
+          {safetyOpen && <SafetyScreen mode={mode} onClose={() => setSafetyOpen(false)} onQuestions={() => setSafetyOpen(false)} />}
+          {articleId && (() => {
+            const article = ARTICLES.find((a) => a.id === articleId) ?? ARTICLES[0];
+            return (
+              <EducationArticle
+                mode={mode} article={article}
+                hasPremium={initialPremium}
+                saved={savedArticles.includes(article.id)}
+                onClose={() => setArticleId(null)}
+                onToggleSave={() => setSavedArticles((prev) => prev.includes(article.id) ? prev.filter((x) => x !== article.id) : [...prev, article.id])}
+                onUnlock={() => { setArticleId(null); setShowPaywall(true); }}
+              />
+            );
+          })()}
           {/* ReportPreview: zIndex 45 — full-screen. NO lock, in any state. */}
           {report && (
             <ReportPreview

@@ -95,6 +95,14 @@ const APP: Screen[] = [
   { id: "app-capture", route: "app:capture", note: "quick capture, empty — save is a no-op, not a refusal" },
   { id: "app-capture-ready", route: "app:capture-ready", note: "typed, nothing recognised — THE normal case" },
   { id: "app-capture-tagged", route: "app:capture-tagged", note: "keywords recognised silently, editable later" },
+  // Safety and education. Access on the article is DERIVED from the article's
+  // tier plus the entitlement, so "locked" and "unlocked" are the same fixture
+  // seen under two truths rather than two flags.
+  { id: "app-safety", route: "app:safety", note: "tiered red flags — the one screen that owns the reserved hue (N3, N7)" },
+  { id: "app-article", route: "app:article", note: "a free article, unsaved" },
+  { id: "app-article-saved", route: "app:article-saved", note: "the same article, saved — icon plus word (N4)" },
+  { id: "app-article-locked", route: "app:article-locked", note: "premium deep dive: value before the gate, soft fade, no wall (P9/§9)" },
+  { id: "app-article-unlocked", route: "app:article-unlocked", note: "the same deep dive with premium held" },
 ];
 
 const SCREENS = [...ONBOARDING, ...APP];
