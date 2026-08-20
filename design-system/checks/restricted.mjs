@@ -213,6 +213,10 @@ const N7_CORE_LOOP_SURFACES = [
   "Onboarding Flow/src/components/MedicationDetail.tsx",
   "Onboarding Flow/src/components/AppointmentDetail.tsx",
   "Onboarding Flow/src/components/QuestionsForDoctor.tsx",
+  // Taking a photo is core loop. COMPARING them is premium (P9), so
+  // PhotoCompare is deliberately absent from this list — the gate belongs on
+  // the comparison and never on the act of adding a photo.
+  "Onboarding Flow/src/components/PhotoCapture.tsx",
 ];
 
 n6Scan(N7_CORE_LOOP_SURFACES, N6_GATING_SYMBOLS, "N7 core loop gated",

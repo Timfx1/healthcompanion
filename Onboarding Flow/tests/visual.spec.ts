@@ -118,6 +118,13 @@ const APP: Screen[] = [
   { id: "app-appointment-past", route: "app:detail-appointmentPast", note: "past — notes-after and follow-up lead instead" },
   { id: "app-questions", route: "app:detail-questions", note: "questions list, answered kept visible" },
   { id: "app-questions-empty", route: "app:detail-questionsEmpty", note: "empty — the state most people meet first" },
+  // The photo lane. Capture is free and compare is premium (P9), so the two
+  // screens sit on opposite sides of the only gate in the core loop's vicinity.
+  { id: "app-photo-empty", route: "app:detail-photoEmpty", note: "nothing chosen — privacy cue BEFORE the controls (P10)" },
+  { id: "app-photo-chosen", route: "app:detail-photoChosen", note: "an image selected, note optional (P1)" },
+  { id: "app-compare-locked", route: "app:detail-compareLocked", note: "premium gate — both photos visible, tooling withheld (§9)" },
+  { id: "app-compare-ready", route: "app:detail-compareReady", note: "premium held, two photos" },
+  { id: "app-compare-insufficient", route: "app:detail-compareInsufficient", note: "premium held, ONE photo — a come-back-later with nothing to buy" },
 ];
 
 const SCREENS = [...ONBOARDING, ...APP];

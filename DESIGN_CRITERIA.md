@@ -568,6 +568,37 @@ template string — Tailwind scans source for whole class names, so `gap-${n}` i
 invisible to it and the rule may simply not exist in the output, a failure that
 looks like a layout bug and reads like nothing at all.
 
+### Resolved — the photo lane, and the last dead row in the FAB sheet
+
+`PhotoCapture` and `PhotoCompare` are built. `AddTimelineEntry` now lands
+somewhere for **every** row; the photo row was the last stub in it.
+
+**The gate sits on the comparison, never on the photo.** §9 keeps the timeline
+and the core loop free and names only photo COMPARE as premium, so
+`PhotoCapture` is registered as a core-loop surface in `restricted.mjs` and
+`PhotoCompare` deliberately is not. Gating the act of adding a photo would gate
+the core loop, which is the Medisafe failure P9 exists to prevent.
+
+**P10 is placed before the controls, not after them.** Photographs of a healing
+body are the most private thing this product will ever hold, so "stays on your
+device" leads the screen. A reassurance that arrives after the decision is not a
+reassurance.
+
+**`PhotoCompare` has three states, and the middle one is the point.** `locked` /
+`insufficient` / `ready`, derived from the entitlement AND the photo count.
+Without `insufficient`, a subscriber holding one photo sees either a broken
+screen or — far worse — an upsell for something they have already bought. That
+state has deliberately nothing to buy on it: the answer is "add another in a
+week or two", and the gap is what makes the comparison worth looking at.
+
+In the locked state **both photos stay visible** and only the comparison tooling
+is withheld (§9, value before the gate). The privacy line is stated in every
+state, premium or not.
+
+The frames are neutral placeholders. This prototype does not ship invented
+photographs of injuries, and a mock wound is not a detail worth faking for a
+baseline.
+
 ### Open — the doctor report has no brandmark
 
 The report masthead used to carry AnklePath's app icon, inline as SVG: a teal
@@ -1212,13 +1243,13 @@ The `z` order is fixed: an overlay must never be authored with an ad-hoc z-index
 
 ### Contrast manifest
 
-**171 declared pairs, 303 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
+**174 declared pairs, 307 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
 
 | Usage class | Pairs |
 |---|---|
-| `body-text` | 99 |
+| `body-text` | 101 |
 | `ui-boundary` | 13 |
-| `decorative` | 25 |
+| `decorative` | 26 |
 | `large-text` | 14 |
 | `print-body` | 13 |
 | `print-rule` | 3 |

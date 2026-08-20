@@ -65,6 +65,8 @@ import MilestoneDetail from "./MilestoneDetail";
 import MedicationDetail from "./MedicationDetail";
 import AppointmentDetail from "./AppointmentDetail";
 import QuestionsForDoctor from "./QuestionsForDoctor";
+import PhotoCapture from "./PhotoCapture";
+import PhotoCompare from "./PhotoCompare";
 import * as TF from "./timelineFixtures";
 
 // The detail layer's addressable states. Exported because App.tsx routes to
@@ -75,7 +77,9 @@ export type DetailKey =
   | "milestone" | "milestoneAuto"
   | "medication" | "medicationNew"
   | "appointmentUpcoming" | "appointmentPast"
-  | "questions" | "questionsEmpty";
+  | "questions" | "questionsEmpty"
+  | "photoEmpty" | "photoChosen"
+  | "compareLocked" | "compareReady" | "compareInsufficient";
 
 
 // Category colour access now lives in patterns/category.ts, next to the pattern
@@ -1797,6 +1801,7 @@ export default function MainApp({
               else if (kind === "milestone") setDetail("milestone");
               else if (kind === "medication") setDetail("medication");
               else if (kind === "appointment") setDetail("appointmentUpcoming");
+              else if (kind === "photo") setDetail("photoEmpty");
             }} />}
           {captureOpen && <QuickCaptureSheet mode={mode} initialText={initialCaptureText} onClose={() => setCaptureOpen(false)} onSave={() => {}} />}
           {/* Safety: zIndex 45 — full-screen. Core loop, never gated (N7).
@@ -1829,6 +1834,14 @@ export default function MainApp({
           {detail === "appointmentPast"     && <AppointmentDetail mode={mode} appointment={TF.apptPast}     onClose={() => setDetail(null)} onQuestions={() => setDetail("questions")} onReport={() => { setDetail(null); setReport("ready"); }} />}
           {detail === "questions"       && <QuestionsForDoctor mode={mode} questions={TF.questionsSome} onClose={() => setDetail(null)} />}
           {detail === "questionsEmpty"  && <QuestionsForDoctor mode={mode} questions={TF.questionsNone} onClose={() => setDetail(null)} />}
+          {detail === "photoEmpty"      && <PhotoCapture mode={mode} onClose={() => setDetail(null)} />}
+          {detail === "photoChosen"     && <PhotoCapture mode={mode} hasImage onClose={() => setDetail(null)} />}
+          {/* Photo COMPARE is premium (P9); photo CAPTURE is not. The gate sits
+              on the comparison, never on adding a photo — that would gate the
+              core loop (N7). */}
+          {detail === "compareLocked"       && <PhotoCompare mode={mode} photoCount={4} hasPremium={false} onClose={() => setDetail(null)} onUnlock={() => { setDetail(null); setShowPaywall(true); }} />}
+          {detail === "compareReady"        && <PhotoCompare mode={mode} photoCount={4} hasPremium onClose={() => setDetail(null)} onUnlock={() => {}} />}
+          {detail === "compareInsufficient" && <PhotoCompare mode={mode} photoCount={1} hasPremium onClose={() => setDetail(null)} onUnlock={() => {}} />}
           {/* ReportPreview: zIndex 45 — full-screen. NO lock, in any state. */}
           {report && (
             <ReportPreview

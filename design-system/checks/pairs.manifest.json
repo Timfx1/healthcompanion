@@ -214,6 +214,9 @@
     { "id": "lock/label on raised",           "fg": "pattern.lock.label",           "bg": "color.surface.raised", "usage": "body-text", "note": "The word beside a lock badge. Real text on a premium row — and premium rows are the one place this system is most tempted to let contrast slide." },
     { "id": "historyFade/gradient start on raised", "fg": "pattern.historyFade.fadeFrom", "bg": "color.surface.raised", "usage": "decorative", "note": "Both gradient stops are declared. dayCard and share.* both shipped a defect because only one end of a gradient was ever considered." },
     { "id": "historyFade/gradient end on raised",   "fg": "pattern.historyFade.fadeTo",   "bg": "color.surface.raised", "usage": "decorative" },
-    { "id": "historyFade/pill edge on raised",      "fg": "pattern.historyFade.pillEdge", "bg": "color.surface.raised", "usage": "decorative" }
+    { "id": "historyFade/pill edge on raised",      "fg": "pattern.historyFade.pillEdge", "bg": "color.surface.raised", "usage": "decorative" },
+    { "id": "photo/placeholder frame on raised", "fg": "pattern.rest.surface", "bg": "color.surface.raised", "usage": "decorative", "note": "The empty photo frame borrows rest.* — a photo not yet taken is the same kind of absence as a day not yet logged, and both should read as quiet rather than missing (N2)." },
+    { "id": "photo/frame caption on frame (dark)",  "fg": "color.text.muted", "bg": "#15141F", "modes": ["dark"],  "composited": "pattern.rest.surface", "usage": "body-text", "note": "The caption inside the frame. rest.surface is opaque, so this is its literal value rather than a composite — declared with the link anyway so the role reads as measured." },
+    { "id": "photo/frame caption on frame (light)", "fg": "color.text.muted", "bg": "#F8F7FC", "modes": ["light"], "composited": "pattern.rest.surface", "usage": "body-text" }
   ]
 }

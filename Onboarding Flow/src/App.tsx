@@ -50,7 +50,9 @@ import type { Mode } from "./components/tokens";
 //                                     milestone, milestoneAuto, medication,
 //                                     medicationNew, appointmentUpcoming,
 //                                     appointmentPast, questions,
-//                                     questionsEmpty.
+//                                     questionsEmpty, photoEmpty,
+//                                     photoChosen, compareLocked,
+//                                     compareReady, compareInsufficient.
 //   ?screen=app:safety                when to contact a doctor (N3, N7)
 //   ?screen=app:article               a free article, unsaved
 //   ?screen=app:article-saved         the same article, saved
