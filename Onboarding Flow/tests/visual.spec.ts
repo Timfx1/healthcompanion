@@ -125,6 +125,13 @@ const APP: Screen[] = [
   { id: "app-compare-locked", route: "app:detail-compareLocked", note: "premium gate — both photos visible, tooling withheld (§9)" },
   { id: "app-compare-ready", route: "app:detail-compareReady", note: "premium held, two photos" },
   { id: "app-compare-insufficient", route: "app:detail-compareInsufficient", note: "premium held, ONE photo — a come-back-later with nothing to buy" },
+  // The report's range picker — the last §5 greenfield screen. Every option
+  // states its YIELD before it is chosen, because changing the range can re-derive
+  // the report into empty or sparse, and a picker that hides that hands somebody
+  // a blank report on the morning of an appointment.
+  { id: "app-range", route: "app:detail-range", note: "presets with entry counts; a zero-yield window is described, not warned about" },
+  { id: "app-range-custom", route: "app:detail-rangeCustom", note: "custom start and end" },
+  { id: "app-range-no-anchor", route: "app:detail-rangeNoAnchor", note: "no prior visit — reframed to since-you-started, matching ReportPreview" },
 ];
 
 const SCREENS = [...ONBOARDING, ...APP];

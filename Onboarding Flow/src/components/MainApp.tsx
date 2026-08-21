@@ -67,6 +67,7 @@ import AppointmentDetail from "./AppointmentDetail";
 import QuestionsForDoctor from "./QuestionsForDoctor";
 import PhotoCapture from "./PhotoCapture";
 import PhotoCompare from "./PhotoCompare";
+import ReportDateRange from "./ReportDateRange";
 import * as TF from "./timelineFixtures";
 
 // The detail layer's addressable states. Exported because App.tsx routes to
@@ -79,7 +80,8 @@ export type DetailKey =
   | "appointmentUpcoming" | "appointmentPast"
   | "questions" | "questionsEmpty"
   | "photoEmpty" | "photoChosen"
-  | "compareLocked" | "compareReady" | "compareInsufficient";
+  | "compareLocked" | "compareReady" | "compareInsufficient"
+  | "range" | "rangeCustom" | "rangeNoAnchor";
 
 
 // Category colour access now lives in patterns/category.ts, next to the pattern
@@ -1842,6 +1844,10 @@ export default function MainApp({
           {detail === "compareLocked"       && <PhotoCompare mode={mode} photoCount={4} hasPremium={false} onClose={() => setDetail(null)} onUnlock={() => { setDetail(null); setShowPaywall(true); }} />}
           {detail === "compareReady"        && <PhotoCompare mode={mode} photoCount={4} hasPremium onClose={() => setDetail(null)} onUnlock={() => {}} />}
           {detail === "compareInsufficient" && <PhotoCompare mode={mode} photoCount={1} hasPremium onClose={() => setDetail(null)} onUnlock={() => {}} />}
+          {/* The report's range picker. Free forever like the rest of it (N6). */}
+          {detail === "range"         && <ReportDateRange mode={mode} onClose={() => setDetail(null)} onApply={() => { setDetail(null); setReport("ready"); }} />}
+          {detail === "rangeCustom"   && <ReportDateRange mode={mode} initialMode="custom" onClose={() => setDetail(null)} onApply={() => setDetail(null)} />}
+          {detail === "rangeNoAnchor" && <ReportDateRange mode={mode} hasAnchor={false} onClose={() => setDetail(null)} onApply={() => setDetail(null)} />}
           {/* ReportPreview: zIndex 45 — full-screen. NO lock, in any state. */}
           {report && (
             <ReportPreview
@@ -1850,7 +1856,7 @@ export default function MainApp({
               exportState={initialExport}
               onClose={() => setReport(null)}
               onExport={() => {}}
-              onRange={() => {}}
+              onRange={() => { setReport(null); setDetail("range"); }}
             />
           )}
         </div>

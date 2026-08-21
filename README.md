@@ -62,15 +62,15 @@ still has AnklePath's five (`Home · Plan · Track · Learn · Profile`).
 
 | Class | Count | Screens |
 |---|---|---|
-| **Exists** | 15 | **`ReportPreview`** (7 states), **`QuickCaptureSheet`** (3 states), **`AddTimelineEntry`**, **`Safety`**, **`EducationArticle`** (3 access states × saved), **`JournalEntry`** (3), **`MilestoneDetail`**, **`MedicationDetail`** (2), **`AppointmentDetail`** (2), **`QuestionsForDoctor`** (2), **`PhotoCapture`** (2), **`PhotoCompare`** (3), `ShareCardPreview` (built as `ShareCardScreen`), `PremiumTeaser`, `TrialPaywall` |
+| **Exists** | 16 | **`ReportPreview`** (7 states), **`QuickCaptureSheet`** (3 states), **`AddTimelineEntry`**, **`Safety`**, **`EducationArticle`** (3 access states × saved), **`JournalEntry`** (3), **`MilestoneDetail`**, **`MedicationDetail`** (2), **`AppointmentDetail`** (2), **`QuestionsForDoctor`** (2), **`PhotoCapture`** (2), **`PhotoCompare`** (3), **`ReportDateRange`** (3), `ShareCardPreview` (built as `ShareCardScreen`), `PremiumTeaser`, `TrialPaywall` |
 | **Partial** — the value ships, the §5 surface does not | 1 | `WeeklyReflection` (Home card exists; "save to timeline" has no destination) |
 | **Precedent to re-domain** | 0 | — both done. |
-| **Greenfield** | 1 | `ReportDateRange` |
+| **Greenfield** | 0 | — every §5 detail/modal screen now exists. |
 
 Two things this count surfaced.
 
 **`ShareCardScreen` is the 20th surface and has no baseline.** The visual suite
-covers 52 screens × 2 modes; ShareCard is not among them, and `?screen=app:`
+covers 55 screens × 2 modes; ShareCard is not among them, and `?screen=app:`
 accepts only `home|timeline|progress|profile|checkin|paywall`. It is
 unphotographable — the exact condition that hid the dead `Toast` branch for the
 whole life of that component. `welcomeBack.*` has the same problem for a

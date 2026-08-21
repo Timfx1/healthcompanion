@@ -599,6 +599,62 @@ The frames are neutral placeholders. This prototype does not ship invented
 photographs of injuries, and a mock wound is not a detail worth faking for a
 baseline.
 
+### Resolved — ReportDateRange, and the chain extended past the pattern layer
+
+The last §5 greenfield screen is built. `ReportPreview`'s range chip had
+`onRange={() => {}}` since the report shipped; it goes somewhere now.
+
+**Every option states its YIELD before it is chosen.** That is not polish — it
+is a promise `ReportPreview` already made in its own header: *"changing the range
+re-derives depth, so empty and sparse are reachable from INSIDE a ready report."*
+A picker that hides its consequences hands somebody a blank report on the morning
+of an appointment. A window containing nothing is described (*"nothing logged
+yet"*) and cannot be applied; it is not warned about, and the alert hue stays
+where N3 puts it.
+
+**The screen introduces NO new token family, and that is the finding.**
+Selection already has a name — `state.selectedFill` / `state.selectedEdge` — and
+`semantic.json` warns in as many words that reusing a named value under a new
+name "would have been misnaming rather than reuse".
+
+One constraint arrived WITH those tokens, and it is worth recording as a pattern
+in its own right. `state/selectedEdge on raised` is classified decorative, and
+its manifest note is explicit that this holds only because *"selection here is
+carried by three simultaneous signals — a tinted fill, this border, and a
+trailing check glyph… if a future selected state ever drops the fill or the
+check, this must revert to ui-boundary."* So the selected option here carries all
+three. **The manifest is not describing the past; it is a contract on anything
+that adopts the token**, and this is the first screen to inherit one.
+
+### Resolved — the chain now covers the whole colour surface
+
+`consumption.mjs` only knew about `pattern.*`. Extending it to semantic roles
+found **19 undeclared**, including `color.accent.surface` and `color.accent.edge`
+— which are used on nearly every screen built in this project and were named by
+no pair at all. They are translucent, so they reach the manifest only as
+pre-composited literals: exactly the gap the `composited` field was added to
+close for patterns, reappearing one layer down.
+
+Also undeclared: all eleven `painScale.*.mark` steps (the sparkline's area wash),
+`state.scrim` (every bottom sheet dims through it), `safety.surface`,
+`surface.notification` and `text.onNotification` (the Toast at the semantic level
+— `pattern.toast.*` refs them and was declared, the underlying roles were not, so
+a change to either could have moved the pill with no pair naming what moved).
+
+All 19 are now declared. **61 of 61 pattern roles and 64 of 64 semantic roles**,
+with both ratchets at zero.
+
+Deliberately NOT added: semantic *dormancy*. Semantic roles are reached through
+the legacy `D` alias as often as by their full path, so source scanning would be
+even less reliable there than it was for patterns — and the file already
+abandoned role-level dormancy once for that reason. Measure what can be measured
+honestly; leave the rest visible.
+
+**Three families remain dormant: `insight`, `fastPath`, `welcomeBack`.** Nothing
+in this pass changed that, and on the record of four families now found broken
+while dormant, `fastPath` is the highest-risk thing left in the token layer — P3
+makes it the largest element on the check-in tab, and the screen hardcodes.
+
 ### Open — the doctor report has no brandmark
 
 The report masthead used to carry AnklePath's app icon, inline as SVG: a teal
@@ -1243,13 +1299,13 @@ The `z` order is fixed: an overlay must never be authored with an ad-hoc z-index
 
 ### Contrast manifest
 
-**174 declared pairs, 307 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
+**190 declared pairs, 339 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
 
 | Usage class | Pairs |
 |---|---|
-| `body-text` | 101 |
+| `body-text` | 102 |
 | `ui-boundary` | 13 |
-| `decorative` | 26 |
+| `decorative` | 41 |
 | `large-text` | 14 |
 | `print-body` | 13 |
 | `print-rule` | 3 |

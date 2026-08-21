@@ -120,6 +120,7 @@ const N6_REPORT_SURFACES = [
   "app/src/services/report/exportReport.ts",
   "Onboarding Flow/src/components/ReportPreview.tsx",
   "Onboarding Flow/src/components/reportFixtures.ts",
+  "Onboarding Flow/src/components/ReportDateRange.tsx",
 ];
 
 const N6_PREMIUM_OFFER_SURFACES = [

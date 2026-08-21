@@ -114,6 +114,36 @@ for (const pair of manifest.pairs) {
   }
 }
 
+// ── SEMANTIC ROLES ──────────────────────────────────────────────────────────
+// The pattern layer is not the whole token surface. `color.accent.surface` and
+// `color.accent.edge` are used on almost every screen in this product and were
+// named by no pair at all — they are translucent, so they appear in the manifest
+// only as pre-composited literals, exactly the gap the `composited` field was
+// added to close for patterns.
+//
+// MEASUREMENT ONLY, and deliberately no dormancy check here. Semantic roles are
+// reached through the legacy `D` alias as often as by their full path, so
+// source scanning would be even less reliable than it was for pattern roles —
+// and a check that cries wolf gets ignored.
+const semanticRoles = [];
+(function walkColour(node, path) {
+  if (typeof node === "string") {
+    if (/^#[0-9A-Fa-f]{6,8}$/.test(node)) semanticRoles.push(path.join("."));
+    return;
+  }
+  if (!node || typeof node !== "object") return;
+  for (const [k, v] of Object.entries(node)) walkColour(v, path.concat(k));
+})(tokens.modes.dark.color, ["color"]);
+
+const declaredSemantic = new Set();
+for (const pair of manifest.pairs) {
+  for (const spec of [pair.fg, pair.bg].concat(pair.composited ?? [])) {
+    const name = String(spec).split("@")[0];
+    if (name.startsWith("color.")) declaredSemantic.add(name);
+  }
+}
+const unmeasuredSemantic = semanticRoles.filter((r) => !declaredSemantic.has(r));
+
 const dormant = familyNames.filter((f) => !consumed.has(f));
 // Roles inside a dormant family are already reported by that family, so they are
 // not counted twice. "Unmeasured" means: this renders, and nothing checks it.
@@ -132,6 +162,8 @@ if (UPDATE) {
     unmeasured: Math.min(budget.unmeasured ?? unmeasured.length, unmeasured.length),
     $dormantFamilies: dormant,
     $unmeasuredRoles: unmeasured,
+    unmeasuredSemantic: Math.min(budget.unmeasuredSemantic ?? unmeasuredSemantic.length, unmeasuredSemantic.length),
+    $unmeasuredSemanticRoles: unmeasuredSemantic,
   }, null, 2) + "\n");
   console.log("consumption budget updated: dormant " + dormant.length + ", unmeasured " + unmeasured.length);
   process.exit(0);
@@ -140,7 +172,8 @@ if (UPDATE) {
 console.log("consumption: " + familyNames.length + " pattern families, " + roleNames.length + " colour roles");
 console.log("  measured   : " + (roleNames.length - unmeasured.length) + " of " + roleNames.length + " roles");
 console.log("  dormant    : " + dormant.length + " families  (budget " + budget.dormant + ")" + (dormant.length ? " — " + dormant.join(", ") : ""));
-console.log("  unmeasured : " + unmeasured.length + " roles  (budget " + budget.unmeasured + ")" + (unmeasured.length ? " — " + unmeasured.join(", ") : ""));
+console.log("  unmeasured : " + unmeasured.length + " pattern roles  (budget " + budget.unmeasured + ")" + (unmeasured.length ? " — " + unmeasured.join(", ") : ""));
+console.log("  semantic   : " + (semanticRoles.length - unmeasuredSemantic.length) + " of " + semanticRoles.length + " measured  (budget " + budget.unmeasuredSemantic + " unmeasured)" + (unmeasuredSemantic.length ? " — " + unmeasuredSemantic.join(", ") : ""));
 
 if (LIST) {
   console.log("");
@@ -162,6 +195,12 @@ if (dormant.length > budget.dormant) {
 if (unmeasured.length > budget.unmeasured) {
   console.error("\nUnmeasured roles over budget by " + (unmeasured.length - budget.unmeasured) + ".");
   console.error("These RENDER and no contrast pair names them. Declare them in pairs.manifest.json.");
+  failed = true;
+}
+if (unmeasuredSemantic.length > (budget.unmeasuredSemantic ?? Infinity)) {
+  console.error("");
+  console.error("Unmeasured SEMANTIC roles over budget by " + (unmeasuredSemantic.length - budget.unmeasuredSemantic) + ".");
+  console.error("The pattern layer is not the whole token surface.");
   failed = true;
 }
 if (failed) process.exit(1);
