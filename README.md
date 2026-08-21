@@ -70,7 +70,7 @@ still has AnklePath's five (`Home · Plan · Track · Learn · Profile`).
 Two things this count surfaced.
 
 **`ShareCardScreen` is the 20th surface and has no baseline.** The visual suite
-covers 55 screens × 2 modes; ShareCard is not among them, and `?screen=app:`
+covers 57 screens × 2 modes; ShareCard is not among them, and `?screen=app:`
 accepts only `home|timeline|progress|profile|checkin|paywall`. It is
 unphotographable — the exact condition that hid the dead `Toast` branch for the
 whole life of that component. `welcomeBack.*` has the same problem for a
@@ -184,7 +184,7 @@ what is not finished. Full detail in `DESIGN_CRITERIA.md` §11.
   path in `Toast` for the whole life of the component, because nothing could
   photograph a state that exists for 2.4 seconds behind an interaction. That one
   is closed (`?screen=app:toast`); the check-in's states need the same.
-- **`insight.*` is defined and unused**, and would reintroduce a fixed bug if
+- **`insight.*` and `welcomeBack.*` are defined and unused**, and would reintroduce a fixed bug if
   adopted as written — its trend roles still point at category `mark`.
 - **Off-scale font sizes and raw hex values remain** in consumer code, under a
   ratchet that can only tighten.

@@ -72,13 +72,29 @@
   "fastPath": {
     "$intent": "The core retention mechanic: a complete, valid check-in in one tap, under ten seconds, without typing.",
     "$contract": "Largest and first-rendered element on its screen, in the thumb zone. Each option is icon plus word. No scroll, no second decision.",
-    "optionFill":     { "$type": "ref", "$value": "{color.surface.card}" },
+    "$wasContradictory": "This family defined BOTH a single `optionSelected` (accent at 27%) AND per-option marks for better/same/worse. Those cannot both describe the selected state, and the contrast manifest settles it: the five `category ink on 27% tint` pairs exist because the fast path fills its selected option with a tint of that option's OWN mark, and five pastelInk values were re-solved against exactly those backdrops. A uniform accent fill would strand that calibration and duplicate `state.selectedFill` at a different alpha, which semantic.json warns against by name. `optionSelected` was the vestigial half and is gone.",
+    "$wasMissing": "There was no `ink`. The screen renders the selected WORD in the category ink — correctly — and the family had no role that could say so, which is how a family stays dormant while the screen quietly does the right thing by hand.",
+    "optionFill":     { "$type": "ref", "$value": "{color.surface.card}", "$description": "NOT surface.raised, which is what the screen painted. On surface.base, card lifts further — and this is the one control that should be unmissable on a bad day. Adopting it is also what exposed the dark-mode failure recorded on pastelInk.painOnDark." },
     "optionEdge":     { "$type": "ref", "$value": "{color.surface.border}" },
-    "optionSelected": { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint27}" } },
     "minHeight":      { "$type": "dimension", "$value": 88, "$description": "Twice the 44pt floor. This is the one control that should be unmissable on a bad day." },
-    "better": { "label": { "$type": "string", "$value": "Better" }, "mark": { "$type": "ref", "$value": "{color.category.mood.mark}" } },
-    "same":   { "label": { "$type": "string", "$value": "Same" },   "mark": { "$type": "ref", "$value": "{color.category.sleep.mark}" } },
-    "worse":  { "label": { "$type": "string", "$value": "Worse" },  "mark": { "$type": "ref", "$value": "{color.category.pain.mark}" } }
+    "better": {
+      "label":        { "$type": "string", "$value": "Better" },
+      "mark":         { "$type": "ref", "$value": "{color.category.mood.mark}" },
+      "ink":          { "$type": "ref", "$value": "{color.category.mood.ink}" },
+      "selectedFill": { "$type": "colorAlpha", "$value": { "base": "{color.category.mood.mark}", "alpha": "{alpha.tint27}" } }
+    },
+    "same": {
+      "label":        { "$type": "string", "$value": "Same" },
+      "mark":         { "$type": "ref", "$value": "{color.category.sleep.mark}" },
+      "ink":          { "$type": "ref", "$value": "{color.category.sleep.ink}" },
+      "selectedFill": { "$type": "colorAlpha", "$value": { "base": "{color.category.sleep.mark}", "alpha": "{alpha.tint27}" } }
+    },
+    "worse": {
+      "label":        { "$type": "string", "$value": "Worse" },
+      "mark":         { "$type": "ref", "$value": "{color.category.pain.mark}" },
+      "ink":          { "$type": "ref", "$value": "{color.category.pain.ink}" },
+      "selectedFill": { "$type": "colorAlpha", "$value": { "base": "{color.category.pain.mark}", "alpha": "{alpha.tint27}" } }
+    }
   },
 
   "share": {

@@ -73,7 +73,7 @@ const THEMES = {
       "category": {
         "pain": {
           "mark": "#F2A69E",
-          "ink": "#F2A69E",
+          "ink": "#F9ABA3",
           "icon": "pain",
           "label": "Pain",
           "onMark": "#1A1830"
@@ -378,7 +378,7 @@ const THEMES = {
           "tracking": 0
         },
         "trendUp": "#A8D9B8",
-        "trendDown": "#F2A69E",
+        "trendDown": "#F9ABA3",
         "trendFlat": "#9B97B8",
         "chartLine": "#7C6FCD",
         "chartGrid": "#2E2C4588"
@@ -386,19 +386,24 @@ const THEMES = {
       "fastPath": {
         "optionFill": "#252438",
         "optionEdge": "#2E2C45",
-        "optionSelected": "#7C6FCD44",
         "minHeight": 88,
         "better": {
           "label": "Better",
-          "mark": "#A8D9B8"
+          "mark": "#A8D9B8",
+          "ink": "#A8D9B8",
+          "selectedFill": "#A8D9B844"
         },
         "same": {
           "label": "Same",
-          "mark": "#9EC3F5"
+          "mark": "#9EC3F5",
+          "ink": "#9EC3F5",
+          "selectedFill": "#9EC3F544"
         },
         "worse": {
           "label": "Worse",
-          "mark": "#F2A69E"
+          "mark": "#F2A69E",
+          "ink": "#F9ABA3",
+          "selectedFill": "#F2A69E44"
         }
       },
       "share": {
@@ -787,19 +792,24 @@ const THEMES = {
       "fastPath": {
         "optionFill": "#FFFFFF",
         "optionEdge": "#E4E1F5",
-        "optionSelected": "#7C6FCD44",
         "minHeight": 88,
         "better": {
           "label": "Better",
-          "mark": "#A8D9B8"
+          "mark": "#A8D9B8",
+          "ink": "#35784B",
+          "selectedFill": "#A8D9B844"
         },
         "same": {
           "label": "Same",
-          "mark": "#9EC3F5"
+          "mark": "#9EC3F5",
+          "ink": "#406CA9",
+          "selectedFill": "#9EC3F544"
         },
         "worse": {
           "label": "Worse",
-          "mark": "#F2A69E"
+          "mark": "#F2A69E",
+          "ink": "#AE4571",
+          "selectedFill": "#F2A69E44"
         }
       },
       "share": {

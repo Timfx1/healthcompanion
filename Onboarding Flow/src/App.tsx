@@ -39,6 +39,7 @@ import type { Mode } from "./components/tokens";
 //   ?screen=ob:<0-11>                 a specific onboarding wizard step
 //   ?screen=app:home|timeline|progress|profile
 //   ?screen=app:checkin               MainApp with the check-in overlay open
+//   ?screen=app:checkin-selected      the fast path with "Worse" selected
 //   ?screen=app:paywall               MainApp with the paywall sheet open
 //   ?screen=app:add                   the FAB sheet (AddTimelineEntry)
 //   ?screen=app:capture               the quick-capture sheet, empty
@@ -77,7 +78,7 @@ import type { Mode } from "./components/tokens";
 type Route =
   | { kind: "onboarding"; step: number }
   | { kind: "app"; tab: Tab; overlay: "checkin" | "paywall" | "add" | "capture" | null; pinToast?: boolean;
-      captureText?: string; safety?: boolean; article?: string | null;
+      captureText?: string; safety?: boolean; article?: string | null; fastChoice?: number | null;
       saved?: boolean; premium?: boolean; detail?: DetailKey | null;
       report?: FixtureName | null; exportState?: ExportState };
 
@@ -99,6 +100,9 @@ function parseRoute(): { route: Route | null; mode: Mode } {
   if (screen.startsWith("app:")) {
     const target = screen.slice(4);
     if (target === "checkin") return { route: { kind: "app", tab: "home", overlay: "checkin" }, mode };
+    // The selected fast-path option, addressed directly. It exists for 500ms
+    // behind a tap, so nothing could photograph it before this route.
+    if (target === "checkin-selected") return { route: { kind: "app", tab: "home", overlay: "checkin", fastChoice: 2 }, mode };
     if (target === "paywall") return { route: { kind: "app", tab: "home", overlay: "paywall" }, mode };
 
     // The report's states are DATA, not flags — the screen derives depth from
@@ -167,7 +171,7 @@ export default function App() {
   if (DEV_ROUTE) {
     return DEV_ROUTE.kind === "onboarding"
       ? <Onboarding initialMode={DEV_MODE} initialScreen={DEV_ROUTE.step} />
-      : <MainApp initialMode={DEV_MODE} initialTab={DEV_ROUTE.tab} initialOverlay={DEV_ROUTE.overlay} pinToast={DEV_ROUTE.pinToast} initialReport={DEV_ROUTE.report ?? null} initialExport={DEV_ROUTE.exportState ?? "idle"} initialCaptureText={DEV_ROUTE.captureText ?? ""} initialSafety={DEV_ROUTE.safety ?? false} initialArticle={DEV_ROUTE.article ?? null} initialSaved={DEV_ROUTE.saved ?? false} initialPremium={DEV_ROUTE.premium ?? false} initialDetail={DEV_ROUTE.detail ?? null} />;
+      : <MainApp initialMode={DEV_MODE} initialTab={DEV_ROUTE.tab} initialOverlay={DEV_ROUTE.overlay} pinToast={DEV_ROUTE.pinToast} initialReport={DEV_ROUTE.report ?? null} initialExport={DEV_ROUTE.exportState ?? "idle"} initialCaptureText={DEV_ROUTE.captureText ?? ""} initialSafety={DEV_ROUTE.safety ?? false} initialArticle={DEV_ROUTE.article ?? null} initialSaved={DEV_ROUTE.saved ?? false} initialPremium={DEV_ROUTE.premium ?? false} initialDetail={DEV_ROUTE.detail ?? null} initialFastChoice={DEV_ROUTE.fastChoice ?? null} />;
   }
 
   if (phase === "onboarding") {

@@ -1181,10 +1181,15 @@ function TimelineScreen({ mode, onShareMilestone, onAdd }: { mode: Mode; onShare
 //   BUTTON: 30×30px circle, form-phase header.
 //   ACTION: onClose() → setShowCheckIn(false) in MainApp → modal unmounts.
 // ============================================================
-function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
+function CheckInModal({ mode, onClose, initialFastChoice = null }: { mode: Mode; onClose: () => void; initialFastChoice?: number | null }) {
   const [step, setStep] = useState<"form" | "done">("form");
   const [detailOpen, setDetailOpen] = useState(false);
-  const [fastChoice, setFastChoice] = useState<number | null>(null);
+  // DEV-ROUTE affordance, like pinToast. The selected option lives for 500ms
+  // before the screen advances to "done", so it is unphotographable through the
+  // interaction — and §11 has recorded for some time that no baseline exercises
+  // it. Six pairs now depend on that state; a state with no route is a state
+  // nothing checks.
+  const [fastChoice, setFastChoice] = useState<number | null>(initialFastChoice);
   const [pain, setPain] = useState(3);
   const [energy, setEnergy] = useState<number | null>(null);
   const [sleep, setSleep] = useState<number | null>(null);
@@ -1199,10 +1204,19 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
   const LEVELS = [{ icon: "⬇️", label: "Low" }, { icon: "➡️", label: "Med" }, { icon: "⬆️", label: "High" }];
 
   // C1: Icon + word label for each fast-path option. NEVER color-only (accessibility).
+  // The three options are the TOKEN FAMILY's, not this file's. Labels, marks,
+  // inks and the selected fill all come from pattern.fastPath — the family was
+  // dormant while this screen hardcoded equivalents by hand, which is exactly
+  // how toast.*, capture.*, share.* and paywall.savingsLabel each hid a defect.
+  //
+  // The icon and the one-word descriptor stay here: the contract says "icon plus
+  // word" and owns the word, and inventing token roles for an emoji and a
+  // subtitle would be defining values the design system has no opinion about.
+  const FP = theme(mode).pattern.fastPath;
   const FAST_OPTIONS = [
-    { icon: "📈", word: "Better",  desc: "Improving",  cat: "mood" as Category },
-    { icon: "➡️", word: "Same",    desc: "Stable",     cat: "sleep" as Category },
-    { icon: "📉", word: "Worse",   desc: "Harder day", cat: "pain" as Category },
+    { icon: "📈", key: "better" as const, desc: "Improving" },
+    { icon: "➡️", key: "same" as const,   desc: "Stable" },
+    { icon: "📉", key: "worse" as const,  desc: "Harder day" },
   ];
 
   // C1 FAST-PATH HANDLER:
@@ -1264,13 +1278,26 @@ function CheckInModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
               <button key={i} onClick={() => handleFastTap(i)}
                 className="btn-press flex-1 flex flex-col items-center justify-center gap-1.5 rounded-2xl"
                 style={{
-                  height: 100,
-                  background: sel ? `${cat(mode, opt.cat).mark}44` : s(D.raised, D.lCard, mode),
-                  border: `2px solid ${sel ? cat(mode, opt.cat).mark : s(D.border, D.lBorder, mode)}`,
+                  // minHeight, not height: the contract sets a FLOOR of 88 —
+                  // "twice the 44pt floor … the one control that should be
+                  // unmissable on a bad day" — and a fixed height cannot honour
+                  // a floor when the text grows.
+                  minHeight: FP.minHeight,
+                  background: sel ? FP[opt.key].selectedFill : FP.optionFill,
+                  // INK, not mark. DESIGN_CRITERIA §8: "mark = fills, ink = text,
+                  // icons and DATA STROKES". A selected border is a meaningful
+                  // stroke, and the mark version measured 1.58-1.96:1 on white
+                  // against a 3:1 floor — the same mark-as-a-stroke confusion,
+                  // now in a fifth family.
+                  border: `2px solid ${sel ? FP[opt.key].ink : FP.optionEdge}`,
                   cursor: "pointer", transition: `all ${scale.duration.quick}ms`,
                 }}>
-                <span style={{ fontSize: 30, lineHeight: 1 }}>{opt.icon}</span>
-                <span style={{ fontSize: scale.font.size.md, fontWeight: 700, color: sel ? cat(mode, opt.cat).ink : s(D.text, D.lText, mode) }}>{opt.word}</span>
+                <span style={{ fontSize: scale.font.size["3xl"], lineHeight: 1 }}>{opt.icon}</span>
+                {/* Icon AND word, always — the contract says so and N4 requires
+                    it. The word is INK when selected: mark is a fill, and using
+                    a mark as text is the mistake this system has now made in
+                    four separate families. */}
+                <span style={{ fontSize: scale.font.size.md, fontWeight: 700, color: sel ? FP[opt.key].ink : s(D.text, D.lText, mode) }}>{FP[opt.key].label}</span>
                 <span style={{ fontSize: scale.font.size["3xs"], color: s(D.textSec, D.lTextSec, mode) }}>{opt.desc}</span>
               </button>
             );
@@ -1734,12 +1761,13 @@ export default function MainApp({
   initialSaved = false,
   initialPremium = false,
   initialDetail = null as DetailKey | null,
+  initialFastChoice = null as number | null,
 }: {
   initialMode?: Mode; initialTab?: Tab;
   initialOverlay?: "checkin" | "paywall" | "add" | "capture" | null; pinToast?: boolean;
   initialReport?: FixtureName | null; initialExport?: ExportState; initialCaptureText?: string;
   initialSafety?: boolean; initialArticle?: string | null; initialSaved?: boolean; initialPremium?: boolean;
-  initialDetail?: DetailKey | null;
+  initialDetail?: DetailKey | null; initialFastChoice?: number | null;
 }) {
   const [mode, setMode] = useState<Mode>(initialMode);
   const [tab, setTab] = useState<Tab>(initialTab);
@@ -1792,7 +1820,7 @@ export default function MainApp({
               CheckInModal: zIndex 40 — full-screen, check-in flow.
               ShareCardScreen: zIndex 45 — full-screen, share preview.
               PaywallSheet: zIndex 50 — bottom sheet + backdrop. */}
-          {showCheckIn && <CheckInModal mode={mode} onClose={() => setShowCheckIn(false)} />}
+          {showCheckIn && <CheckInModal mode={mode} onClose={() => setShowCheckIn(false)} initialFastChoice={initialFastChoice} />}
           {showPaywall && <PaywallSheet mode={mode} onClose={() => setShowPaywall(false)} />}
           {shareCard   && <ShareCardScreen mode={mode} milestone={shareCard} onClose={() => setShareCard(null)} />}
           {/* AddTimelineEntry / QuickCaptureSheet: zIndex 50 — bottom sheets.

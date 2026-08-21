@@ -2,11 +2,10 @@
   "$note": "Token consumption ratchet. BOTH NUMBERS MAY ONLY DECREASE.",
   "$principle": "defined -> consumed -> rendered -> measured. A definition is not evidence.",
   "$generated": "2026-08-21",
-  "dormant": 3,
+  "dormant": 2,
   "unmeasured": 0,
   "$dormantFamilies": [
     "insight",
-    "fastPath",
     "welcomeBack"
   ],
   "$unmeasuredRoles": [],

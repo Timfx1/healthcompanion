@@ -69,6 +69,10 @@ const APP: Screen[] = [
   { id: "app-progress", route: "app:progress", note: "corridor band, insight sentence, history fade" },
   { id: "app-profile", route: "app:profile", note: "rows incl. safety entry point" },
   { id: "app-checkin", route: "app:checkin", note: "fast-path overlay (C1)" },
+  // The SELECTED fast-path option. §11 recorded for months that no baseline
+  // exercised this, and six contrast pairs now depend on it — including the one
+  // that measured 4.32:1 in dark before pastelInkDark.pain existed.
+  { id: "app-checkin-selected", route: "app:checkin-selected", note: "fast path with an option chosen — the state six pairs depend on" },
   { id: "app-paywall", route: "app:paywall", note: "dismissible bottom sheet (P9)" },
   { id: "app-toast", route: "app:toast", note: "quick-capture confirmation, pinned visible" },
 

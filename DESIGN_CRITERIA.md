@@ -702,6 +702,61 @@ CI.** They were about to share one, and CI runs visual **advisory** because of
 the open harness flake. A persistence regression is not flaky and must not
 inherit an exemption written for something else.
 
+### Resolved — fastPath, and the token contract was NOT simply right either
+
+The check-in screen has been brought into `pattern.fastPath`. The family is no
+longer dormant, and the ratchet is down to two.
+
+The instruction was to treat the token contract as the source of truth rather
+than the hardcoded screen. Doing that carefully turned up something better than
+either: **the family was internally contradictory, and the half that survives is
+the half the measurement layer corroborates.**
+
+**The contradiction.** `fastPath` defined BOTH a single `optionSelected` (accent
+at 27%) AND per-option marks for `better`/`same`/`worse`. Those cannot both
+describe the selected state. The contrast manifest settles it: five
+`category ink on 27% tint` pairs exist *because the fast path fills its selected
+option with a tint of that option's own mark*, and five `pastelInk` values were
+re-solved against exactly those backdrops. A uniform accent fill would strand
+that calibration and duplicate `state.selectedFill` at a different alpha — which
+`semantic.json` warns against by name. `optionSelected` was vestigial and is
+gone.
+
+**What the family was missing.** There was no `ink`. The screen renders the
+selected word in the category ink — correctly — and the family had no role that
+could say so. A family stays dormant precisely while a screen does the right
+thing by hand.
+
+**Where the screen was wrong.** It painted options on `surface.raised`; the
+contract says `surface.card`, which lifts further from `surface.base` and suits
+"the one control that should be unmissable on a bad day". It also hardcoded
+`height: 100` where the contract sets a *floor* of 88 — and a fixed height cannot
+honour a floor when text grows.
+
+**And adopting that fill exposed a live failure the light-only pairs had hidden.**
+`category.pain.ink` on a 27% pain tint over `surface.card` measures **4.32:1 in
+dark**. `pastelInk`'s own note exempts dark on the grounds that "the pastels
+there already clear 7.7–12.4:1" — true on plain surfaces, false on the worst one.
+**The exemption was reasoned, not measured**, which is the same mistake that
+note itself describes, one mode over. Only pain fails (sleep 4.54, mood 4.94), so
+only pain diverges: `pastelInkDark.pain` at `#F9ABA3`, 4.59 on that backdrop and
+better on every other, so nothing is traded for it. All six selected-state pairs
+are now declared in **both** modes.
+
+**A fifth mark-as-ink.** The selected border used `mark` and measured
+**1.58–1.96:1** on white against a 3:1 floor. §8 assigns data strokes to `ink`;
+a selected border is a meaningful stroke. Fixed, and now passing.
+
+**The selected state finally has a route.** §11 has recorded for a long time
+that `app-checkin` photographs the fast path with nothing selected, so the
+contrast fixes there were unexercised. Six pairs now depend on that state, and it
+lives for 500ms behind a tap — unphotographable through interaction. It has a
+dev route and a baseline now, the same treatment the Toast needed.
+
+The ripple from `pastel.pain` → `pastelInkDark.pain` moved four dark baselines by
+91 pixels each: the "Pain" tag chip, the report's "Worsening" word, and the
+progress screen. Verified as exactly that and nothing else.
+
 ### Open — the doctor report has no brandmark
 
 The report masthead used to carry AnklePath's app icon, inline as SVG: a teal
@@ -1104,7 +1159,7 @@ Two lessons worth keeping. **Three of the five corridor tokens — `edge`, `phas
 
 **Two contrast fixes are still unbaselined, and it is the same gap both times.** `app-checkin` captures the fast path with nothing selected *and* the detail panel collapsed, so neither the selected-word fix nor the 22px pain numeral is exercised by any baseline. The pain-ramp change moved exactly one screenshot (`ob-05-pain-baseline`, light) when it should logically have moved two.
 
-This gap is no longer theoretical: it hid the Toast's dead code path and unused token family for the entire life of the component, because nothing could photograph a state that exists for 2.4 seconds behind an interaction. That one is now closed by the `app:toast` dev route — the same treatment the check-in's selected and expanded states still need.
+The fast path's SELECTED state is now closed too (`app:checkin-selected`); the expanded detail panel still is not. This gap is no longer theoretical: it hid the Toast's dead code path and unused token family for the entire life of the component, because nothing could photograph a state that exists for 2.4 seconds behind an interaction. That one is now closed by the `app:toast` dev route — the same treatment the check-in's selected and expanded states still need.
 
 **Structural gap:** the design file has no light-mode frames at all, so light mode has never been visually reviewed against a design — only implemented. That is the most likely explanation for why the light-mode failures cluster so heavily, and it is why the code is canonical for light mode by decision rather than by preference.
 
@@ -1152,7 +1207,7 @@ Every semantic colour, both modes, as the emitters hand them to the app. A role 
 | `accent.surface` | `#7C6FCD22` | `#7C6FCD22` |
 | `accent.edge` | `#7C6FCD44` | `#7C6FCD44` |
 | `category.pain.mark` | `#F2A69E` | `#F2A69E` |
-| `category.pain.ink` | `#F2A69E` | `#AE4571` |
+| `category.pain.ink` | `#F9ABA3` | `#AE4571` |
 | `category.pain.onMark` | `#1A1830` | `#1A1830` |
 | `category.sleep.mark` | `#9EC3F5` | `#9EC3F5` |
 | `category.sleep.ink` | `#9EC3F5` | `#406CA9` |
@@ -1229,16 +1284,21 @@ Product concepts with fixed contracts, defined once so they cannot drift between
 | `historyFade.pillLabel` | `#9B8FE0` | `#6B5DBE` |
 | `insight.headline` | `#F0EFFE` | `#1A1830` |
 | `insight.trendUp` | `#A8D9B8` | `#35784B` |
-| `insight.trendDown` | `#F2A69E` | `#AE4571` |
+| `insight.trendDown` | `#F9ABA3` | `#AE4571` |
 | `insight.trendFlat` | `#9B97B8` | `#6B6890` |
 | `insight.chartLine` | `#7C6FCD` | `#7C6FCD` |
 | `insight.chartGrid` | `#2E2C4588` | `#E4E1F588` |
 | `fastPath.optionFill` | `#252438` | `#FFFFFF` |
 | `fastPath.optionEdge` | `#2E2C45` | `#E4E1F5` |
-| `fastPath.optionSelected` | `#7C6FCD44` | `#7C6FCD44` |
 | `fastPath.better.mark` | `#A8D9B8` | `#A8D9B8` |
+| `fastPath.better.ink` | `#A8D9B8` | `#35784B` |
+| `fastPath.better.selectedFill` | `#A8D9B844` | `#A8D9B844` |
 | `fastPath.same.mark` | `#9EC3F5` | `#9EC3F5` |
+| `fastPath.same.ink` | `#9EC3F5` | `#406CA9` |
+| `fastPath.same.selectedFill` | `#9EC3F544` | `#9EC3F544` |
 | `fastPath.worse.mark` | `#F2A69E` | `#F2A69E` |
+| `fastPath.worse.ink` | `#F9ABA3` | `#AE4571` |
+| `fastPath.worse.selectedFill` | `#F2A69E44` | `#F2A69E44` |
 | `share.cardFrom` | `#3D3668` | `#3D3668` |
 | `share.cardTo` | `#1E1D2E` | `#1E1D2E` |
 | `share.title` | `#F0EFFE` | `#F0EFFE` |
@@ -1346,13 +1406,13 @@ The `z` order is fixed: an overlay must never be authored with an ad-hoc z-index
 
 ### Contrast manifest
 
-**190 declared pairs, 339 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
+**202 declared pairs, 357 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
 
 | Usage class | Pairs |
 |---|---|
-| `body-text` | 102 |
-| `ui-boundary` | 13 |
-| `decorative` | 41 |
+| `body-text` | 110 |
+| `ui-boundary` | 16 |
+| `decorative` | 42 |
 | `large-text` | 14 |
 | `print-body` | 13 |
 | `print-rule` | 3 |

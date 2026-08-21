@@ -233,6 +233,18 @@
     { "id": "painScale/7 mark wash on raised", "fg": "color.painScale.7.mark@22", "bg": "color.surface.raised", "usage": "decorative" },
     { "id": "painScale/8 mark wash on raised", "fg": "color.painScale.8.mark@22", "bg": "color.surface.raised", "usage": "decorative" },
     { "id": "painScale/9 mark wash on raised", "fg": "color.painScale.9.mark@22", "bg": "color.surface.raised", "usage": "decorative" },
-    { "id": "painScale/10 mark wash on raised", "fg": "color.painScale.10.mark@22", "bg": "color.surface.raised", "usage": "decorative" }
+    { "id": "painScale/10 mark wash on raised", "fg": "color.painScale.10.mark@22", "bg": "color.surface.raised", "usage": "decorative" },
+    { "id": "fastPath/better label when selected (dark)", "fg": "pattern.fastPath.better.ink", "bg": "#48545A", "modes": ["dark"], "composited": "pattern.fastPath.better.selectedFill", "usage": "body-text", "note": "The fast path's SELECTED option - the largest control in the product, on the screen P3 calls the retention engine. Backdrop is fastPath.better.selectedFill composited over fastPath.optionFill." },
+    { "id": "fastPath/better label when selected (light)", "fg": "pattern.fastPath.better.ink", "bg": "#E8F5EC", "modes": ["light"], "composited": "pattern.fastPath.better.selectedFill", "usage": "body-text" },
+    { "id": "fastPath/better edge when selected", "fg": "pattern.fastPath.better.ink", "bg": "pattern.fastPath.optionFill", "usage": "ui-boundary", "note": "INK, not mark. §8 assigns data strokes to ink, and the mark version measured 1.58-1.96:1 on white against a 3:1 floor — mark-as-a-stroke, in a fifth family." },
+    { "id": "fastPath/same label when selected (dark)", "fg": "pattern.fastPath.same.ink", "bg": "#454E6A", "modes": ["dark"], "composited": "pattern.fastPath.same.selectedFill", "usage": "body-text", "note": "The fast path's SELECTED option - the largest control in the product, on the screen P3 calls the retention engine. Backdrop is fastPath.same.selectedFill composited over fastPath.optionFill." },
+    { "id": "fastPath/same label when selected (light)", "fg": "pattern.fastPath.same.ink", "bg": "#E5EFFC", "modes": ["light"], "composited": "pattern.fastPath.same.selectedFill", "usage": "body-text" },
+    { "id": "fastPath/same edge when selected", "fg": "pattern.fastPath.same.ink", "bg": "pattern.fastPath.optionFill", "usage": "ui-boundary" },
+    { "id": "fastPath/worse label when selected (dark)", "fg": "pattern.fastPath.worse.ink", "bg": "#5C4753", "modes": ["dark"], "composited": "pattern.fastPath.worse.selectedFill", "usage": "body-text", "note": "The fast path's SELECTED option - the largest control in the product, on the screen P3 calls the retention engine. Backdrop is fastPath.worse.selectedFill composited over fastPath.optionFill. The pair that exposed it: 4.32:1 on this backdrop before pastelInkDark.pain, and the dark side of these tints had never been declared at all." },
+    { "id": "fastPath/worse label when selected (light)", "fg": "pattern.fastPath.worse.ink", "bg": "#FCE7E5", "modes": ["light"], "composited": "pattern.fastPath.worse.selectedFill", "usage": "body-text" },
+    { "id": "fastPath/worse edge when selected", "fg": "pattern.fastPath.worse.ink", "bg": "pattern.fastPath.optionFill", "usage": "ui-boundary" },
+    { "id": "fastPath/option label at rest", "fg": "color.text.primary", "bg": "pattern.fastPath.optionFill", "usage": "body-text" },
+    { "id": "fastPath/option descriptor at rest", "fg": "color.text.secondary", "bg": "pattern.fastPath.optionFill", "usage": "body-text" },
+    { "id": "fastPath/option edge at rest", "fg": "pattern.fastPath.optionEdge", "bg": "pattern.fastPath.optionFill", "usage": "decorative", "note": "Unselected outline. Decorative because the option fill already lifts off surface.base and the label carries the option." }
   ]
 }
