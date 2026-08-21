@@ -655,6 +655,53 @@ in this pass changed that, and on the record of four families now found broken
 while dormant, `fastPath` is the highest-risk thing left in the token layer — P3
 makes it the largest element on the check-in tab, and the screen hardcodes.
 
+### Resolved — WeeklyReflection, and the first behavioural test
+
+The §5 gap here was one line wide: the Home card shipped, its "Save to timeline"
+button was a documented stub, and §4.13's "saveable to timeline" was therefore a
+label on nothing. It opens `WeeklyReflection` now.
+
+**This is the first surface in the prototype backed by real storage.** Everything
+before it lived in React and died on reload, which is fine for photographing a
+screen and useless for the one thing a reflection has to do.
+
+`components/storage.ts` is the web prototype's stand-in for AsyncStorage (§7),
+deliberately the same shape so the port is a swap of two functions rather than a
+rewrite of the callers. **It cannot throw.** That is P1, not defensive habit:
+`localStorage` throws in more situations than people expect — Safari private
+browsing, quota, blocked third-party storage — and a reflection somebody just
+wrote is the wrong moment to surface an exception. Every access is wrapped and
+degrades to an in-memory map for the session; nothing on screen apologises. Same
+reasoning that gives the confirmation Toast no failure branch.
+
+**The verification is the point, and it is not a screenshot.** A baseline proves
+a state can be DRAWN — which is exactly what it proves and no more. This project
+has already shipped a report export button that drew perfectly while its handler
+was missing, and a quick-capture save button that drew perfectly with no
+`onClick` at all. Both were caught by reading code.
+
+`tests/persistence.spec.ts` reloads the page and re-reads:
+
+    open → write → save → persist → confirm → reopen → still there
+
+Four cases: a full reload, navigating away to Home and back, an empty save being
+a no-op rather than a refusal, and the storage key being namespaced so it cannot
+collide with anything else on a shared dev origin.
+
+**Verified by sabotage.** Making `write()` a no-op — which is exactly what
+"in-memory only" looked like everywhere else in this prototype — fails three of
+the four, and the one that survives is correctly the empty-save test, which does
+not depend on writing.
+
+**The saved state is deliberately NOT baselined.** A screenshot of it would prove
+the state can be drawn, which is the claim a baseline cannot be trusted to make
+about this feature. The behaviour spec makes the claim that matters.
+
+**Behaviour is now its own gate, separate from visual, in `verify.mjs` and in
+CI.** They were about to share one, and CI runs visual **advisory** because of
+the open harness flake. A persistence regression is not flaky and must not
+inherit an exemption written for something else.
+
 ### Open — the doctor report has no brandmark
 
 The report masthead used to carry AnklePath's app icon, inline as SVG: a teal

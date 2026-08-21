@@ -68,6 +68,7 @@ import QuestionsForDoctor from "./QuestionsForDoctor";
 import PhotoCapture from "./PhotoCapture";
 import PhotoCompare from "./PhotoCompare";
 import ReportDateRange from "./ReportDateRange";
+import WeeklyReflection from "./WeeklyReflection";
 import * as TF from "./timelineFixtures";
 
 // The detail layer's addressable states. Exported because App.tsx routes to
@@ -81,7 +82,8 @@ export type DetailKey =
   | "questions" | "questionsEmpty"
   | "photoEmpty" | "photoChosen"
   | "compareLocked" | "compareReady" | "compareInsufficient"
-  | "range" | "rangeCustom" | "rangeNoAnchor";
+  | "range" | "rangeCustom" | "rangeNoAnchor"
+  | "weekly";
 
 
 // Category colour access now lives in patterns/category.ts, next to the pattern
@@ -690,7 +692,7 @@ function ShareCardScreen({ mode, milestone, onClose }: { mode: Mode; milestone: 
 //   When isWelcomeBack=true: greeting changes to "Good to see you again 🤗"
 //   (C3 — warm return, no mention of missed days or streak broken).
 // ============================================================
-function HomeScreen({ mode, onCheckIn, onPaywall, onReport, isWelcomeBack = false, pinToast = false }: { mode: Mode; onCheckIn: () => void; onPaywall: () => void; onReport: () => void; isWelcomeBack?: boolean; pinToast?: boolean }) {
+function HomeScreen({ mode, onCheckIn, onPaywall, onReport, onWeekly, isWelcomeBack = false, pinToast = false }: { mode: Mode; onCheckIn: () => void; onPaywall: () => void; onReport: () => void; onWeekly: () => void; isWelcomeBack?: boolean; pinToast?: boolean }) {
   const [captureText, setCaptureText] = useState("");
   // pinToast is a DEV-ROUTE affordance only (?screen=app:toast). It shows the
   // toast and schedules no dismissal, because the harness advances the clock by
@@ -860,7 +862,7 @@ function HomeScreen({ mode, onCheckIn, onPaywall, onReport, isWelcomeBack = fals
               + motivational copy.
             DISMISS BUTTON (×): top-right, → weeklyDismissed=true.
             BUTTONS:
-              "Save to timeline" → prototype stub (no nav).
+              "Save to timeline" → opens WeeklyReflection.
               "Dismiss" → weeklyDismissed=true → card removed. */}
         {!weeklyDismissed && (
           <Card mode={mode} style={{ background: `${D.mood}0E`, borderColor: `${D.mood}44` }}>
@@ -887,11 +889,13 @@ function HomeScreen({ mode, onCheckIn, onPaywall, onReport, isWelcomeBack = fals
               Showing up for yourself is the work. 🙌
             </div>
             <div className="flex gap-2">
-              {/* BUTTON: "Save to timeline" → prototype stub.
+              {/* BUTTON: "Save to timeline" → opens WeeklyReflection. This was
+                  the §5 gap in one line: the card shipped, the destination did
+                  not, so "saveable to timeline" (§4.13) was a label on nothing.
                   Was white on the mood pastel at 1.58:1 — the worst measured pair
                   in the product, on a button label in the free experience.
                   onMark reaches 10.91:1. */}
-              <button className="btn-press flex-1 flex items-center justify-center rounded-xl font-medium"
+              <button onClick={onWeekly} className="btn-press flex-1 flex items-center justify-center rounded-xl font-medium"
                 style={{ height: 36, background: D.mood, color: theme(mode).color.category.mood.onMark, border: "none", cursor: "pointer", fontSize: scale.font.size.sm }}>
                 Save to timeline
               </button>
@@ -1779,7 +1783,7 @@ export default function MainApp({
             position: relative is required for absolute-positioned overlays inside. */}
         <div key={tab} className="flex flex-col flex-1 overflow-hidden animate-fade-in" style={{ position: "relative" }}>
           {/* TAB CONTENT: Only the active tab renders */}
-          {tab === "home"     && <HomeScreen mode={mode} onCheckIn={() => setShowCheckIn(true)} onPaywall={() => setShowPaywall(true)} onReport={() => setReport("ready")} pinToast={pinToast} />}
+          {tab === "home"     && <HomeScreen mode={mode} onCheckIn={() => setShowCheckIn(true)} onPaywall={() => setShowPaywall(true)} onReport={() => setReport("ready")} onWeekly={() => setDetail("weekly")} pinToast={pinToast} />}
           {tab === "timeline" && <TimelineScreen mode={mode} onShareMilestone={m => setShareCard(m)} onAdd={() => setAddOpen(true)} />}
           {tab === "progress" && <ProgressScreen mode={mode} onPaywall={() => setShowPaywall(true)} />}
           {tab === "profile"  && <ProfileScreen mode={mode} onPaywall={() => setShowPaywall(true)} onSafety={() => setSafetyOpen(true)} onArticle={() => setArticleId(ARTICLES[0].id)} />}
@@ -1848,6 +1852,8 @@ export default function MainApp({
           {detail === "range"         && <ReportDateRange mode={mode} onClose={() => setDetail(null)} onApply={() => { setDetail(null); setReport("ready"); }} />}
           {detail === "rangeCustom"   && <ReportDateRange mode={mode} initialMode="custom" onClose={() => setDetail(null)} onApply={() => setDetail(null)} />}
           {detail === "rangeNoAnchor" && <ReportDateRange mode={mode} hasAnchor={false} onClose={() => setDetail(null)} onApply={() => setDetail(null)} />}
+          {/* The weekly give-back, and the first surface backed by real storage. */}
+          {detail === "weekly"        && <WeeklyReflection mode={mode} onClose={() => setDetail(null)} />}
           {/* ReportPreview: zIndex 45 — full-screen. NO lock, in any state. */}
           {report && (
             <ReportPreview

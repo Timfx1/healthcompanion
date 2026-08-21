@@ -14,7 +14,7 @@ Being precise about this, because the gap matters:
 
 | | Status |
 |---|---|
-| **Design system** (`design-system/`) | Real. One token source, two platforms **plus paper**, nine gates. |
+| **Design system** (`design-system/`) | Real. One token source, two platforms **plus paper**, ten gates. |
 | **Web prototype** (`Onboarding Flow/`) | Real, and the reference implementation — 12 onboarding screens + 5 tabs, both colour modes. A Figma Make export, since evolved. |
 | **React Native app** (`app/`) | **Colour re-domain complete.** The AnklePath `ActivatePayment` tree, copied in with fresh history. All 172 colour references resolve to Recovery Companion roles and the app typechecks clean. Screens are still AnklePath's. |
 | **§5 detail/modal screens** | **3 of 17 exist, 2 partial, 3 have precedent, 9 greenfield** — counted below. Includes the Doctor Report, the flagship. |
@@ -62,8 +62,8 @@ still has AnklePath's five (`Home · Plan · Track · Learn · Profile`).
 
 | Class | Count | Screens |
 |---|---|---|
-| **Exists** | 16 | **`ReportPreview`** (7 states), **`QuickCaptureSheet`** (3 states), **`AddTimelineEntry`**, **`Safety`**, **`EducationArticle`** (3 access states × saved), **`JournalEntry`** (3), **`MilestoneDetail`**, **`MedicationDetail`** (2), **`AppointmentDetail`** (2), **`QuestionsForDoctor`** (2), **`PhotoCapture`** (2), **`PhotoCompare`** (3), **`ReportDateRange`** (3), `ShareCardPreview` (built as `ShareCardScreen`), `PremiumTeaser`, `TrialPaywall` |
-| **Partial** — the value ships, the §5 surface does not | 1 | `WeeklyReflection` (Home card exists; "save to timeline" has no destination) |
+| **Exists** | 17 | **`ReportPreview`** (7 states), **`QuickCaptureSheet`** (3 states), **`AddTimelineEntry`**, **`Safety`**, **`EducationArticle`** (3 access states × saved), **`JournalEntry`** (3), **`MilestoneDetail`**, **`MedicationDetail`** (2), **`AppointmentDetail`** (2), **`QuestionsForDoctor`** (2), **`PhotoCapture`** (2), **`PhotoCompare`** (3), **`ReportDateRange`** (3), **`WeeklyReflection`** (3, persisted), `ShareCardPreview` (built as `ShareCardScreen`), `PremiumTeaser`, `TrialPaywall` |
+| **Partial** | 0 | — none. |
 | **Precedent to re-domain** | 0 | — both done. |
 | **Greenfield** | 0 | — every §5 detail/modal screen now exists. |
 
@@ -106,7 +106,7 @@ any backend anywhere in this repository.
 | Quick Capture (P1) | **Built, in-memory** | The Home field, the FAB sheet and silent keyword tagging all work; nothing persists yet. Phase 1 target is AsyncStorage. The path must never block on the network and must never fail — which is why the sheet has no saving state and no error state. |
 | Corridor data (P5) | **Placeholder mock, cited** | "Common range for knee rehab, weeks 4–6" is illustrative. Real content needs source attribution per §10 before it ships. |
 | Safety + education content | **Placeholder mock, cited** | Every red flag and article names a source, and `NEEDS_CLINICAL_REVIEW` is rendered on the Safety screen so it states that it is pending review rather than implying sign-off. No item names a condition (§10). |
-| Weekly reflections (P7) | **Mock generator** | Fixed copy. The real one derives from entries. |
+| Weekly reflections (P7) | **Mock copy, REAL persistence** | The app-generated lines are still fixed. What the user writes back is stored via `components/storage.ts` and verified by reloading the page — `tests/persistence.spec.ts`, not a baseline. |
 | Share cards (P8) | **Local render** | In-app preview only. No OS share sheet — that is `expo-sharing` in Phase 1. |
 | Doctor report (P6) | **Built** | The RN app has AnklePath’s `ReportsScreen` plus a print/PDF template. The template now draws from `tokens/print.json` — its own single-valued print layer, 7:1 body contrast, verified by rendering and by a photocopy approximation. The gate is gone (it was premium). `ReportPreview` is built — seven states, all routable and baselined. Free forever, no lock, ever — enforced by `restricted.mjs`. |
 | Photo timeline / compare | **Built, placeholder frames** | Capture is free and registered as a core-loop surface; only compare is gated (P9). No real image handling yet — the prototype does not ship invented photographs of injuries. |

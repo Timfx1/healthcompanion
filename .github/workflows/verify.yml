@@ -51,12 +51,22 @@ jobs:
         working-directory: "Onboarding Flow"
         run: corepack pnpm@10.34.3 exec playwright install --with-deps chromium
 
+      # BLOCKING. Behaviour is not visual and must not inherit the advisory
+      # exemption below: that exemption exists for one specific harness flake in
+      # the screenshot path, and persistence has nothing to do with it. A
+      # baseline proves a state can be DRAWN — the report's export button drew
+      # perfectly while its handler was missing, and quick capture's save button
+      # drew perfectly with no onClick at all.
+      - name: Behaviour (persistence)
+        working-directory: "Onboarding Flow"
+        run: corepack pnpm@10.34.3 exec playwright test tests/persistence.spec.ts
+
       # Advisory until the flake is closed — see the note at the top.
       - name: Visual parity (advisory)
         id: visual
         continue-on-error: true
         working-directory: "Onboarding Flow"
-        run: corepack pnpm@10.34.3 exec playwright test
+        run: corepack pnpm@10.34.3 exec playwright test tests/visual.spec.ts
 
       # Retained on failure by playwright.config.ts. With retries at 0, the
       # failing run is the only chance to record anything, so getting the trace

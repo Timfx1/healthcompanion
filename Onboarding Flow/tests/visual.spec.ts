@@ -132,6 +132,11 @@ const APP: Screen[] = [
   { id: "app-range", route: "app:detail-range", note: "presets with entry counts; a zero-yield window is described, not warned about" },
   { id: "app-range-custom", route: "app:detail-rangeCustom", note: "custom start and end" },
   { id: "app-range-no-anchor", route: "app:detail-rangeNoAnchor", note: "no prior visit — reframed to since-you-started, matching ReportPreview" },
+  // The weekly give-back. Only the EMPTY state is baselined here on purpose: the
+  // saved state depends on storage, and a screenshot of it would prove the state
+  // can be drawn — which is precisely the thing a baseline cannot be trusted to
+  // establish. tests/persistence.spec.ts reloads the page and re-reads it.
+  { id: "app-weekly", route: "app:detail-weekly", note: "the give-back plus an optional written reply; persistence is covered by the behaviour spec" },
 ];
 
 const SCREENS = [...ONBOARDING, ...APP];
