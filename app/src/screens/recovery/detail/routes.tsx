@@ -25,7 +25,8 @@
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { useRecoveryData } from "../../../state/RecoveryDataContext";
+import { shortDate } from "../../../rules";
+import { useRecoveryData } from "../../../state/recoveryContext";
 import { dayNumber } from "../../../types/recovery";
 import type { MainStackParamList } from "../../../navigation/types";
 import { DetailScreen } from "../../../components/recovery/DetailScreen";
@@ -107,7 +108,7 @@ export function RcMilestoneRoute() {
         navigation.navigate("RcShareCard", {
           title: milestone.title,
           dayN: dayNumber(journey.startDate, new Date(milestone.date).getTime()),
-          date: new Date(milestone.date).toLocaleDateString(),
+          date: shortDate(milestone.date),
         })
       }
     />

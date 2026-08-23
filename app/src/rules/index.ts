@@ -34,6 +34,7 @@
 
 export * from "./access.ts";
 export * from "./entries.ts";
+export * from "./format.ts";
 export * from "./select.ts";
 export * from "./absence.ts";
 export * from "./report.ts";

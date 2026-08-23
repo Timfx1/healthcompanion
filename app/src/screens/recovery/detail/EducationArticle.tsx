@@ -27,8 +27,8 @@
 
 import { Linking, View } from "react-native";
 
-import { useAppData } from "../../../state/AppDataContext";
 import { useAppTheme } from "../../../state/AppThemeContext";
+import { useRecoveryData } from "../../../state/recoveryContext";
 import { scale } from "../../../theme/tokens.generated";
 import { ARTICLES, NEEDS_CLINICAL_REVIEW } from "../../../data/educationContent";
 import { accessOf } from "../../../rules";
@@ -43,7 +43,7 @@ export function EducationArticle({
   onUnlock: () => void;
 }) {
   const { tokens } = useAppTheme();
-  const { isPremium, savedArticles, toggleArticleSaved } = useAppData();
+  const { isPremium, savedArticles, toggleArticleSaved } = useRecoveryData();
 
   const article = ARTICLES.find((a) => a.id === articleId);
   if (!article) {

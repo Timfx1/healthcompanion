@@ -26,6 +26,8 @@
 
 import { Text, View } from "react-native";
 
+import { shortDate } from "../../../rules";
+
 import { useAppTheme } from "../../../state/AppThemeContext";
 import { scale } from "../../../theme/tokens.generated";
 import type { Milestone } from "../../../types/recovery";
@@ -70,7 +72,7 @@ export function MilestoneDetail({
         <View style={{ flexDirection: "row", alignItems: "center", gap: scale.space[2] }}>
           <Text style={{ color: SH.title, fontSize: tokens.type.caption.size, fontWeight: "700" }}>Day {dayN}</Text>
           <Text style={{ color: SH.meta, fontSize: tokens.type.caption.size }}>
-            · {new Date(milestone.date).toLocaleDateString()}
+            · {shortDate(milestone.date)}
           </Text>
         </View>
       </View>

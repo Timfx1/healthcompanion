@@ -54,8 +54,12 @@ type AppThemeValue = {
 
 const AppThemeContext = createContext<AppThemeValue | undefined>(undefined);
 
-export function AppThemeProvider({ children }: PropsWithChildren) {
-  const [mode, setMode] = useState<ThemeMode>("light");
+export function AppThemeProvider({ children, initialMode = "light" }: PropsWithChildren<{ initialMode?: ThemeMode }>) {
+  // `initialMode` exists for the render harness, which photographs every screen
+  // in BOTH modes and must not reach the second one by clicking a toggle — an
+  // image taken after an interaction encodes that interaction's timing.
+  // Defaulting to "light" leaves the app's behaviour byte-identical.
+  const [mode, setMode] = useState<ThemeMode>(initialMode);
   const palette = appPalette(mode);
   const tokens = theme(mode);
   const value = useMemo<AppThemeValue>(

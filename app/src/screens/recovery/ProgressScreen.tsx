@@ -36,7 +36,7 @@ import { useMemo } from "react";
 import { ScrollView, View } from "react-native";
 
 import { useAppTheme } from "../../state/AppThemeContext";
-import { useRecoveryData } from "../../state/RecoveryDataContext";
+import { useRecoveryData } from "../../state/recoveryContext";
 import { scale } from "../../theme/tokens.generated";
 import { dayNumber, type CheckIn } from "../../types/recovery";
 import { painTrend } from "../../rules";

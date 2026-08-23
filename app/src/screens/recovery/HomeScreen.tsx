@@ -22,8 +22,11 @@
 import { useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 
+import { shortDate } from "../../rules";
+import { LinearGradient } from "expo-linear-gradient";
+
 import { useAppTheme } from "../../state/AppThemeContext";
-import { useRecoveryData } from "../../state/RecoveryDataContext";
+import { useRecoveryData } from "../../state/recoveryContext";
 import { scale } from "../../theme/tokens.generated";
 import { dayNumber } from "../../types/recovery";
 import {
@@ -57,6 +60,14 @@ export function RecoveryHomeScreen({
   function save() {
     // No-op on empty rather than a refusal. P1: nothing on the capture path
     // may fail, and there is nothing here to apologise for.
+    //
+    // THE GUARD IS HERE AND NOT ONLY IN THE STORE. `addCapture` already ignores
+    // an empty string, so this looked redundant — but `setText("")` ran either
+    // way, which meant pressing save on something the store declined DESTROYED
+    // what the user had typed and created nothing. A capture path that can eat
+    // your words is the one failure P1 does not allow, and it took rendering
+    // the screen and pressing the button to see it.
+    if (!text.trim()) return;
     addCapture(text);
     setText("");
   }
@@ -139,11 +150,21 @@ export function RecoveryHomeScreen({
         </Pressable>
       </View>
 
-      {/* Day-N card. Both gradient stops are tokens; light mirrors dark rather
-          than reusing it, which is what fixed a 1.58:1 at the top of this card. */}
-      <View
+      {/* Day-N card. THIS RENDERED FLAT until the harness drew it: the comment
+          claimed both gradient stops were tokens and the code set one colour,
+          so `dayCard.from` appeared nowhere and the manifest's measured pair
+          "secondary at gradient start" described a backdrop that did not exist.
+          It typechecked, and consumption.mjs still reported the family consumed
+          because the web prototype draws it properly.
+
+          Light mirrors dark rather than reusing it — reusing the dark start put
+          near-black text on a deep indigo at 1.58:1, the worst contrast this
+          system has recorded. */}
+      <LinearGradient
+        colors={[tokens.pattern.dayCard.from, tokens.pattern.dayCard.to]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         style={{
-          backgroundColor: tokens.pattern.dayCard.to,
           borderRadius: scale.radius.lg,
           padding: scale.space[4],
           gap: scale.space[1],
@@ -161,9 +182,9 @@ export function RecoveryHomeScreen({
           Day {day}
         </Text>
         <Caption>
-          {journey.label} · Started {new Date(journey.startDate).toLocaleDateString()}
+          {journey.label} · Started {shortDate(journey.startDate)}
         </Caption>
-      </View>
+      </LinearGradient>
 
       {/* §4.10 pre-appointment nudge. A question, never an instruction. */}
       {nextAppointment && daysUntil !== undefined && daysUntil <= 7 && (

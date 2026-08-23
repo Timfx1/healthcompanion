@@ -1376,6 +1376,125 @@ report's depth and change derivation, `detectTags`, `phaseForDay`, `dayNumber`.
 Each is exported and pure precisely so that a test can reach it without a
 renderer.
 
+### Resolved — the RN app is rendered, and standing the harness up found five defects
+
+Feature work is frozen. Three gates were added in the order the work demanded:
+`rules` (89 pure tests), then the store and adapter transitions, then
+`rn-behaviour` and `rn-render` — 66 Playwright tests over 50 baselines.
+
+**The rules were unreachable by construction.** Which state a subscriber with
+one photo sees; whether an article gates; whether the report may claim a trend;
+where a gap becomes "quiet days"; what an empty save writes. Every one lived in
+a file that imported `react-native` on line one, so the monetisation boundary of
+the entire product could not be reached by anything except a running app.
+
+`src/rules/` is now pure — no React, no React Native, no components — and the
+suite asserts that constraint as its own test, because everything else here
+rests on it. Node 22 strips the types itself, so the `rules` gate needs no
+install and no build: it is the only gate that still works in a bare checkout,
+which is the right property for the one guarding the product's decisions.
+
+Sixteen mutants were planted and all sixteen were caught. Reversing the
+entitlement check so a paying subscriber is upsold, greeting a brand-new user
+with "good to see you again", reading a backwards clock as an absence, emitting
+one rest row per day instead of per run, claiming a trend from noise, inverting
+valence so falling pain reads as worsening, dating a milestone on the day it was
+promoted, dropping the appointment fallback, comparing the two most recent
+photos instead of oldest against newest, throwing on corrupt storage.
+
+### What rendering found in an afternoon
+
+Five, and every one had typechecked, passed every gate, and been reviewed:
+
+**The Day-N card rendered FLAT.** The comment said "both gradient stops are
+tokens" and the code set `backgroundColor: dayCard.to`. `dayCard.from` appeared
+nowhere on the screen, which means the contrast manifest's measured pair
+`dayCard/secondary at gradient start` described a backdrop that was not there —
+and `consumption.mjs` still reported the family consumed, because the web
+prototype draws it properly. Two consumers, one of them lying.
+
+**`DetailButton` had no horizontal padding.** Invisible in every full-width use.
+The moment one was placed in the report's header slot, the label spilled outside
+its own pill.
+
+**Every date rendered through `toLocaleDateString()`** — "9.7.2026" here,
+"7/9/2026" on an American machine, the same day in two orderings with nothing on
+screen to say which. On the doctor report specifically, whose entire job is to
+be scannable in 60 seconds, that is a defect rather than a nicety. `rules/format`
+now renders the month as a word.
+
+**The capture field deleted text it had not saved.** `save()` called
+`addCapture(text)` — which correctly ignores an empty string — and then
+`setText("")` unconditionally. So pressing save on anything the store declined
+destroyed what the user had typed and created nothing. A capture path that can
+eat your words is the one failure P1 does not permit, and it took pressing the
+button to see it.
+
+**Importing `expo-linear-gradient` produced a silent blank page**, and the first
+smoke check reported all twenty-three screens healthy while several rendered a
+white rectangle. A blank page throws nothing. `render.spec.ts` therefore asserts
+on visible CONTENT before it takes the picture: a baseline that is blank is
+still a baseline, and it will match the next blank one forever.
+
+### Three checks that could not fail, caught while writing them
+
+Recorded because this section is mostly a history of exactly this:
+
+- The N6 render check used a substring match and flagged `"pro"` inside
+  "post-operative rehabilitation", reporting the doctor report as gated. A check
+  that cries wolf gets switched off.
+- Its replacement used `new RegExp("\b" + word + "\b")`, where the escape
+  collapsed to a literal **backspace**. The pattern matched nothing at all and
+  passed on every screen, including ones that do contain those words. Written
+  wrong twice. It now splits on non-letters and compares whole tokens — nothing
+  to escape, so nothing to get wrong — and was verified by planting "Upgrade for
+  more" on the report and watching both modes fail.
+- The harness passed static fixture objects where `detail/routes.tsx` resolves
+  ids against the store on every render. "Add a question, watch it appear"
+  failed in the harness while working in the app. A harness easier to satisfy
+  than the real adapter certifies the wrong thing; the registry reads the
+  context now.
+
+### What the harness does not prove, stated rather than implied
+
+`react-native` aliases to `react-native-web`. This proves a screen mounts, lays
+out and responds to a tap. It does not prove it looks identical on a device —
+shadows, font metrics and safe-area insets all differ. A baseline here is
+evidence about structure, hierarchy and colour, which is what the token system
+makes claims about, and is not evidence about iOS.
+
+`expo-linear-gradient` is a declared **fidelity substitution**: the app keeps
+the real component and the harness draws the same two stops at the same angle in
+CSS. That substitution is load-bearing rather than cosmetic — the Day-N card's
+1.58:1 defect was a wrong gradient START, invisible to any render that only drew
+the end.
+
+And the harness supplies the context, so the real `RecoveryDataProvider` —
+hydration, seeding, AsyncStorage, the welcome-back decision — is not exercised.
+Those are pure functions in `tests/store.test.ts` and are tested there. **The
+wiring between provider and screen is the one seam nothing yet checks.**
+
+### `RecoveryDataContext` left the N7 list, and why that is not a hollowing-out
+
+Entitlement moved onto the Recovery Companion context. `PhotoCompare` and
+`EducationArticle` had been reading `useAppData()` — AnklePath's exercise store —
+for one boolean, which is also what made them impossible to render without
+dragging that whole tree in behind them.
+
+N7 then fired on the provider, because it now names `isPremium`. Removing a file
+from a rule's list to make a build pass is precisely how a rule gets hollowed
+out, so: this list is of SURFACES. The rule is that a core-loop SCREEN must
+never read the entitlement, because reading it there has no legitimate purpose.
+A provider forwarding a flag to the two screens that legitimately gate is not a
+surface, and the guarantee never rested on this file. Verified by planting
+`isPremium` in `TimelineScreen` and watching N7 still bite.
+
+The context was also split from the provider — `state/recoveryContext.ts` holds
+the context, the type and the hook, none of which need a device; the provider
+keeps AsyncStorage. Anything wanting to READ the context used to import a native
+module with it, which is the mechanical reason twenty-one screens could not be
+rendered anywhere.
+
 ## 12. How this is enforced
 
 | Check | What it catches |

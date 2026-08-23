@@ -40,7 +40,7 @@ export type LocalProfile = {
   photoUri?: string;
 };
 
-type AppDataValue = {
+export type AppDataValue = {
   completedExerciseIds: string[];
   exerciseCompletions: ExerciseCompletion[];
   painEntries: PainEntry[];
@@ -87,7 +87,18 @@ function dropTodaysCompletion(log: ExerciseCompletion[], exerciseId: string): Ex
   return log.filter((entry) => !(entry.exerciseId === exerciseId && isSameLocalDay(entry.completedAt)));
 }
 
-const AppDataContext = createContext<AppDataValue | undefined>(undefined);
+/**
+ * EXPORTED FOR THE RENDER HARNESS, and for nothing else in the app.
+ *
+ * `harness/` supplies this context filled from the mock fixture, because a
+ * browser has no AsyncStorage and a SCREENSHOT should not depend on hydration
+ * order. The screens cannot tell the difference: they only ever read the
+ * context, never the provider.
+ *
+ * App code must keep using the hook. Reaching for the context directly would
+ * skip the "used outside its provider" guard that the hook exists to give.
+ */
+export const AppDataContext = createContext<AppDataValue | undefined>(undefined);
 
 export function AppDataProvider({ children }: PropsWithChildren) {
   const [completedExerciseIds, setCompletedExerciseIds] = useState<string[]>([]);

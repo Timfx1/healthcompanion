@@ -25,7 +25,7 @@ import { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 
 import { useAppTheme } from "../../../state/AppThemeContext";
-import { useRecoveryData } from "../../../state/RecoveryDataContext";
+import { useRecoveryData } from "../../../state/recoveryContext";
 import { scale } from "../../../theme/tokens.generated";
 import type { Appointment } from "../../../types/recovery";
 import { DetailScreen, DetailButton, DetailCard } from "../../../components/recovery/DetailScreen";

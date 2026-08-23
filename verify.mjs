@@ -29,6 +29,14 @@
 //                     react-native, which made the whole monetisation boundary
 //                     unreachable by anything except a running app.
 //   8. typecheck    — token name typos, via as-const unions.
+//   9. rn-behaviour — the RN screens under interaction. Blocking, and separate
+//                     from rn-render on purpose: a screenshot cannot see a
+//                     missing handler, and the prototype shipped one for the
+//                     entire life of the component it belonged to.
+//  10. rn-render    — the RN screens drawn, in both modes. It asserts on
+//                     visible CONTENT before it takes the picture, because the
+//                     first version of this check asked only "did anything
+//                     throw?" and passed on a blank white page.
 //   8. behaviour    — the claims a screenshot cannot make. A baseline proves a
 //                     state can be DRAWN: the report's export button drew
 //                     perfectly while its handler was missing, and quick
@@ -93,6 +101,16 @@ const GATES = [
     ...(FAST ? [] : [
       { name: "behaviour", cmd: `${PNPM} exec playwright test tests/persistence.spec.ts`, cwd: APP, why: "the claims a screenshot cannot make — persistence across reload" },
       { name: "visual",  cmd: `${PNPM} exec playwright test tests/visual.spec.ts`, cwd: APP,  why: "110 baselines, 55 screens x 2 modes" },
+      // The RN app, actually drawn. Twenty-one screens shipped into app/ having
+      // never been rendered once; standing this up found four defects in an
+      // afternoon, including a Day-N card that rendered flat and a capture
+      // field that deleted text it had not saved.
+      //
+      // BEHAVIOUR IS SEPARATE FROM RENDER, and blocking, for the same reason it
+      // is in the prototype: a screenshot proves a state can be drawn, and the
+      // quick-capture button was drawn perfectly for months with no handler.
+      { name: "rn-behaviour", cmd: `${PNPM} exec playwright test --config harness/playwright.config.ts behaviour`, cwd: RN, why: "the RN screens respond to a tap, not merely to a screenshot" },
+      { name: "rn-render", cmd: `${PNPM} exec playwright test --config harness/playwright.config.ts render`, cwd: RN, why: "50 baselines, 23 RN screens x 2 modes, plus the data-only states" },
     ]),
   ] : []),
 ];

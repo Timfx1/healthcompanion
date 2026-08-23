@@ -28,7 +28,7 @@ import { useState } from "react";
 import { TextInput, View } from "react-native";
 
 import { useAppTheme } from "../../../state/AppThemeContext";
-import { useRecoveryData } from "../../../state/RecoveryDataContext";
+import { useRecoveryData } from "../../../state/recoveryContext";
 import { scale } from "../../../theme/tokens.generated";
 import { DetailScreen, DetailButton, DetailCard, DetailSection } from "../../../components/recovery/DetailScreen";
 import { Body, Caption, InsightSentence } from "../../../components/recovery/primitives";

@@ -30,9 +30,10 @@
 
 import { Image, View } from "react-native";
 
-import { useAppData } from "../../../state/AppDataContext";
+import { shortDate } from "../../../rules";
+
 import { useAppTheme } from "../../../state/AppThemeContext";
-import { useRecoveryData } from "../../../state/RecoveryDataContext";
+import { useRecoveryData } from "../../../state/recoveryContext";
 import { scale } from "../../../theme/tokens.generated";
 import type { PhotoEntry } from "../../../types/recovery";
 import { comparePair, compareStateOf } from "../../../rules";
@@ -54,14 +55,13 @@ function Frame({ photo }: { photo: PhotoEntry }) {
       >
         {!!photo.uri && <Image source={{ uri: photo.uri }} style={{ width: "100%", height: "100%" }} resizeMode="cover" />}
       </View>
-      <Caption>{new Date(photo.date).toLocaleDateString()}</Caption>
+      <Caption>{shortDate(photo.date)}</Caption>
     </View>
   );
 }
 
 export function PhotoCompare({ onClose, onUnlock }: { onClose: () => void; onUnlock: () => void }) {
-  const { photos } = useRecoveryData();
-  const { isPremium } = useAppData();
+  const { photos, isPremium } = useRecoveryData();
   const state = compareStateOf(photos.length, isPremium);
 
   // OLDEST against NEWEST, not the two most recent — Day 3 against Day 30 is

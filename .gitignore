@@ -60,3 +60,8 @@ logs/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Harness scratch output
+app/harness/.shots/
+app/test-results/
+app/harness/test-results/

@@ -28,7 +28,7 @@ import { useMemo, useState } from "react";
 import { Pressable, View } from "react-native";
 
 import { useAppTheme } from "../../../state/AppThemeContext";
-import { useRecoveryData } from "../../../state/RecoveryDataContext";
+import { useRecoveryData } from "../../../state/recoveryContext";
 import { scale } from "../../../theme/tokens.generated";
 import { DetailScreen, DetailCard } from "../../../components/recovery/DetailScreen";
 import { Body, Caption } from "../../../components/recovery/primitives";

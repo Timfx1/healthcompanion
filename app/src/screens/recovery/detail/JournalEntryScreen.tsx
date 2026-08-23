@@ -28,8 +28,10 @@
 import { useState } from "react";
 import { TextInput } from "react-native";
 
+import { shortDate } from "../../../rules";
+
 import { useAppTheme } from "../../../state/AppThemeContext";
-import { useRecoveryData } from "../../../state/RecoveryDataContext";
+import { useRecoveryData } from "../../../state/recoveryContext";
 import { scale } from "../../../theme/tokens.generated";
 import type { TimelineEntry } from "../../../types/recovery";
 import { journalStateOf } from "../../../rules";
@@ -105,7 +107,7 @@ export function JournalEntryScreen({
 
   return (
     <DetailScreen title="Recovery journal" onClose={onClose}>
-      <DetailSection label={new Date(entry!.date).toLocaleDateString()}>
+      <DetailSection label={shortDate(entry!.date)}>
         <DetailCard>
           <Body>{entry!.title}</Body>
           {!!entry!.detail && <Caption>{entry!.detail}</Caption>}

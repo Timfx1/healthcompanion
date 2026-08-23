@@ -24,6 +24,7 @@
 // review note.
 // ============================================================
 
+import { dateTime, shortDate } from "../../../rules";
 import { useAppTheme } from "../../../state/AppThemeContext";
 import { scale } from "../../../theme/tokens.generated";
 import type { Appointment } from "../../../types/recovery";
@@ -51,7 +52,7 @@ export function AppointmentDetail({
       <DetailCard>
         <Body>{appointment.clinician ?? "Appointment"}</Body>
         <Caption>
-          {new Date(appointment.date).toLocaleString()}
+          {dateTime(appointment.date)}
           {appointment.location ? ` · ${appointment.location}` : ""}
         </Caption>
       </DetailCard>
@@ -102,7 +103,7 @@ export function AppointmentDetail({
           {!!appointment.followUpDate && (
             <DetailSection label="Follow-up">
               <DetailCard>
-                <Body>{new Date(appointment.followUpDate).toLocaleDateString()}</Body>
+                <Body>{shortDate(appointment.followUpDate)}</Body>
               </DetailCard>
             </DetailSection>
           )}

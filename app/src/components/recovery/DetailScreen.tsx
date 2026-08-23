@@ -71,7 +71,12 @@ export function DetailScreen({
         >
           {title}
         </Text>
-        {action}
+        {/* The action slot is CONSTRAINED, not free. A full-width DetailButton
+            dropped in here overflowed the header and spilled its label outside
+            the control — found by rendering the report, and invisible to every
+            other check. The narrow slot is also the point: a detail screen that
+            needs a toolbar has stopped being a detail. */}
+        {action ? <View style={{ maxWidth: scale.size.shellWidth / 3 }}>{action}</View> : null}
       </View>
 
       <ScrollView
@@ -150,6 +155,10 @@ export function DetailButton({
         borderRadius: scale.radius["2xl"],
         alignItems: "center",
         justifyContent: "center",
+        // A button with no horizontal padding is a bug everywhere, and it only
+        // BECAME visible in the header slot, where the label spilled outside
+        // its own pill. Full-width uses hid it completely.
+        paddingHorizontal: scale.space[4],
         backgroundColor: disabled ? tokens.color.state.disabled : tokens.color.surface.card,
         borderWidth: scale.size.hairline,
         borderColor: tokens.color.surface.border,

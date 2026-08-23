@@ -30,8 +30,10 @@
 
 import { View } from "react-native";
 
+import { shortDate } from "../../../rules";
+
 import { useAppTheme } from "../../../state/AppThemeContext";
-import { useRecoveryData } from "../../../state/RecoveryDataContext";
+import { useRecoveryData } from "../../../state/recoveryContext";
 import { scale } from "../../../theme/tokens.generated";
 import type { Medication, MedicationEvent } from "../../../types/recovery";
 import { DetailScreen, DetailButton, DetailCard, DetailSection } from "../../../components/recovery/DetailScreen";
@@ -58,7 +60,7 @@ export function MedicationDetail({ medication, onClose }: { medication: Medicati
         <Body>{medication.name} · {medication.dosage}</Body>
         <Caption>
           {medication.schedule.join(", ")}
-          {medication.endDate ? ` · until ${new Date(medication.endDate).toLocaleDateString()}` : ""}
+          {medication.endDate ? ` · until ${shortDate(medication.endDate)}` : ""}
         </Caption>
         <Caption>{medication.reminders ? "Reminders on. They never escalate and back off if ignored." : "Reminders off."}</Caption>
       </DetailCard>

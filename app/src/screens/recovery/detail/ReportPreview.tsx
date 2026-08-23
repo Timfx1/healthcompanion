@@ -44,8 +44,10 @@
 import { useMemo } from "react";
 import { View } from "react-native";
 
+import { shortDate } from "../../../rules";
+
 import { useAppTheme } from "../../../state/AppThemeContext";
-import { useRecoveryData } from "../../../state/RecoveryDataContext";
+import { useRecoveryData } from "../../../state/recoveryContext";
 import { scale } from "../../../theme/tokens.generated";
 import { dayNumber } from "../../../types/recovery";
 import { deriveReport, lastVisit, MIN_FOR_TREND } from "../../../rules";
@@ -84,8 +86,8 @@ export function ReportPreview({
         <DetailCard>
           <Body>{journey.condition}</Body>
           <Caption>
-            Day {day} · started {new Date(journey.startDate).toLocaleDateString()}
-            {visit ? ` · since ${new Date(visit.date).toLocaleDateString()}` : " · since you started"}
+            Day {day} · started {shortDate(journey.startDate)}
+            {visit ? ` · since ${shortDate(visit.date)}` : " · since you started"}
           </Caption>
         </DetailCard>
       </DetailSection>
@@ -167,7 +169,7 @@ export function ReportPreview({
               .map((e) => (
                 <DetailCard key={e.id}>
                   <Body>{e.title}</Body>
-                  <Caption>{new Date(e.date).toLocaleDateString()}</Caption>
+                  <Caption>{shortDate(e.date)}</Caption>
                 </DetailCard>
               ))}
           </DetailSection>

@@ -16,7 +16,7 @@ Being precise about this, because the gap matters:
 |---|---|
 | **Design system** (`design-system/`) | Real. One token source, two platforms **plus paper**, ten gates. |
 | **Web prototype** (`Onboarding Flow/`) | Real, and the reference implementation — 12 onboarding screens + 5 tabs, both colour modes. A Figma Make export, since evolved. |
-| **React Native app** (`app/`) | **Feature-complete for Phase 1 §5, and entirely unrendered.** Five tabs and all seventeen detail screens, over `types/recovery.ts`, a cited corridor, a 45-day mock journey and an AsyncStorage store. Every screen is addressable and registered under N6 or N7. **Nothing has ever drawn any of it** — no visual harness, no behaviour tests. See open items. AnklePath's Plan / Track / Learn are still in the tree, unreferenced. |
+| **React Native app** (`app/`) | **Feature-complete for Phase 1 §5, and now tested.** Five tabs and all seventeen detail screens over `types/recovery.ts`, a cited corridor, a 45-day mock journey and an AsyncStorage store. 89 pure-rule tests, 66 render and behaviour tests, 50 baselines. AnklePath's Plan / Track / Learn are still in the tree, unreferenced. |
 | **§5 detail/modal screens** | **All 17 exist** in the prototype, each with a dev route and a baseline. Includes the Doctor Report, the flagship, which is free forever and enforced as such by `restricted.mjs`. |
 
 `tokens.native.ts` is now consumed by `app/`, vendored as
@@ -192,33 +192,20 @@ what is not finished. Full detail in `DESIGN_CRITERIA.md` §11.
   path in `Toast` for the whole life of the component, because nothing could
   photograph a state that exists for 2.4 seconds behind an interaction. That one
   is closed (`?screen=app:toast`); the check-in's states need the same.
-- **Nothing renders the RN app, and this is now the biggest risk in the
-  repository.** Twenty-one Recovery Companion screens exist in `app/` and not
-  one has ever been drawn. No visual harness, no behaviour tests, no jest. They
-  are held by `typecheck`, `restricted` (N1–N7), `coverage`, `consumption` and
-  the contrast manifest — much more than the prototype's screens had at the same
-  age, and not the same as having been looked at.
-
-  This repository's history is what that condition produces: `ShareCardScreen`
-  hid a 1.58:1 in `share.*` for the life of the family, the `Toast` carried a
-  dead branch for the life of the component, and the quick-capture ✓ had no
-  `onClick` at all. All three typechecked. One defect of exactly that species
-  was already found in the port — a photo filed as journal text, leaving
-  `PhotoCompare` nothing to compare — caught only because the code was read.
-  **Assume there are others.**
-
-  The cheap route is not available: `app/` has no `react-native-web`,
-  `react-dom` or `@expo/metro-runtime`, so the existing Playwright harness
-  cannot reach it, and several dependencies are native-only. Standing a render
-  path up is the next thing worth doing, ahead of more screens. The pure rules
-  are cheapest to cover first and are where the principles live —
-  `compareStateOf`, `accessOf`, `journalStateOf`, the report's depth and change
-  derivation, `detectTags`, `phaseForDay`, `dayNumber` — each exported and pure
-  precisely so a test can reach it without a renderer.
-- **The onboarding `SignUp` screen still has no prototype route or baseline.**
-  It exists only in the RN app.
+- **The provider-to-screen seam is the one thing nothing checks.** The pure
+  rules are tested without a renderer; the screens are tested without the real
+  provider, because the harness supplies the context. So hydration, seeding,
+  the AsyncStorage round trip and the welcome-back decision are each proven in
+  isolation and never proven together. That is the next gap worth closing.
+- **The render harness is web, not iOS.** `react-native` aliases to
+  `react-native-web`, so a baseline is evidence about structure, hierarchy and
+  colour — what the token system makes claims about — and not about how a
+  shadow, a font metric or a safe-area inset lands on a device.
+  `expo-linear-gradient` is a declared fidelity substitution.
 - **AnklePath's `MainTabs`, Plan, Track and Learn are still in the tree**, now
   unreferenced by the stack. Left deliberately — a rewrite and a deletion should
   not be reviewed as one diff.
+- **The onboarding `SignUp` screen still has no prototype route or baseline.**
+  It exists only in the RN app.
 - **Off-scale font sizes and raw hex values remain** in consumer code, under a
   ratchet that can only tighten.

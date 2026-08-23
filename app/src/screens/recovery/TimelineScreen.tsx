@@ -29,7 +29,7 @@ import { useMemo, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 
 import { useAppTheme } from "../../state/AppThemeContext";
-import { useRecoveryData } from "../../state/RecoveryDataContext";
+import { useRecoveryData } from "../../state/recoveryContext";
 import { scale } from "../../theme/tokens.generated";
 import type { TimelineEntry, TimelineEntryType } from "../../types/recovery";
 import { restLabel, withRestRows } from "../../rules";

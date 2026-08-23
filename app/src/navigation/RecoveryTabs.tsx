@@ -32,7 +32,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useAppTheme } from "../state/AppThemeContext";
-import { useRecoveryData } from "../state/RecoveryDataContext";
+import { useRecoveryData } from "../state/recoveryContext";
 import { nextAppointment } from "../rules";
 import { scale } from "../theme/tokens.generated";
 import { RecoveryHomeScreen } from "../screens/recovery/HomeScreen";

@@ -33,7 +33,7 @@ import { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 
 import { useAppTheme } from "../../../state/AppThemeContext";
-import { useRecoveryData } from "../../../state/RecoveryDataContext";
+import { useRecoveryData } from "../../../state/recoveryContext";
 import { scale } from "../../../theme/tokens.generated";
 import { detectTags, TAG_LABEL } from "../../../data/captureTags";
 import { DetailScreen } from "../../../components/recovery/DetailScreen";

@@ -35,21 +35,17 @@
 // be legitimately empty.
 // ============================================================
 
-import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import type {
-  Appointment,
-  CheckIn,
-  Medication,
-  Milestone,
-  PhotoEntry,
-  QuickAnswer,
-  RecoveryJourney,
-  TimelineEntry,
-  TimelineEntryType,
-  WeeklyReflection,
+  Appointment, CheckIn, Medication, Milestone, PhotoEntry, QuickAnswer,
+  RecoveryJourney, TimelineEntry, WeeklyReflection,
 } from "../types/recovery";
+import { RecoveryDataContext, type RecoveryDataValue } from "./recoveryContext";
+// Entitlement is still OWNED by AppDataContext; this provider only forwards it,
+// so the Recovery Companion screens depend on one context instead of two.
+import { useAppData } from "./AppDataContext";
 import { APPOINTMENTS, JOURNEY, MEDICATIONS, MILESTONES, PHOTOS, REFLECTIONS, TIMELINE } from "../data/mockJourney";
 // One tagging vocabulary, shared with the chip that renders it. This file
 // briefly carried a SECOND keyword list with a different set of categories
@@ -100,44 +96,17 @@ function writeJson<T>(key: string, value: T): void {
 
 // ── Context ─────────────────────────────────────────────────────────────────
 
-type RecoveryDataValue = {
-  hydrated: boolean;
-  journey: RecoveryJourney;
-  timeline: TimelineEntry[];
-  medications: Medication[];
-  appointments: Appointment[];
-  photos: PhotoEntry[];
-  milestones: Milestone[];
-  reflections: WeeklyReflection[];
-  /**
-   * True on the first render after an absence of ABSENCE_DAYS or more, and
-   * false for the rest of the launch. There is deliberately NO `daysAway`
-   * anywhere in this type: a duration in scope is a duration somebody
-   * eventually renders, and "you've been away 12 days" is the guilt mechanic P2
-   * exists to make unbuildable. The safest place to stop a count reaching a
-   * screen is before it leaves the module that computes it.
-   */
-  isWelcomeBack: boolean;
 
-  /** P1. Returns immediately; the write catches up. Never rejects. */
-  addCapture: (text: string, viaVoice?: boolean) => void;
-  /** P3. `quick` alone is a complete check-in. */
-  addCheckIn: (quick: QuickAnswer, detail?: Omit<CheckIn, "quick">) => void;
-  addJournal: (title: string, detail: string) => void;
-  /** P10: the uri is a LOCAL path and is never sent anywhere. */
-  addPhoto: (uri: string, caption: string) => void;
-  promoteToMilestone: (entryId: string) => void;
-  addMilestone: (title: string, emoji?: string) => void;
-  logMedication: (medicationId: string, status: "taken" | "skipped") => void;
-  addQuestion: (appointmentId: string, question: string) => void;
-  saveReflectionReply: (weekStart: string, reply: string) => void;
-};
 
-const RecoveryDataContext = createContext<RecoveryDataValue | undefined>(undefined);
+// The context and its type moved to `state/recoveryContext`, so anything that
+// needs the SHAPE does not import this file's AsyncStorage dependency with it.
+// Re-exported here because every existing call site imports from this module.
+export { RecoveryDataContext, useRecoveryData, type RecoveryDataValue } from "./recoveryContext";
 
 const uid = () => `e-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
 export function RecoveryDataProvider({ children }: PropsWithChildren) {
+  const { isPremium, savedArticles, toggleArticleSaved } = useAppData();
   const [hydrated, setHydrated] = useState(false);
   const [journey, setJourney] = useState<RecoveryJourney>(JOURNEY);
   const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
@@ -354,6 +323,9 @@ export function RecoveryDataProvider({ children }: PropsWithChildren) {
       milestones,
       reflections,
       isWelcomeBack,
+      isPremium,
+      savedArticles,
+      toggleArticleSaved,
       addCapture,
       addCheckIn,
       addJournal,
@@ -366,7 +338,8 @@ export function RecoveryDataProvider({ children }: PropsWithChildren) {
     }),
     [
       hydrated, journey, timeline, medications, appointments, photos, milestones, reflections,
-      isWelcomeBack, addCapture, addCheckIn, addJournal, addPhoto, promoteToMilestone, addMilestone,
+      isWelcomeBack, isPremium, savedArticles, toggleArticleSaved,
+      addCapture, addCheckIn, addJournal, addPhoto, promoteToMilestone, addMilestone,
       logMedication, addQuestion, saveReflectionReply,
     ],
   );
@@ -374,11 +347,7 @@ export function RecoveryDataProvider({ children }: PropsWithChildren) {
   return <RecoveryDataContext.Provider value={value}>{children}</RecoveryDataContext.Provider>;
 }
 
-export function useRecoveryData(): RecoveryDataValue {
-  const ctx = useContext(RecoveryDataContext);
-  if (!ctx) throw new Error("useRecoveryData must be used inside <RecoveryDataProvider>");
-  return ctx;
-}
+
 
 /** Exported for tests and for screens that need to reason about day keys. */
 export const STORAGE_KEYS = KEYS;

@@ -244,7 +244,22 @@ const N7_CORE_LOOP_SURFACES = [
   "app/src/screens/recovery/HomeScreen.tsx",
   "app/src/screens/recovery/TimelineScreen.tsx",
   "app/src/screens/recovery/CheckInScreen.tsx",
-  "app/src/state/RecoveryDataContext.tsx",
+  // NOT app/src/state/RecoveryDataContext.tsx, and the reason is worth stating
+  // because removing something from this list to make a build pass is exactly
+  // how a rule gets hollowed out.
+  //
+  // This list is of SURFACES. The rule is that a screen in the core loop must
+  // never read the entitlement, because reading it there has no legitimate
+  // purpose. A PROVIDER is not a surface: it forwards `isPremium` from
+  // AppDataContext to the two screens that legitimately gate — PhotoCompare and
+  // the education deep dives — and gates nothing itself.
+  //
+  // The guarantee is unchanged, because it never rested on this file. Every
+  // core-loop SCREEN is still listed above, so a screen that starts reading
+  // `isPremium` from `useRecoveryData()` fails on the screen's own line. The
+  // entitlement moved onto this context precisely so that two Recovery
+  // Companion screens would stop importing AnklePath's exercise store for one
+  // boolean — which is also what made them impossible to render.
   "app/src/data/captureTags.ts",
 ];
 

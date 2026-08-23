@@ -21,7 +21,7 @@
 import { Pressable, ScrollView, Switch, View } from "react-native";
 
 import { useAppTheme } from "../../state/AppThemeContext";
-import { useRecoveryData } from "../../state/RecoveryDataContext";
+import { useRecoveryData } from "../../state/recoveryContext";
 import { scale } from "../../theme/tokens.generated";
 import { dayNumber } from "../../types/recovery";
 import { Body, Card, Caption, SectionLabel, Title } from "../../components/recovery/primitives";

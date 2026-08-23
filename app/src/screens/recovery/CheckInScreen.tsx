@@ -32,7 +32,7 @@ import { useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 
 import { useAppTheme } from "../../state/AppThemeContext";
-import { useRecoveryData } from "../../state/RecoveryDataContext";
+import { useRecoveryData } from "../../state/recoveryContext";
 import { painStep, scale } from "../../theme/tokens.generated";
 import type { QuickAnswer, ThreeLevel } from "../../types/recovery";
 import { Body, Card, Caption, PrimaryButton, QuietButton, SectionLabel, Title } from "../../components/recovery/primitives";
