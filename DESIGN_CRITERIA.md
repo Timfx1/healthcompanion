@@ -1131,6 +1131,77 @@ was the hand-computed literal this section has just finished removing. The field
 now accepts an ordered list. The share card's day-pill border needed the same
 thing for the same reason.
 
+### Resolved — the gates had never scanned the React Native app, and there was a streak in the doctor report
+
+`consumerFiles.mjs` exists so that no gate can miss a file merely because nobody
+remembered to add it. Its `SRC` was the single string `"Onboarding Flow/src"`.
+
+So `coverage.mjs` and `restricted.mjs` — **every rule they carry between them,
+N1 through N7 and the whole literal ratchet** — had never once looked at
+`app/src`. The spec is explicit that this is one token source with two
+platform consumers (§7); the module that decides what a consumer *is* knew about
+one of them.
+
+This is the second time. `consumption.mjs` was caught with the identical bug
+earlier in this section: it reported `insight.*` dormant while four RN screens
+were rendering it. That fix was made locally, inside `consumption.mjs`, so the
+general version of the bug survived in the file whose entire purpose is to be
+the general version. A local fix to a general problem leaves the problem.
+
+**What the first widened run found, in `app/src/utils/recoveryInsights.ts`:**
+
+```
+[N1/N2 forbidden concept] app/src/utils/recoveryInsights.ts:326
+   "streak" — consistency is accumulation; gaps are rest
+   > headline: `${streak}-day check-in streak`
+```
+
+A live `currentStreak()`, walking backwards through consecutive logged days,
+rendered with a flame icon — **and its only consumer is `ReportsScreen`**. The
+breakable chain N1/N2 forbid outright, and which P2 calls the mechanism that
+manufactures the top abandonment driver, was being printed on the doctor report.
+
+Beside it, the consistency insight graded the user's own logging:
+
+```
+tone: percent >= 60 ? "good" : percent >= 30 ? "neutral" : "bad"
+```
+
+`"bad"` renders `insight.worsening` — the hue this system reserves for a symptom
+getting worse. Somebody who had a hard fortnight opened the report and found
+their behaviour marked in the alert colour, under the words *"Gaps make
+week-on-week comparisons less reliable"*. P2: no red missed days, no empty-day
+shaming, gaps are neutral rest rather than failure.
+
+Neither was hidden. Both were plainly written, in a file no gate read.
+
+Fixed: the streak became a **count that only accrues** — "You have checked in 14
+times" — which is the accumulation P2 names, and which has no day on which it
+can fall. The consistency tone is pinned to neutral, the percentage is gone, and
+the copy is descriptive on the same contract as `rest.label`. `"bad"` remains
+correct for a symptom: pain rising is a fact about a body, not a verdict on a
+person, and that is where the line runs.
+
+**The literal ratchet is now per tree.** Widening the scope took the total from
+156 to 317, and a single flat budget would have let the two trees pay for each
+other — twenty literals removed from the prototype silently funding twenty added
+to the app, with the gate reporting progress while nothing improved. Each tree
+now carries its own budget and each is enforced separately. The prototype's
+figures came through the split unchanged (2 / 54 / 79 / 0 / 0 / 21), which is
+the check that the split was clean.
+
+The app's honest starting point, now a ceiling it can only fall from:
+
+| | rgba() | hex | radius | font size |
+|---|---|---|---|---|
+| prototype | 2 | 54 | 0 | 21 |
+| app | 17 | 30 | **103** | 11 |
+
+`--update` still refuses to raise any budget that already exists. A tree seen
+for the first time is the one exception, and it is not a loophole: there is no
+earlier number to tighten against. The dishonest option was the one in place
+already — leaving the tree unscanned.
+
 ## 12. How this is enforced
 
 | Check | What it catches |

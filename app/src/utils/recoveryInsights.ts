@@ -157,16 +157,21 @@ function loggedDayKeys(painEntries: PainEntry[], checkIns: TrackerCheckIn[]): Se
   return keys;
 }
 
-/** Consecutive days with at least one log, counting back from today (or yesterday). */
-function currentStreak(loggedDays: Set<string>, now: number): number {
-  const today = startOfLocalDay(now);
-  let cursor = loggedDays.has(dayKey(new Date(today).toISOString())) ? today : today - DAY_MS;
-  let streak = 0;
-  while (loggedDays.has(dayKey(new Date(cursor).toISOString()))) {
-    streak += 1;
-    cursor -= DAY_MS;
-  }
-  return streak;
+/**
+ * How many days this person has logged on, ever. A COUNT, not a chain.
+ *
+ * This replaces a consecutive-day streak, which N1/N2 forbid outright and P2
+ * describes as manufacturing the guilt that is the top abandonment driver:
+ * "No streaks that can 'break'. Consistency is shown as gentle accumulation
+ * ('you've checked in 12 times'), never as a chain with a breakable link."
+ *
+ * The difference is not cosmetic and it is not framing. A streak is a number
+ * that can go DOWN because of something the user did not do; this one cannot go
+ * down at all. That is what makes it safe to show on the doctor report, where
+ * the old one was being shown with a flame icon.
+ */
+function checkInCount(loggedDays: Set<string>): number {
+  return loggedDays.size;
 }
 
 function earliestTimestamp(painEntries: PainEntry[], checkIns: TrackerCheckIn[]): number | undefined {
@@ -315,16 +320,22 @@ export function buildProgressInsights(
     }
   }
 
-  // --- Streak ----------------------------------------------------------------
+  // --- Accumulation ----------------------------------------------------------
+  // WAS A STREAK, and it was on the doctor report with a flame icon. N1/N2
+  // forbid breakable-chain visuals anywhere in this product; the gates could not
+  // see it because `consumerFiles.mjs` had never scanned app/src.
+  //
+  // A count only ever accrues. There is no day on which this number falls, so
+  // there is no day on which the app can imply the user let something lapse.
   const loggedDays = loggedDayKeys(painEntries, trackerCheckIns);
-  const streak = currentStreak(loggedDays, now);
-  if (streak >= 2) {
+  const logged = checkInCount(loggedDays);
+  if (logged >= 2) {
     insights.push({
-      id: "streak",
-      icon: "flame",
+      id: "accumulation",
+      icon: "checkmark-circle",
       tone: "good",
-      headline: `${streak}-day check-in streak`,
-      detail: "Consistent logging is what makes the trends above trustworthy."
+      headline: `You have checked in ${logged} ${logged === 1 ? "time" : "times"}`,
+      detail: "Every one of them is in the history above."
     });
   }
 
@@ -338,13 +349,26 @@ export function buildProgressInsights(
       const time = new Date(year, month - 1, day).getTime();
       return time >= endOfToday - window * DAY_MS;
     }).length;
-    const percent = Math.round((recentLogged / window) * 100);
+    // TONE IS FIXED AT NEUTRAL, and the percentage is gone.
+    //
+    // This used to score the user's own logging on a three-step scale, and
+    // below 30% it rendered in `insight.worsening` — the same hue this system
+    // reserves for a symptom getting worse. A person who had a hard fortnight
+    // therefore opened the DOCTOR REPORT and found their behaviour marked in
+    // the alert colour. P2 is explicit: no red missed days, no empty-day
+    // shaming, gaps are neutral rest rather than failure.
+    //
+    // "bad" remains correct for a symptom — pain rising is honest, and it is a
+    // fact about a body rather than a verdict on a person. The line is between
+    // reporting the recovery and grading the user, and this was on the wrong
+    // side of it. The copy is descriptive now, on the same contract as
+    // `rest.label`: "descriptive, never evaluative".
     insights.push({
       id: "consistency",
       icon: "calendar",
-      tone: percent >= 60 ? "good" : percent >= 30 ? "neutral" : "bad",
+      tone: "neutral",
       headline: `Logged on ${recentLogged} of the last ${window} days`,
-      detail: `That is ${percent}% consistency. Gaps make week-on-week comparisons less reliable.`
+      detail: "More entries give the trends above more to work with. Quiet days are part of recovery too."
     });
   }
 

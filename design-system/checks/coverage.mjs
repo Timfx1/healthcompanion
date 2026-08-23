@@ -139,9 +139,34 @@ const CATEGORIES = {
   },
 };
 
+// ── ONE RATCHET PER CONSUMER TREE ───────────────────────────────────────────
+//
+// The budget used to be a single flat set of category counts, which was correct
+// while there was one consumer. There are two — the spec calls for one token
+// source and two platforms — and `consumerFiles.mjs` had been scanning only the
+// prototype, so every literal in the RN app was invisible to this gate for its
+// entire existence. (`consumption.mjs` had the identical bug and it is recorded
+// in §11; the module written to stop gates missing files had it too.)
+//
+// Widening the scope raises the totals, and a single flat budget would then let
+// the two trees hide behind each other: 20 literals removed from the prototype
+// would silently pay for 20 added to the app, and the ratchet would report
+// progress while nothing improved. So each tree carries its own budget and each
+// is enforced separately. The prototype's numbers are the ones it has already
+// earned; the app's are its honest starting point.
+const TREES = {
+  prototype: (rel) => rel.startsWith("Onboarding Flow/"),
+  app: (rel) => rel.startsWith("app/"),
+};
+const treeOf = (rel) => Object.keys(TREES).find((t) => TREES[t](rel)) ?? "prototype";
+
 const counts = {};
 const offenders = {};
-for (const key of Object.keys(CATEGORIES)) { counts[key] = 0; offenders[key] = []; }
+for (const tree of Object.keys(TREES)) {
+  counts[tree] = {};
+  offenders[tree] = {};
+  for (const key of Object.keys(CATEGORIES)) { counts[tree][key] = 0; offenders[tree][key] = []; }
+}
 
 for (const rel of SOURCES) {
   const abs = resolve(ROOT, rel);
@@ -155,8 +180,8 @@ for (const rel of SOURCES) {
       re.lastIndex = 0;
       let m;
       while ((m = re.exec(line)) !== null) {
-        counts[key]++;
-        offenders[key].push(`${rel}:${idx + 1}  ${rawLines[idx].trim().slice(0, 90)}`);
+        counts[treeOf(rel)][key]++;
+        offenders[treeOf(rel)][key].push(`${rel}:${idx + 1}  ${rawLines[idx].trim().slice(0, 90)}`);
       }
     }
   });
@@ -167,43 +192,61 @@ const budget = existsSync(BUDGET_FILE) ? JSON.parse(readFileSync(BUDGET_FILE, "u
 if (UPDATE) {
   const prev = budget.budgets ?? {};
   const next = {};
-  for (const [k, v] of Object.entries(counts)) {
-    // The ratchet only ever tightens. If a count went UP, --update refuses to
-    // raise the budget to match — that would defeat the entire mechanism.
-    next[k] = prev[k] === undefined ? v : Math.min(prev[k], v);
+  for (const tree of Object.keys(TREES)) {
+    next[tree] = {};
+    for (const [k, v] of Object.entries(counts[tree])) {
+      // The ratchet only ever tightens. If a count went UP, --update refuses to
+      // raise the budget to match — that would defeat the entire mechanism.
+      //
+      // A tree seen for the FIRST time is the one exception, and it is not a
+      // loophole: there is no earlier number to tighten against, so its true
+      // count becomes the ceiling it can only fall from. That is the honest
+      // way to bring an unmeasured tree under a ratchet — the dishonest way is
+      // to leave it unscanned, which is what happened here for months.
+      next[tree][k] = prev[tree]?.[k] === undefined ? v : Math.min(prev[tree][k], v);
+    }
   }
   writeFileSync(BUDGET_FILE, JSON.stringify({
-    $note: "Maximum permitted raw literals per category in consumer code. MAY ONLY DECREASE. Regenerate with --update after a migration slice; --update will not raise a budget even if the count grew.",
+    $note: "Maximum permitted raw literals per category, PER CONSUMER TREE. MAY ONLY DECREASE. Regenerate with --update after a migration slice; --update will not raise a budget even if the count grew.",
+    $why: "Split per tree so the prototype and the RN app cannot pay for each other. A flat budget would let literals removed from one silently fund literals added to the other.",
     $generated: new Date().toISOString().slice(0, 10),
     budgets: next,
   }, null, 2) + "\n", "utf8");
   console.log("Budget updated:");
-  for (const [k, v] of Object.entries(next)) {
-    const delta = prev[k] === undefined ? "new" : `was ${prev[k]}`;
-    console.log(`  ${k.padEnd(14)} ${String(v).padStart(4)}   (${delta})`);
+  for (const tree of Object.keys(next)) {
+    for (const [k, v] of Object.entries(next[tree])) {
+      const delta = prev[tree]?.[k] === undefined ? "new" : `was ${prev[tree][k]}`;
+      console.log(`  ${tree.padEnd(10)} ${k.padEnd(14)} ${String(v).padStart(4)}   (${delta})`);
+    }
   }
   process.exit(0);
 }
 
 let over = 0;
-console.log("CATEGORY         count  budget");
-for (const [k, v] of Object.entries(counts)) {
-  const b = budget.budgets?.[k];
-  const flag = b === undefined ? "" : v > b ? "  OVER BUDGET" : v < b ? "  (ratchet: run --update)" : "";
-  if (b !== undefined && v > b) over++;
-  console.log(`  ${k.padEnd(14)} ${String(v).padStart(5)}  ${String(b ?? "-").padStart(6)}${flag}`);
-}
-
-if (LIST) {
-  for (const [k, list] of Object.entries(offenders)) {
-    if (!list.length) continue;
-    console.log(`\n${k} — ${CATEGORIES[k].why}`);
-    for (const o of list.slice(0, 25)) console.log(`  ${o}`);
-    if (list.length > 25) console.log(`  … and ${list.length - 25} more`);
+for (const tree of Object.keys(TREES)) {
+  const files = SOURCES.filter((rel) => treeOf(rel) === tree).length;
+  console.log(`\n${tree.toUpperCase()}  (${files} files)`);
+  console.log("  CATEGORY         count  budget");
+  for (const [k, v] of Object.entries(counts[tree])) {
+    const b = budget.budgets?.[tree]?.[k];
+    const flag = b === undefined ? "  (no budget yet: run --update)" : v > b ? "  OVER BUDGET" : v < b ? "  (ratchet: run --update)" : "";
+    if (b !== undefined && v > b) over++;
+    console.log(`    ${k.padEnd(14)} ${String(v).padStart(5)}  ${String(b ?? "-").padStart(6)}${flag}`);
   }
 }
 
-const total = Object.values(counts).reduce((a, b) => a + b, 0);
+if (LIST) {
+  for (const tree of Object.keys(TREES)) {
+    for (const [k, list] of Object.entries(offenders[tree])) {
+      if (!list.length) continue;
+      console.log(`\n${tree} / ${k} — ${CATEGORIES[k].why}`);
+      for (const o of list.slice(0, 25)) console.log(`  ${o}`);
+      if (list.length > 25) console.log(`  … and ${list.length - 25} more`);
+    }
+  }
+}
+
+const total = Object.values(counts).reduce((sum, byCat) => sum + Object.values(byCat).reduce((a, b) => a + b, 0), 0);
 console.log(`\ntotal raw literals: ${total}`);
 console.log(`  files scanned         : ${SOURCES.length} (discovered, not listed)`);
 for (const e of describeExclusions()) console.log(`  excluded              : ${e.files.length} — ${e.why.split(".")[0]}`);

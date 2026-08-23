@@ -13,10 +13,34 @@
 // baseline could photograph. A list you have to remember to update is a list
 // that is wrong the moment you stop thinking about it.
 //
-// SO THE DEFAULT IS INCLUSION. Everything under the prototype's src/ is
+// SO THE DEFAULT IS INCLUSION. Everything under a consumer tree's src/ is
 // consumer code. Exclusions are enumerated below, each with a reason, and
 // `describeExclusions()` prints them on every run — an exclusion nobody can see
 // is how this problem started.
+//
+// ─────────────────────────────────────────────────────────────────────────────
+// AND THEN IT DID THE SAME THING ONE LEVEL UP.
+//
+// This module was written to stop gates missing FILES. It then missed an entire
+// CONSUMER: `SRC` was the single string "Onboarding Flow/src", so `coverage`
+// and `restricted` — every rule they carry between them — had never once looked
+// at the React Native app. The spec says one token source and two platforms
+// (§7); the discovery layer knew about one.
+//
+// `consumption.mjs` had already been caught with the identical bug and it is
+// recorded in §11: it reported `insight.*` dormant while four RN screens were
+// rendering it. The fix there was local, so the general version survived here,
+// in the file whose entire purpose is to be the general version.
+//
+// What the widened scope found on its first run: a live `currentStreak()` in
+// `app/src/utils/recoveryInsights.ts` producing "3-day check-in streak" with a
+// flame icon, ON THE DOCTOR REPORT — which N1/N2 forbid outright and P2 calls
+// the mechanism that manufactures the top abandonment driver. Alongside it, the
+// consistency insight scored the user's own logging on a three-step scale and
+// rendered anything under 30% in `insight.worsening`, the hue this system
+// reserves for a symptom getting worse.
+//
+// Neither was hiding. Both were plainly written in a file no gate read.
 // ============================================================
 
 import { readdirSync, statSync, existsSync } from "node:fs";
@@ -26,7 +50,7 @@ import { fileURLToPath } from "node:url";
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const ROOT = resolve(HERE, "../..");
 
-const SRC = "Onboarding Flow/src";
+const SRC = ["Onboarding Flow/src", "app/src"];
 
 // Each entry must state WHY, because "excluded" and "unmeasured" are the same
 // thing and only one of them is a decision.
@@ -61,19 +85,20 @@ function walk(dir, acc) {
  * they exist — that is the whole point.
  */
 export function consumerFiles() {
-  const base = resolve(ROOT, SRC);
-  if (!existsSync(base)) return [];
-  return walk(base, [])
-    .map((abs) => abs.slice(ROOT.length + 1).split("\\").join("/"))
-    .filter((rel) => !EXCLUDED.some((e) => e.match(rel)))
-    .sort();
+  return SRC.flatMap((src) => {
+    const base = resolve(ROOT, src);
+    if (!existsSync(base)) return [];
+    return walk(base, []).map((abs) => abs.slice(ROOT.length + 1).split(String.fromCharCode(92)).join('/'));
+  }).filter((rel) => !EXCLUDED.some((e) => e.match(rel))).sort();
 }
 
 /** What was skipped and why, printed by every gate that uses this. */
 export function describeExclusions() {
-  const base = resolve(ROOT, SRC);
-  if (!existsSync(base)) return [];
-  const all = walk(base, []).map((abs) => abs.slice(ROOT.length + 1).split("\\").join("/"));
+  const all = SRC.flatMap((src) => {
+    const base = resolve(ROOT, src);
+    if (!existsSync(base)) return [];
+    return walk(base, []).map((abs) => abs.slice(ROOT.length + 1).split(String.fromCharCode(92)).join('/'));
+  });
   const out = [];
   for (const rule of EXCLUDED) {
     const hit = all.filter((rel) => rule.match(rel)).sort();

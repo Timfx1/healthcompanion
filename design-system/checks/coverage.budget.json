@@ -1,12 +1,23 @@
 {
-  "$note": "Maximum permitted raw literals per category in consumer code. MAY ONLY DECREASE. Regenerate with --update after a migration slice; --update will not raise a budget even if the count grew.",
+  "$note": "Maximum permitted raw literals per category, PER CONSUMER TREE. MAY ONLY DECREASE. Regenerate with --update after a migration slice; --update will not raise a budget even if the count grew.",
+  "$why": "Split per tree so the prototype and the RN app cannot pay for each other. A flat budget would let literals removed from one silently fund literals added to the other.",
   "$generated": "2026-08-23",
   "budgets": {
-    "rgba()": 2,
-    "raw hex": 54,
-    "raw duration": 79,
-    "raw z-index": 0,
-    "raw radius": 0,
-    "raw font size": 21
+    "prototype": {
+      "rgba()": 2,
+      "raw hex": 54,
+      "raw duration": 79,
+      "raw z-index": 0,
+      "raw radius": 0,
+      "raw font size": 21
+    },
+    "app": {
+      "rgba()": 17,
+      "raw hex": 30,
+      "raw duration": 0,
+      "raw z-index": 0,
+      "raw radius": 103,
+      "raw font size": 11
+    }
   }
 }
