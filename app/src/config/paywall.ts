@@ -25,11 +25,26 @@ export const PAYWALL_COPY = {
   monthlyLabel: `Subscribe monthly - ${MONTHLY_PRICE}`,
   monthlyPrice: `${MONTHLY_PRICE} / month`,
   trialLength: "14 days free",
+  // §9's premium list, and NOTHING ELSE. These were AnklePath's — "smarter
+  // rehab progression", "return-to-sport readiness", "extended exercise
+  // library" — which are features of a different product. Selling them here
+  // would have been the paywall describing an app the user does not have.
+  //
+  // Premium is DEPTH ONLY (P9). Every item below adds to something the user
+  // already has for free; none of them is a thing they need in order to use the
+  // product. That is the structural difference between this list and the
+  // Medisafe core-feature paywall that §9 cites as the cautionary tale.
+  //
+  // WHAT IS DELIBERATELY ABSENT: the doctor report, its export, the check-in,
+  // quick capture, the timeline, the journal, medications, appointments and the
+  // safety content. Those are free forever, and N6 rule B in restricted.mjs
+  // FAILS THE BUILD if the report is so much as named on a premium-offer
+  // surface — this file is on that list.
   benefits: [
-    "Advanced progress insights",
-    "Smarter rehab progression",
-    "Return-to-sport readiness tools",
-    "Photo progress compare",
-    "Extended exercise library"
+    "Deeper insights and correlations",
+    "Your full history, beyond the last 30 days",
+    "Side-by-side photo comparison",
+    "More than one recovery at a time",
+    "Education deep dives"
   ]
 } as const;

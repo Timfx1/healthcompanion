@@ -59,6 +59,33 @@ export type MainStackParamList = {
   PremiumTeaser: undefined;
   TrialPaywall: PaywallParams;
   NextRecoveryArea: { sourceScreen: "Home" | "Profile" | "Learn" };
+
+  // ── Recovery Companion §5 detail screens ──────────────────────────────────
+  //
+  // Every one of these is addressable. That is the same discipline the web
+  // prototype's `?screen=` routes enforce, and it exists for the same reason:
+  // a state nothing can reach is a state nothing checks. The prototype's dead
+  // `Toast` branch and its save button with no `onClick` both survived
+  // precisely because nothing could get to them.
+  //
+  // Params are IDs, never pre-built objects. A screen that receives its data
+  // already assembled cannot be opened from anywhere except the place that
+  // assembled it, and it stops reflecting later edits to that data.
+  RcQuickCapture: undefined;
+  RcAddEntry: undefined;
+  RcJournal: { entryId?: string } | undefined;
+  RcMilestone: { milestoneId: string };
+  RcShareCard: { title: string; dayN: number; date: string };
+  RcMedication: { medicationId: string };
+  RcAppointment: { appointmentId: string };
+  RcQuestions: { appointmentId: string };
+  RcPhotoCapture: undefined;
+  RcPhotoCompare: undefined;
+  RcReport: undefined;
+  RcReportRange: undefined;
+  RcArticle: { articleId: string };
+  RcSafety: undefined;
+  RcWeekly: undefined;
 };
 
 export type RootStackParamList = {

@@ -16,7 +16,7 @@ Being precise about this, because the gap matters:
 |---|---|
 | **Design system** (`design-system/`) | Real. One token source, two platforms **plus paper**, ten gates. |
 | **Web prototype** (`Onboarding Flow/`) | Real, and the reference implementation — 12 onboarding screens + 5 tabs, both colour modes. A Figma Make export, since evolved. |
-| **React Native app** (`app/`) | **Colour re-domain complete; five Recovery Companion tabs built on AsyncStorage.** `Home · Timeline · Check-in (centre) · Progress · Profile`, over `types/recovery.ts`, a cited corridor, a 45-day mock journey and a store that persists. **The seventeen §5 detail screens are NOT ported** — they exist in the prototype only. AnklePath's Plan / Track / Learn are still in the tree, unreferenced. |
+| **React Native app** (`app/`) | **Feature-complete for Phase 1 §5, and entirely unrendered.** Five tabs and all seventeen detail screens, over `types/recovery.ts`, a cited corridor, a 45-day mock journey and an AsyncStorage store. Every screen is addressable and registered under N6 or N7. **Nothing has ever drawn any of it** — no visual harness, no behaviour tests. See open items. AnklePath's Plan / Track / Learn are still in the tree, unreferenced. |
 | **§5 detail/modal screens** | **All 17 exist** in the prototype, each with a dev route and a baseline. Includes the Doctor Report, the flagship, which is free forever and enforced as such by `restricted.mjs`. |
 
 `tokens.native.ts` is now consumed by `app/`, vendored as
@@ -192,15 +192,29 @@ what is not finished. Full detail in `DESIGN_CRITERIA.md` §11.
   path in `Toast` for the whole life of the component, because nothing could
   photograph a state that exists for 2.4 seconds behind an interaction. That one
   is closed (`?screen=app:toast`); the check-in's states need the same.
-- **The seventeen §5 detail screens do not exist in the RN app.** They are
-  complete in the web prototype, with a dev route and a baseline each. §10's
-  Definition of Done asks for them in `app/`; this is the largest remaining
-  Phase 1 gap.
-- **Nothing photographs the RN app.** No visual harness, no behaviour tests. Its
-  screens are held by `typecheck`, `restricted`, `coverage`, `consumption` and
-  the contrast manifest — considerably more than they had, and not a baseline.
-  The prototype's own history is what an unphotographed surface looks like after
-  a few months: a dead `Toast` branch, and a save button with no `onClick`.
+- **Nothing renders the RN app, and this is now the biggest risk in the
+  repository.** Twenty-one Recovery Companion screens exist in `app/` and not
+  one has ever been drawn. No visual harness, no behaviour tests, no jest. They
+  are held by `typecheck`, `restricted` (N1–N7), `coverage`, `consumption` and
+  the contrast manifest — much more than the prototype's screens had at the same
+  age, and not the same as having been looked at.
+
+  This repository's history is what that condition produces: `ShareCardScreen`
+  hid a 1.58:1 in `share.*` for the life of the family, the `Toast` carried a
+  dead branch for the life of the component, and the quick-capture ✓ had no
+  `onClick` at all. All three typechecked. One defect of exactly that species
+  was already found in the port — a photo filed as journal text, leaving
+  `PhotoCompare` nothing to compare — caught only because the code was read.
+  **Assume there are others.**
+
+  The cheap route is not available: `app/` has no `react-native-web`,
+  `react-dom` or `@expo/metro-runtime`, so the existing Playwright harness
+  cannot reach it, and several dependencies are native-only. Standing a render
+  path up is the next thing worth doing, ahead of more screens. The pure rules
+  are cheapest to cover first and are where the principles live —
+  `compareStateOf`, `accessOf`, `journalStateOf`, the report's depth and change
+  derivation, `detectTags`, `phaseForDay`, `dayNumber` — each exported and pure
+  precisely so a test can reach it without a renderer.
 - **The onboarding `SignUp` screen still has no prototype route or baseline.**
   It exists only in the RN app.
 - **AnklePath's `MainTabs`, Plan, Track and Learn are still in the tree**, now

@@ -32,6 +32,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useAppTheme } from "../state/AppThemeContext";
+import { useRecoveryData } from "../state/RecoveryDataContext";
 import { scale } from "../theme/tokens.generated";
 import { RecoveryHomeScreen } from "../screens/recovery/HomeScreen";
 import { RecoveryTimelineScreen } from "../screens/recovery/TimelineScreen";
@@ -54,7 +55,15 @@ const ICONS: Record<keyof RecoveryTabsParamList, keyof typeof Ionicons.glyphMap>
 export function RecoveryTabs() {
   const { tokens } = useAppTheme();
   const navigation = useNavigation<Nav>();
+  const { appointments, medications, milestones } = useRecoveryData();
   const [checkInOpen, setCheckInOpen] = useState(false);
+
+  // The soonest appointment, falling back to the most recent one. Resolving it
+  // HERE rather than inside the screens keeps every detail screen ignorant of
+  // the navigator — see detail/routes.tsx.
+  const nextAppointmentId =
+    (appointments.filter((a) => new Date(a.date).getTime() > Date.now())
+      .sort((a, b) => a.date.localeCompare(b.date))[0] ?? appointments[0])?.id ?? "";
 
   return (
     <View style={{ flex: 1 }}>
@@ -81,14 +90,35 @@ export function RecoveryTabs() {
           {() => (
             <RecoveryHomeScreen
               onOpenCheckIn={() => setCheckInOpen(true)}
-              onOpenReport={() => navigation.navigate("Reports")}
-              onOpenWeekly={() => navigation.navigate("Reports")}
-              onOpenAppointment={() => navigation.navigate("Reports")}
+              onOpenReport={() => navigation.navigate("RcReport")}
+              onOpenWeekly={() => navigation.navigate("RcWeekly")}
+              onOpenAppointment={() => navigation.navigate("RcAppointment", { appointmentId: nextAppointmentId })}
             />
           )}
         </Tab.Screen>
         <Tab.Screen name="Timeline">
-          {() => <RecoveryTimelineScreen onAdd={() => setCheckInOpen(true)} />}
+          {() => (
+            <RecoveryTimelineScreen
+              onAdd={() => navigation.navigate("RcAddEntry")}
+              onOpenEntry={(entry) => {
+                // The timeline routes by ENTRY TYPE. A row that opened nothing
+                // would be the timeline claiming to be the product's heart while
+                // being a read-only list.
+                if (entry.type === "journal") navigation.navigate("RcJournal", { entryId: entry.id });
+                else if (entry.type === "milestone") {
+                  const m = milestones.find((x) => x.title === entry.title);
+                  if (m) navigation.navigate("RcMilestone", { milestoneId: m.id });
+                } else if (entry.type === "medication") {
+                  const first = medications[0];
+                  if (first) navigation.navigate("RcMedication", { medicationId: first.id });
+                } else if (entry.type === "appointment") {
+                  const first = appointments[0];
+                  if (first) navigation.navigate("RcAppointment", { appointmentId: first.id });
+                } else if (entry.type === "photo") navigation.navigate("RcPhotoCompare");
+                else if (entry.type === "reflection") navigation.navigate("RcWeekly");
+              }}
+            />
+          )}
         </Tab.Screen>
         <Tab.Screen name="Progress">
           {() => <RecoveryProgressScreen onUnlock={() => navigation.navigate("PremiumTeaser")} />}
@@ -96,11 +126,11 @@ export function RecoveryTabs() {
         <Tab.Screen name="Profile">
           {() => (
             <RecoveryProfileScreen
-              onOpenMedications={() => navigation.navigate("Reports")}
-              onOpenAppointments={() => navigation.navigate("Reports")}
-              onOpenEducation={() => navigation.navigate("Learn" as never)}
-              onOpenSafety={() => navigation.navigate("Safety")}
-              onOpenReport={() => navigation.navigate("Reports")}
+              onOpenMedications={() => { const m = medications[0]; if (m) navigation.navigate("RcMedication", { medicationId: m.id }); }}
+              onOpenAppointments={() => navigation.navigate("RcAppointment", { appointmentId: nextAppointmentId })}
+              onOpenEducation={() => navigation.navigate("RcArticle", { articleId: "is-this-normal-week-6" })}
+              onOpenSafety={() => navigation.navigate("RcSafety")}
+              onOpenReport={() => navigation.navigate("RcReport")}
               onOpenPremium={() => navigation.navigate("PremiumTeaser")}
             />
           )}

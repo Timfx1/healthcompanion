@@ -121,6 +121,11 @@ const N6_REPORT_SURFACES = [
   "Onboarding Flow/src/components/ReportPreview.tsx",
   "Onboarding Flow/src/components/reportFixtures.ts",
   "Onboarding Flow/src/components/ReportDateRange.tsx",
+  // The RN port. Registered in the SAME change that created them — the list
+  // being hand-maintained is the documented weakness of this rule, and a report
+  // surface added without a line here is a report surface nobody checks.
+  "app/src/screens/recovery/detail/ReportPreview.tsx",
+  "app/src/screens/recovery/detail/ReportDateRange.tsx",
 ];
 
 const N6_PREMIUM_OFFER_SURFACES = [
@@ -220,6 +225,27 @@ const N7_CORE_LOOP_SURFACES = [
   "Onboarding Flow/src/components/PhotoCapture.tsx",
   "Onboarding Flow/src/components/WeeklyReflection.tsx",
   "Onboarding Flow/src/components/storage.ts",
+  // The RN port. Same reasoning as the report list above.
+  //
+  // Note what is NOT here: PhotoCompare. Taking a photo is core loop and
+  // comparing them is premium (P9), so the gate belongs on the comparison and
+  // never on the act of adding a photo. Listing PhotoCompare here would make
+  // the build fail on a gate that is CORRECT, which is how a rule gets weakened
+  // to make it pass.
+  "app/src/screens/recovery/detail/QuickCaptureSheet.tsx",
+  "app/src/screens/recovery/detail/AddTimelineEntry.tsx",
+  "app/src/screens/recovery/detail/JournalEntryScreen.tsx",
+  "app/src/screens/recovery/detail/MilestoneDetail.tsx",
+  "app/src/screens/recovery/detail/ShareCardPreview.tsx",
+  "app/src/screens/recovery/detail/MedicationDetail.tsx",
+  "app/src/screens/recovery/detail/AppointmentDetail.tsx",
+  "app/src/screens/recovery/detail/QuestionsForDoctor.tsx",
+  "app/src/screens/recovery/detail/PhotoCapture.tsx",
+  "app/src/screens/recovery/HomeScreen.tsx",
+  "app/src/screens/recovery/TimelineScreen.tsx",
+  "app/src/screens/recovery/CheckInScreen.tsx",
+  "app/src/state/RecoveryDataContext.tsx",
+  "app/src/data/captureTags.ts",
 ];
 
 n6Scan(N7_CORE_LOOP_SURFACES, N6_GATING_SYMBOLS, "N7 core loop gated",

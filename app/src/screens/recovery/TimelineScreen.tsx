@@ -79,7 +79,7 @@ const CATEGORY_FOR: Partial<Record<TimelineEntryType, "pain" | "sleep" | "energy
   photo: "sleep",
 };
 
-export function RecoveryTimelineScreen({ onAdd }: { onAdd: () => void }) {
+export function RecoveryTimelineScreen({ onAdd, onOpenEntry }: { onAdd: () => void; onOpenEntry: (entry: TimelineEntry) => void }) {
   const { tokens } = useAppTheme();
   const { timeline } = useRecoveryData();
   const [filter, setFilter] = useState<TimelineEntryType | "all">("all");
@@ -169,7 +169,8 @@ export function RecoveryTimelineScreen({ onAdd }: { onAdd: () => void }) {
               </Body>
             </View>
           ) : (
-            <Card key={row.entry.id}>
+            <Pressable key={row.entry.id} accessibilityRole="button" onPress={() => onOpenEntry(row.entry)}>
+            <Card>
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                 <SectionLabel>
                   {new Date(row.entry.date).toLocaleDateString(undefined, { day: "numeric", month: "short" })}
@@ -183,6 +184,7 @@ export function RecoveryTimelineScreen({ onAdd }: { onAdd: () => void }) {
                 <CategoryChip category={CATEGORY_FOR[row.entry.type]!} label={row.entry.type} />
               )}
             </Card>
+            </Pressable>
           ),
         )}
       </ScrollView>

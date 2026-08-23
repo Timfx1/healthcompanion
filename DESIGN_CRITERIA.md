@@ -1294,6 +1294,88 @@ was the first to render `share.*` and found its 1.58:1.
   and the ratchet caught six raw font sizes in the primitives on their first run
   and made them type roles.
 
+### Done — all seventeen §5 detail screens exist in the RN app
+
+The gap this section recorded as "the largest remaining Phase 1 gap" is closed.
+`app/src/screens/recovery/detail/` holds fifteen new screens; `PremiumTeaser`
+and `TrialPaywall` already existed and were re-domained. Every one is
+addressable from `MainStack`, and every one is registered under N6 or N7.
+
+**What did NOT get ported, deliberately: two vocabularies.**
+
+`§6` types a capture's `autoTags` as `pain | sleep | mood | medication |
+mobility`. The design system's category families are `pain | sleep | energy |
+mood | meds`. Two names disagree and `mobility` has no family at all.
+
+That is not cosmetic, because a tag has to RENDER. N4 forbids meaning by colour
+alone, so every category family carries an icon and a label beside its colours
+and `restricted.mjs` fails the build if one does not. A `mobility` tag could be
+drawn only as a colourless chip, or by inventing a sixth family for one word in
+one spec sentence. The vocabulary follows the families — which is what the web
+prototype already did, so the alternative was two consumers of one token source
+disagreeing about what a tag is.
+
+The RN store had briefly shipped a SECOND keyword list of its own, with
+different categories and substring matching, which tagged half of everything.
+Both consumers now share one matcher.
+
+**The paywall was selling a different product.** `PAYWALL_COPY.benefits` still
+read "Smarter rehab progression", "Return-to-sport readiness tools", "Extended
+exercise library" — AnklePath's features, on Recovery Companion's paywall. Now
+§9's list and nothing else: deeper insights, full history, photo comparison,
+multiple recoveries, education deep dives. Every item adds to something the user
+already has free; none is needed to use the product. That is the structural
+difference between this list and the Medisafe core-feature paywall §9 cites.
+
+**Screens know nothing about the navigator.** Every file in `detail/` takes
+plain props — a medication, an appointment, an `onClose` — exactly as its web
+counterpart does. `detail/routes.tsx` is the only file that knows about routes,
+params and the stack, and it resolves IDs against the store rather than being
+handed pre-assembled objects. A screen that reaches for `useNavigation`
+internally cannot be rendered in a harness without standing up a navigator
+around it, and the RN app has no harness yet; the screens should not be the
+reason it stays that way.
+
+**One defect found, by reading rather than rendering.** `RcPhotoCaptureRoute`
+filed a photo as a JOURNAL entry with the file path as its body — a uri on the
+timeline, `photos` left empty, and `PhotoCompare` with nothing to compare. It
+typechecked perfectly. There is now a real `addPhoto` on the store.
+
+Zero new raw literals across all seventeen: the app tree's ratchet is unchanged
+at 17 / 30 / 0 / 0 / 103 / 11.
+
+### Open, and now the dominant risk — nothing renders the RN app
+
+Twenty-one Recovery Companion screens exist in `app/` and **not one of them has
+ever been drawn**. There is no visual harness, no behaviour test, no jest, no
+testing-library. They are held by `typecheck`, `restricted` (N1–N7), `coverage`,
+`consumption` and the contrast manifest — which is a great deal more than the
+prototype's screens had at the same age, and is not the same as having been
+looked at.
+
+This section is the record of what that condition produces. `ShareCardScreen`
+hardcoded `#fff` and hid a 1.58:1 in `share.*` for the life of the family. The
+`Toast` carried a dead branch for the life of the component. The quick-capture
+✓ had no `onClick` at all, on the interaction P1 is built around. Every one of
+those typechecked.
+
+The photo-route defect above is the same species, caught only because the code
+happened to be read. **Assume there are others.**
+
+The cheap route is not available: the RN app has no `react-native-web`, no
+`react-dom` and no `@expo/metro-runtime`, so the existing Playwright harness
+cannot reach it without installing a web render path — and several dependencies
+here are native-only (`expo-image-picker`, `expo-print`, AsyncStorage, Sentry).
+Standing this up is a real piece of work and is the next thing worth doing,
+ahead of any further screens.
+
+The pure rules are the cheapest thing to cover first, and they are where the
+principles actually live: `compareStateOf` (does a subscriber with one photo see
+`insufficient` rather than an upsell?), `accessOf`, `journalStateOf`, the
+report's depth and change derivation, `detectTags`, `phaseForDay`, `dayNumber`.
+Each is exported and pure precisely so that a test can reach it without a
+renderer.
+
 ## 12. How this is enforced
 
 | Check | What it catches |

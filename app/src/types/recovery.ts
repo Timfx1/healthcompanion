@@ -80,7 +80,23 @@ export type TimelineEntryData =
   | Milestone
   | WeeklyReflection;
 
-export type AutoTag = "pain" | "sleep" | "mood" | "medication" | "mobility";
+/**
+ * DEPARTS FROM §6, which types this as
+ * `'pain' | 'sleep' | 'mood' | 'medication' | 'mobility'`.
+ *
+ * The design system's category families are pain | sleep | energy | mood |
+ * meds, and two of the five names disagree — `mobility` has no family at all.
+ * That matters because a tag has to RENDER: N4 forbids meaning by colour alone,
+ * so every family carries an icon and a label beside its colours and
+ * `restricted.mjs` fails the build if one does not. A `mobility` tag could only
+ * be drawn as a colourless chip, or by inventing a sixth family for one word in
+ * one spec sentence.
+ *
+ * The web prototype already resolved it this way. Two consumers of one token
+ * source disagreeing about what a tag IS would be worse than either answer.
+ * Recorded in DESIGN_CRITERIA §11.
+ */
+export type AutoTag = "pain" | "sleep" | "energy" | "mood" | "meds";
 
 export interface QuickCapture {
   text: string;
