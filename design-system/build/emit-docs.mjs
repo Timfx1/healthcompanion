@@ -178,6 +178,34 @@ const appendix = [
   "",
 ].join("\n");
 
+// ── Structural integrity ────────────────────────────────────────────────────
+//
+// §11 records this document being duplicated into itself twice, by a `$` +
+// backtick in a String.replace replacement. Both times it survived commits,
+// because the appendix check below only ever looked BELOW the marker, and the
+// prose above it had no test at all. The document's own conclusion was that
+// "a document has no test, so the only thing standing between it and silent
+// corruption is somebody reading it." This is that test.
+//
+// A spliced prefix always duplicates the H1 and every `## ` heading above the
+// splice point. Uniqueness of headings is therefore a cheap, exact detector:
+// it would have failed on the first bad commit instead of the fourth copy.
+function checkStructure(text) {
+  const prose = text.slice(0, text.indexOf(MARKER) === -1 ? text.length : text.indexOf(MARKER));
+  const seen = new Map();
+  for (const line of prose.split(String.fromCharCode(10))) {
+    if (!/^#{1,2} /.test(line)) continue;
+    seen.set(line, (seen.get(line) ?? 0) + 1);
+  }
+  const dupes = [...seen].filter(([, n]) => n > 1);
+  if (dupes.length === 0) return;
+  console.error("CORRUPTION: DESIGN_CRITERIA.md repeats headings above the appendix marker.");
+  console.error("A heading appearing N times means N-1 copies of the document are spliced into it.");
+  for (const [line, n] of dupes) console.error(`  ${n}x  ${line}`);
+  console.error("Cause, both previous times: a `$` followed by a backtick in a String.replace");
+  console.error("replacement means 'insert everything before the match'. Use a replacer function.");
+  process.exit(1);
+}
 const doc = readFileSync(DOC, "utf8");
 const cut = doc.indexOf(MARKER);
 if (cut === -1) {
@@ -185,6 +213,8 @@ if (cut === -1) {
   process.exit(1);
 }
 const next = doc.slice(0, cut) + appendix;
+
+checkStructure(doc);
 
 if (CHECK) {
   if (doc !== next) {
