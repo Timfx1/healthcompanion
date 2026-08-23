@@ -33,6 +33,19 @@ export type MainTabsParamList = {
   Profile: undefined;
 };
 
+/**
+ * The Recovery Companion tabs (spec §5). Four navigable tabs plus a CENTRE
+ * ACTION that is not one: check-in opens as a modal, because it is something
+ * you do and return from rather than a place you go, and switching tabs would
+ * throw away whatever the person was looking at. See navigation/RecoveryTabs.
+ */
+export type RecoveryTabsParamList = {
+  Home: undefined;
+  Timeline: undefined;
+  Progress: undefined;
+  Profile: undefined;
+};
+
 export type MainStackParamList = {
   MainTabs: NavigatorScreenParams<MainTabsParamList> | undefined;
   ExerciseDetail: { exerciseId: string };

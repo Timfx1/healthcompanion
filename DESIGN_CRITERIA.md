@@ -1202,6 +1202,98 @@ for the first time is the one exception, and it is not a loophole: there is no
 earlier number to tighten against. The dishonest option was the one in place
 already — leaving the tree unscanned.
 
+### Partially done — the RN app has Recovery Companion's five tabs, and none of its seventeen detail screens
+
+Stated plainly at the top because the rest of this entry describes what WAS
+built, and an entry that only describes progress is how a status document stops
+being usable: **the five tabs are done, the seventeen §5 detail screens in
+`app/` are not.** They exist in the web prototype, with routes and baselines,
+and they do not exist in React Native. §10's Definition of Done is not met.
+
+What now exists in `app/`:
+
+| | |
+|---|---|
+| `types/recovery.ts` | §6's models |
+| `data/recoveryCorridors.ts` | P5, three conditions, every phase cited, flagged for review |
+| `data/mockJourney.ts` | a 45-day journey |
+| `state/RecoveryDataContext.tsx` | the store, on **AsyncStorage** — §7 Phase 1 item 4 |
+| `components/recovery/primitives.tsx` | Card, type roles, accumulation, rest, chips, insight |
+| `screens/recovery/` | Home, Timeline, Check-in, Progress, Profile |
+| `navigation/RecoveryTabs.tsx` | the five tabs, replacing AnklePath's |
+
+Four things in there are decisions rather than transcription.
+
+**The fixture has gaps in it, on purpose.** Days 12–16 and 27–29 of the mock
+journey contain nothing at all, and the recovery gets WORSE around days 18–22.
+A fixture with an entry every day makes the rest treatment unbuildable and the
+setback copy untestable — you cannot check "gaps render as neutral rest, never
+failure" against data that has no gaps. Most check-ins in it are `quick` and
+nothing else, because P3 says one tap is a complete check-in and a fixture full
+of rich rows would leave the sparse case as the untested one.
+
+**`isWelcomeBack` is a boolean and there is no `daysAway` in the type.** The
+same decision as the prototype's `absence.ts`, for the same reason: a duration
+in scope is a duration somebody eventually renders.
+
+**The check-in's fast path saves and leaves on one tap.** It does not open the
+detail layer, ask "add more?", or wait for a confirm — the moment a fast path
+needs a second tap to commit it has become step one of a form. The ~600ms
+confirmation comes from `motion.celebrate`, which is already 600ms with a gentle
+spring; inventing a `confirmation` duration would have added a token for a value
+the system had a name for.
+
+**The pain scale does not write on its own swatches.** `painScale.N` supplies
+`mark` and `ink` and no `onMark`, so the system has no declared colour for text
+on a pain fill and there is no honest way to put a numeral there. Rather than
+add eleven tokens, the mark became a bar and the numeral sits below it in text
+ink — which also means the number stays legible whatever the hue does (N4).
+
+### The sixth instance, caught before the screen shipped
+
+Declaring the new pairs found another one immediately. The Timeline's selected
+filter chip was written with `accent.strong` on `state.selectedFill`, and
+measured **4.30:1 in light**.
+
+`accent.strong` exists precisely because the brand accent only reaches 4.19 as
+light-mode text, and its note records the fixed figure: **4.55 against the
+page**. Against a 13% wash of the same accent it is 4.30. Sixth time text on a
+tint of its own accent has failed in this system.
+
+What is different this time is only the order. The four earlier ones were found
+in review after the screens were built, and two of the ten N6 violations had
+already been photographed into passing baselines. This one failed in the
+manifest before the screen had a baseline at all, because the pair was declared
+first. That is the method working the way it was supposed to: a new surface
+declares what it renders, and the declaration is what disagrees.
+
+Fixed with the answer the earlier four converged on — primary ink, with fill,
+border and ink weight carrying selection between them. 13.91 light, 13.88 dark,
+and nothing marginal left anywhere in it.
+
+Two other pairs were undeclared and are now measured. `rn/rest label on rest
+surface` had never been declared in EITHER consumer: `rest.*` was measured only
+against the page, and the label actually sits on `rest.surface`. The RN Timeline
+is the first surface to render the two together — the same way `MilestoneDetail`
+was the first to render `share.*` and found its 1.58:1.
+
+### Still open in `app/`
+
+- **The seventeen §5 detail screens.** None ported.
+- **`MainTabs.tsx` and AnklePath's Plan / Track / Learn screens are still in the
+  tree**, now unreferenced by the stack. Left deliberately: deleting them in the
+  same change as the re-domain would put a rewrite and a deletion in one diff.
+- **Nothing photographs the RN app.** It has no visual harness and no behaviour
+  tests, so the five new screens are held only by `typecheck`, `restricted`,
+  `coverage`, `consumption` and the contrast manifest. That is considerably more
+  than they had, and it is not a baseline. The prototype's own history — a dead
+  `Toast` branch, a save button with no `onClick` — is what an unphotographed,
+  untested surface looks like after a few months.
+- The literal ratchet for `app` starts at 103 raw radii and 30 raw hex. New code
+  adds none: the five screens and the primitives contributed **zero** literals,
+  and the ratchet caught six raw font sizes in the primitives on their first run
+  and made them type roles.
+
 ## 12. How this is enforced
 
 | Check | What it catches |
@@ -1445,12 +1537,12 @@ The `z` order is fixed: an overlay must never be authored with an ad-hoc z-index
 
 ### Contrast manifest
 
-**215 declared pairs, 380 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
+**218 declared pairs, 386 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
 
 | Usage class | Pairs |
 |---|---|
-| `body-text` | 118 |
-| `ui-boundary` | 17 |
+| `body-text` | 120 |
+| `ui-boundary` | 18 |
 | `decorative` | 46 |
 | `large-text` | 14 |
 | `print-body` | 13 |

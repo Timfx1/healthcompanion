@@ -1,6 +1,10 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { MainStackParamList } from "./types";
-import { MainTabs } from "./MainTabs";
+// The five Recovery Companion tabs replace AnklePath's. `MainTabs` is kept in
+// the tree, unreferenced, until the AnklePath screens it hosts are removed —
+// deleting it now would take Plan, Track and Learn with it in the same change,
+// and a re-domain and a deletion should not be reviewed as one diff.
+import { RecoveryTabs } from "./RecoveryTabs";
 import { ExerciseDetailScreen } from "../screens/main/ExerciseDetailScreen";
 import { ArticleDetailScreen } from "../screens/main/ArticleDetailScreen";
 import { TrackerCheckInScreen } from "../screens/main/TrackerCheckInScreen";
@@ -28,7 +32,7 @@ export function MainStack() {
         contentStyle: { backgroundColor: palette.background }
       }}
     >
-      <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
+      <Stack.Screen name="MainTabs" component={RecoveryTabs} options={{ headerShown: false }} />
       <Stack.Screen name="ExerciseDetail" component={ExerciseDetailScreen} options={{ title: "Exercise" }} />
       <Stack.Screen name="ArticleDetail" component={ArticleDetailScreen} options={{ title: "Article" }} />
       <Stack.Screen name="TrackerCheckIn" component={TrackerCheckInScreen} options={{ title: "Check-in" }} />

@@ -16,7 +16,7 @@ Being precise about this, because the gap matters:
 |---|---|
 | **Design system** (`design-system/`) | Real. One token source, two platforms **plus paper**, ten gates. |
 | **Web prototype** (`Onboarding Flow/`) | Real, and the reference implementation — 12 onboarding screens + 5 tabs, both colour modes. A Figma Make export, since evolved. |
-| **React Native app** (`app/`) | **Colour re-domain complete.** The AnklePath `ActivatePayment` tree, copied in with fresh history. All 172 colour references resolve to Recovery Companion roles and the app typechecks clean. Screens are still AnklePath's. |
+| **React Native app** (`app/`) | **Colour re-domain complete; five Recovery Companion tabs built on AsyncStorage.** `Home · Timeline · Check-in (centre) · Progress · Profile`, over `types/recovery.ts`, a cited corridor, a 45-day mock journey and a store that persists. **The seventeen §5 detail screens are NOT ported** — they exist in the prototype only. AnklePath's Plan / Track / Learn are still in the tree, unreferenced. |
 | **§5 detail/modal screens** | **All 17 exist** in the prototype, each with a dev route and a baseline. Includes the Doctor Report, the flagship, which is free forever and enforced as such by `restricted.mjs`. |
 
 `tokens.native.ts` is now consumed by `app/`, vendored as
@@ -192,8 +192,19 @@ what is not finished. Full detail in `DESIGN_CRITERIA.md` §11.
   path in `Toast` for the whole life of the component, because nothing could
   photograph a state that exists for 2.4 seconds behind an interaction. That one
   is closed (`?screen=app:toast`); the check-in's states need the same.
+- **The seventeen §5 detail screens do not exist in the RN app.** They are
+  complete in the web prototype, with a dev route and a baseline each. §10's
+  Definition of Done asks for them in `app/`; this is the largest remaining
+  Phase 1 gap.
+- **Nothing photographs the RN app.** No visual harness, no behaviour tests. Its
+  screens are held by `typecheck`, `restricted`, `coverage`, `consumption` and
+  the contrast manifest — considerably more than they had, and not a baseline.
+  The prototype's own history is what an unphotographed surface looks like after
+  a few months: a dead `Toast` branch, and a save button with no `onClick`.
 - **The onboarding `SignUp` screen still has no prototype route or baseline.**
-  It exists only in the RN app. It is the one remaining surface in either
-  codebase that nothing photographs.
+  It exists only in the RN app.
+- **AnklePath's `MainTabs`, Plan, Track and Learn are still in the tree**, now
+  unreferenced by the stack. Left deliberately — a rewrite and a deletion should
+  not be reviewed as one diff.
 - **Off-scale font sizes and raw hex values remain** in consumer code, under a
   ratchet that can only tighten.

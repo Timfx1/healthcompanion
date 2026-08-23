@@ -7,6 +7,11 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { RootNavigator } from "./src/navigation/RootNavigator";
 import { AppThemeProvider, useAppTheme } from "./src/state/AppThemeContext";
 import { AppDataProvider } from "./src/state/AppDataContext";
+// The Recovery Companion store, on AsyncStorage (§7 Phase 1). Kept alongside
+// AppDataContext rather than merged into it: the two describe different
+// products, and mixing them would make removing the AnklePath domain
+// impossible to review as its own change.
+import { RecoveryDataProvider } from "./src/state/RecoveryDataContext";
 import { ConsentProvider } from "./src/state/ConsentContext";
 import { OnboardingProvider } from "./src/state/OnboardingContext";
 import { PremiumSync } from "./src/components/PremiumSync";
@@ -71,10 +76,12 @@ function App() {
           <ConsentProvider>
             <AnalyticsProvider>
               <AppDataProvider>
+                <RecoveryDataProvider>
                 <PremiumSync />
                 <OnboardingProvider>
                   <ThemedAppShell />
                 </OnboardingProvider>
+                </RecoveryDataProvider>
               </AppDataProvider>
             </AnalyticsProvider>
           </ConsentProvider>
