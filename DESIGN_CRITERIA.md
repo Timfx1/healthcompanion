@@ -304,37 +304,82 @@ same day. The screen adds **zero** raw literals; the ratchet stayed at 162.
 Still open, and unchanged by this work: `ShareCardScreen` remains the one app
 surface with no route and no baseline.
 
-### Open — secondary text on a 13% accent tint has now failed four times
+### Resolved — secondary text on an accent tint, fixed at the token instead of a fifth time
 
-`color.text.secondary` on the standard 13% accent tint measures **4.49:1** in
-light mode. Under 4.5 by one hundredth, and it is not a one-off:
+`color.text.secondary` light is now `#646186`, darkened 7% from `#6B6890`.
 
-| Where | Measured | What was done |
-|---|---|---|
-| `InsightSentence` trend word | 1.40:1 | used `mark` as text; moved to `ink` |
-| `corridor.phaseLabel` | 4.15:1 | `lavender.650` re-solved against the tint |
-| report change block, meta + "Steady" | 4.49:1 | moved to heading ink, smaller and lighter |
-| `AddTimelineEntry` capture-row hint | 4.49:1 | same |
+This class had been fixed locally four times — `InsightSentence` (1.40:1, `mark`
+used as text), `corridor.phaseLabel` (4.15), the report change block (4.49) and
+`AddTimelineEntry`'s capture hint (4.49) — each time by moving the text to a
+different role or making it smaller and lighter in weight. Those local fixes
+were right and stay. What was wrong was leaving the token that caused them.
 
-Four sites, one cause. `accent.surface` is a NAMED general-purpose container —
-`semantic.json` calls it "informational cards, badges, chips, callouts" and
-lists five uses — so secondary-weight text on it is an entirely ordinary thing
-to want, and the system currently cannot supply it.
+**The entry that stood here quoted a number that does not exist.** It said a 7%
+step "clears even the 27% tint at 4.56, which would make this class of failure
+unbuildable". Measured, composited, per surface:
 
-Each site was fixed the way `semantic.json`'s own note on the muted step already
-prescribes: *"Differentiate quiet text by WEIGHT and SIZE, not by lowering
-contrast — which is the accessible way to build hierarchy regardless."* That is
-the right local answer and the print layer reached it independently.
+| backdrop | `#6B6890` | `#6A678F` (1%) | `#646186` (7%) |
+|---|---|---|---|
+| accent 13% over the page | 4.23 | 4.30 | **4.72** |
+| accent 13% over a card | 4.49 | **4.56** | **5.01** |
+| accent 20% over a card | 4.12 | 4.18 | **4.60** |
+| accent 27% over a card | 3.78 | 3.84 | 4.21 |
 
-**But the root is still there.** Measured: darkening `text.secondary`'s light
-value by 1% (`#6B6890` → `#6A678F`) clears the tint at 4.55 and improves every
-other declared backdrop — 5.24→5.32 on white, 4.92→4.99 on base. A 7% step
-(`#646186`) clears even the 27% tint at 4.56, which would make this class of
-failure unbuildable rather than fixed four times.
+4.56 is what the **1%** step scores on the **13%** tint over a card. Two figures
+had been transposed, and the transposition was doing real work: it was the whole
+argument for the larger step. The 7% step does not make the class unbuildable —
+27% still fails as body text, and no value of this token fixes that without
+collapsing the ladder against `text.muted`, which sits at 4.84 on card.
 
-Not done here, deliberately: it is a core semantic token and every light-mode
-baseline moves with it, which is a bigger decision than the screen that
-surfaced it. Recorded with the numbers so it can be taken on its own terms.
+Adopted anyway, for the reason that survives measurement: **13% is the only
+accent tint the system puts text on.** `accent.surface` is 13% and so are all
+five of its named siblings; 27% is `accent.edge`, a border. The 1% step clears
+13% over a card and leaves it failing over the page at 4.30 — half a fix, and
+the failing half is the page, which is where an informational card most often
+sits. The 7% step clears both, improves all 17 declared light pairs that touch
+this token, and regresses nothing.
+
+What it costs: every light-mode baseline moves, and `state.disabledText` rides
+the same primitive and darkens with it, 4.09 → 4.56 on the disabled fill. That
+is not a regression. Disabled state is carried by the fill, not by starving the
+label, and a disabled "Save" that a user can still read is better than one they
+cannot. It stays exempt under 1.4.3 and stays measured.
+
+The class is now **declared**, in three `root/secondary on accent.surface` pairs
+that nothing renders. They exist as a standing constraint on the two tokens, so
+that darkening either one or raising the tint fails in the manifest rather than
+in a screen review four screens later. Verified by reverting the token and
+watching them fail at 4.23 and 4.49 — the same two numbers this section had been
+recording as prose since the second occurrence.
+
+### Resolved — `composited` was a comment the contrast check never read
+
+Declaring the pairs above surfaced it. Three of them passed immediately, against
+the old token value, which was impossible if they were measuring what they said.
+
+`composited` had never been implemented. Pairs using it carried a **hand-computed
+literal** backdrop in `bg` — `"#EEECF8"`, `"#2B2843"` — with `composited` naming,
+in prose, the tint those literals had been derived from. That is precisely the
+shape §11 keeps recording: a value asserted rather than resolved, correct on the
+day it was typed and unable to notice the day it stopped being.
+
+It failed outright wherever an author gave a real token as `bg` and assumed the
+tint would be applied. `education/deep-dive hook` was measuring its text against
+plain `surface.raised`, and `share/day label at gradient start` against an
+untinted gradient stop. Both passed on a foreground so dark it would have passed
+on anything, which is why nothing caught them; the true figures are 14.78 and
+8.41, and both still pass. The correction is that they are now measurements.
+
+- `composited` now resolves and composites, and the result is the backdrop.
+- An **opaque** layer in `composited` is a hard error, not a no-op. It had one
+  such use, on `photo/frame caption`, declared as a link "so the role reads as
+  measured" — which is exactly the reading the field cannot support. That pair
+  now declares `pattern.rest.surface` as its `bg`, which is what it always was.
+- All 22 hand-computed literals were replaced with the surface tokens beneath
+  them, recovered by **inverting each literal through its own alpha** rather than
+  by eye. Every one resolved onto an existing token, and every one re-measured to
+  the identical ratio — which is the proof that the inversion was right and that
+  nothing was quietly re-declared in the process.
 
 ### Resolved — the capture lane, and a save button that never worked
 
@@ -1020,7 +1065,7 @@ Every semantic colour, both modes, as the emitters hand them to the app. A role 
 | `surface.inverse` | `#FFFFFF` | `#1A1830` |
 | `surface.notification` | `#252438` | `#252438` |
 | `text.primary` | `#F0EFFE` | `#1A1830` |
-| `text.secondary` | `#9B97B8` | `#6B6890` |
+| `text.secondary` | `#9B97B8` | `#646186` |
 | `text.muted` | `#8D89A8` | `#716AA9` |
 | `text.onAccent` | `#FFFFFF` | `#FFFFFF` |
 | `text.onNotification` | `#FFFFFF` | `#FFFFFF` |
@@ -1073,7 +1118,7 @@ Every semantic colour, both modes, as the emitters hand them to the app. A role 
 | `safety.mark` | `#E05548` | `#E05548` |
 | `safety.surface` | `#E0554822` | `#E0554822` |
 | `state.disabled` | `#2E2C45` | `#E4E1F5` |
-| `state.disabledText` | `#5C5878` | `#6B6890` |
+| `state.disabledText` | `#5C5878` | `#646186` |
 | `state.selectedFill` | `#7C6FCD22` | `#7C6FCD22` |
 | `state.selectedEdge` | `#7C6FCD44` | `#7C6FCD44` |
 | `state.scrim` | `#0000008C` | `#0000008C` |
@@ -1086,7 +1131,7 @@ Product concepts with fixed contracts, defined once so they cannot drift between
 |---|---|---|
 | `corridor.band` | `#7C6FCD22` | `#7C6FCD22` |
 | `corridor.edge` | `#7C6FCD44` | `#7C6FCD44` |
-| `corridor.label` | `#9B97B8` | `#6B6890` |
+| `corridor.label` | `#9B97B8` | `#646186` |
 | `corridor.phaseChip` | `#7C6FCD22` | `#7C6FCD22` |
 | `corridor.phaseLabel` | `#9B8FE0` | `#6B5DBE` |
 | `rest.surface` | `#15141F` | `#F8F7FC` |
@@ -1098,8 +1143,8 @@ Product concepts with fixed contracts, defined once so they cannot drift between
 | `accumulation.dotFilled` | `#7C6FCD` | `#7C6FCD` |
 | `accumulation.dotEmpty` | `#2E2C45` | `#E4E1F5` |
 | `lock.badgeFill` | `#2E2C45` | `#E4E1F5` |
-| `lock.badgeGlyph` | `#9B97B8` | `#6B6890` |
-| `lock.label` | `#9B97B8` | `#6B6890` |
+| `lock.badgeGlyph` | `#9B97B8` | `#646186` |
+| `lock.label` | `#9B97B8` | `#646186` |
 | `historyFade.fadeFrom` | `#1E1D2E0D` | `#FFFFFF0D` |
 | `historyFade.fadeTo` | `#1E1D2E` | `#FFFFFF` |
 | `historyFade.pillFill` | `#7C6FCD22` | `#7C6FCD22` |
@@ -1108,7 +1153,7 @@ Product concepts with fixed contracts, defined once so they cannot drift between
 | `insight.headline` | `#F0EFFE` | `#1A1830` |
 | `insight.improving` | `#A8D9B8` | `#35784B` |
 | `insight.worsening` | `#F9ABA3` | `#AE4571` |
-| `insight.steady` | `#9B97B8` | `#6B6890` |
+| `insight.steady` | `#9B97B8` | `#646186` |
 | `insight.chartLine` | `#7C6FCD` | `#7C6FCD` |
 | `insight.chartGrid` | `#2E2C4588` | `#E4E1F588` |
 | `fastPath.optionFill` | `#252438` | `#FFFFFF` |
@@ -1129,7 +1174,7 @@ Product concepts with fixed contracts, defined once so they cannot drift between
 | `share.brandmark` | `#F0EFFE55` | `#F0EFFE55` |
 | `report.surface` | `#1E1D2E` | `#FFFFFF` |
 | `report.heading` | `#F0EFFE` | `#1A1830` |
-| `report.meta` | `#9B97B8` | `#6B6890` |
+| `report.meta` | `#9B97B8` | `#646186` |
 | `report.changeBlock` | `#7C6FCD22` | `#7C6FCD22` |
 | `report.divider` | `#2E2C45` | `#E4E1F5` |
 | `welcomeBack.surface` | `#7C6FCD14` | `#7C6FCD14` |
@@ -1147,7 +1192,7 @@ Product concepts with fixed contracts, defined once so they cannot drift between
 | `dayCard.from` | `#332C55` | `#F0EDFB` |
 | `dayCard.to` | `#1E1D2E` | `#FFFFFF` |
 | `dayCard.primary` | `#F0EFFE` | `#1A1830` |
-| `dayCard.secondary` | `#9B97B8` | `#6B6890` |
+| `dayCard.secondary` | `#9B97B8` | `#646186` |
 | `toast.surface` | `#252438` | `#252438` |
 | `toast.label` | `#FFFFFF` | `#FFFFFF` |
 
@@ -1229,11 +1274,11 @@ The `z` order is fixed: an overlay must never be authored with an ad-hoc z-index
 
 ### Contrast manifest
 
-**208 declared pairs, 369 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
+**211 declared pairs, 372 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
 
 | Usage class | Pairs |
 |---|---|
-| `body-text` | 114 |
+| `body-text` | 117 |
 | `ui-boundary` | 17 |
 | `decorative` | 43 |
 | `large-text` | 14 |

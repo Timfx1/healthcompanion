@@ -183,10 +183,34 @@ for (const pair of manifest.pairs) {
   if (!isPrintUsage(usage) && (pair.modes ?? []).includes("print")) throw new Error(`Pair "${pair.id}": declares the print token set but uses a screen usage class "${usage}".`);
 
   for (const mode of isPrintUsage(usage) ? ["print"] : pair.modes ?? ["dark", "light"]) {
-    // Backdrops must be opaque — you cannot measure contrast against something
+    // Backdrops must be opaque - you cannot measure contrast against something
     // see-through without knowing what is behind it.
-    const bg = resolveSpec(pair.bg, tokens, mode);
-    if (bg.a < 1) throw new Error(`Pair "${pair.id}" (${mode}): background "${pair.bg}" is translucent; declare the opaque surface beneath it.`);
+    //
+    // `composited` names a TRANSLUCENT LAYER that sits between the declared
+    // surface and the foreground: a tinted chip on a card, a selected fill on
+    // an option. The check composites it here and measures against the result.
+    //
+    // IT DID NOT ALWAYS. For most of this manifest's life `composited` was a
+    // prose field the checker never read, and every pair using it carried a
+    // HAND-COMPUTED literal backdrop instead. That worked only for as long as
+    // nobody moved a surface or an alpha, and it failed silently in the three
+    // places where an author gave a plain surface token as `bg` and assumed the
+    // tint was being applied - `education/deep-dive hook` and `share/day label`
+    // were measuring their foregrounds against an UNTINTED backdrop while
+    // reading, in the manifest, as though the tint were accounted for.
+    //
+    // The literals were not guesses that could simply be trusted: each one was
+    // inverted back through its own alpha to recover the surface underneath,
+    // and every one landed on a real token. That is what they are now declared
+    // as, so a change to a surface or an alpha moves the measurement with it.
+    const surface = resolveSpec(pair.bg, tokens, mode);
+    if (surface.a < 1) throw new Error(`Pair "${pair.id}" (${mode}): background "${pair.bg}" is translucent; declare the opaque surface beneath it.`);
+    let bg = surface;
+    if (pair.composited) {
+      const layer = resolveSpec(pair.composited, tokens, mode);
+      if (layer.a >= 1) throw new Error(`Pair "${pair.id}" (${mode}): composited layer "${pair.composited}" is opaque. An opaque layer IS the backdrop - declare it as "bg" and drop "composited".`);
+      bg = { ...composite(layer, surface), a: 1 };
+    }
 
     const fgRaw = resolveSpec(pair.fg, tokens, mode);
     const fg = composite(fgRaw, bg);

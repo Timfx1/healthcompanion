@@ -127,7 +127,7 @@
   --color-surface-inverse: #1A1830;
   --color-surface-notification: #252438;
   --color-text-primary: #1A1830;
-  --color-text-secondary: #6B6890;
+  --color-text-secondary: #646186;
   --color-text-muted: #716AA9;
   --color-text-onAccent: #FFFFFF;
   --color-text-onNotification: #FFFFFF;
@@ -180,7 +180,7 @@
   --color-safety-mark: #E05548;
   --color-safety-surface: #E0554822;
   --color-state-disabled: #E4E1F5;
-  --color-state-disabledText: #6B6890;
+  --color-state-disabledText: #646186;
   --color-state-selectedFill: #7C6FCD22;
   --color-state-selectedEdge: #7C6FCD44;
   --color-state-scrim: #0000008C;

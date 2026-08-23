@@ -28,7 +28,7 @@ export const D = {
   "lCard": "#FFFFFF",
   "lBorder": "#E4E1F5",
   "lText": "#1A1830",
-  "lTextSec": "#6B6890",
+  "lTextSec": "#646186",
   "lTextMut": "#716AA9",
   "pain": "#F2A69E",
   "sleep": "#9EC3F5",
@@ -464,7 +464,7 @@ const THEMES = {
       },
       "text": {
         "primary": "#1A1830",
-        "secondary": "#6B6890",
+        "secondary": "#646186",
         "muted": "#716AA9",
         "onAccent": "#FFFFFF",
         "onNotification": "#FFFFFF"
@@ -571,7 +571,7 @@ const THEMES = {
       },
       "state": {
         "disabled": "#E4E1F5",
-        "disabledText": "#6B6890",
+        "disabledText": "#646186",
         "selectedFill": "#7C6FCD22",
         "selectedEdge": "#7C6FCD44",
         "scrim": "#0000008C"
@@ -744,7 +744,7 @@ const THEMES = {
       "corridor": {
         "band": "#7C6FCD22",
         "edge": "#7C6FCD44",
-        "label": "#6B6890",
+        "label": "#646186",
         "phaseChip": "#7C6FCD22",
         "phaseLabel": "#6B5DBE"
       },
@@ -763,10 +763,10 @@ const THEMES = {
       "lock": {
         "cardOpacity": 0.7,
         "badgeFill": "#E4E1F5",
-        "badgeGlyph": "#6B6890",
+        "badgeGlyph": "#646186",
         "badgeSize": 24,
         "glyphSize": 12,
-        "label": "#6B6890"
+        "label": "#646186"
       },
       "historyFade": {
         "fadeFrom": "#FFFFFF0D",
@@ -785,7 +785,7 @@ const THEMES = {
         },
         "improving": "#35784B",
         "worsening": "#AE4571",
-        "steady": "#6B6890",
+        "steady": "#646186",
         "chartLine": "#7C6FCD",
         "chartGrid": "#E4E1F588"
       },
@@ -823,7 +823,7 @@ const THEMES = {
       "report": {
         "surface": "#FFFFFF",
         "heading": "#1A1830",
-        "meta": "#6B6890",
+        "meta": "#646186",
         "changeBlock": "#7C6FCD22",
         "divider": "#E4E1F5"
       },
@@ -849,7 +849,7 @@ const THEMES = {
         "from": "#F0EDFB",
         "to": "#FFFFFF",
         "primary": "#1A1830",
-        "secondary": "#6B6890"
+        "secondary": "#646186"
       },
       "toast": {
         "surface": "#252438",
