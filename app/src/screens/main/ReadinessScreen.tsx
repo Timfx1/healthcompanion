@@ -146,7 +146,7 @@ function CriterionRow({
   const { tokens } = useAppTheme();
   const showAsGoal = !hasData;
   const iconName = showAsGoal ? "ellipse-outline" : criterion.met ? "checkmark-circle" : "close-circle";
-  const iconColor = showAsGoal ? palette.textSubtle : criterion.met ? tokens.pattern.insight.trendUp : palette.textMuted;
+  const iconColor = showAsGoal ? palette.textSubtle : criterion.met ? tokens.pattern.insight.improving : palette.textMuted;
 
   return (
     <View style={[styles.criterion, { backgroundColor: palette.surface, borderColor: palette.borderSoft }]}>

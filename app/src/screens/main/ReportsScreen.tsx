@@ -269,12 +269,12 @@ function StatTile({ palette, value, label }: { palette: AppPalette; value: strin
 
 function TrendBadge({ palette, tone, label }: { palette: AppPalette; tone: Tone; label: string }) {
   const { tokens } = useAppTheme();
-  // The neutral tone uses PRIMARY text, not trendFlat. trendFlat is
+  // The neutral tone uses PRIMARY text, not trendFlat. steady is
   // text.secondary — deliberately quiet — and on the muted chip fill it reaches
   // only 4.09:1. "No notable change" is plain, not quiet: a badge whose whole
   // job is to be read should not be the one that whispers.
   const color =
-    tone === "good" ? tokens.pattern.insight.trendUp : tone === "bad" ? tokens.pattern.insight.trendDown : tokens.color.text.primary;
+    tone === "good" ? tokens.pattern.insight.improving : tone === "bad" ? tokens.pattern.insight.worsening : tokens.color.text.primary;
   const bg = tone === "neutral" ? palette.surfaceMuted : tokens.color.accent.surface;
   const icon = tone === "good" ? "arrow-down" : tone === "bad" ? "arrow-up" : "remove";
   return (
@@ -290,7 +290,7 @@ function TrendBadge({ palette, tone, label }: { palette: AppPalette; tone: Tone;
 function InsightCard({ palette, insight }: { palette: AppPalette; insight: Insight }) {
   const { tokens } = useAppTheme();
   const accent =
-    insight.tone === "good" ? tokens.pattern.insight.trendUp : insight.tone === "bad" ? tokens.pattern.insight.trendDown : tokens.color.accent.default;
+    insight.tone === "good" ? tokens.pattern.insight.improving : insight.tone === "bad" ? tokens.pattern.insight.worsening : tokens.color.accent.default;
   const accentSoft = tokens.color.accent.surface;
 
   return (

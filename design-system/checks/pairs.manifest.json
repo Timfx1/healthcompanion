@@ -82,8 +82,8 @@
     { "id": "RN accent/strong on accent tint",      "fg": "color.accent.strong", "bg": "#EEECF8", "modes": ["light"], "usage": "body-text", "note": "Accent text inside an accent-tinted pill — the backdrop lavender.650 was re-solved against." },
     { "id": "RN category/mood ink on base",         "fg": "color.category.mood.ink", "bg": "color.surface.base", "usage": "body-text", "note": "The 'Free plan unlocked' kicker sits on the page, not on a card." },
     { "id": "RN safety/mark on safety surface",     "fg": "color.safety.mark", "bg": "#FCEEEC", "modes": ["light"], "usage": "ui-boundary", "note": "SafetyAlert draws its warning icon and border on its OWN tint. Previously only measured against flat surfaces, so the one component that must never be unreadable was the one combination nobody had checked." },
-    { "id": "RN insight/trendUp on accent tint",    "fg": "pattern.insight.trendUp", "bg": "#EEECF8", "modes": ["light"], "usage": "body-text", "note": "The trend badge word. Reached 4.39:1 before mood.ink was re-solved against this backdrop — found by measuring the port, not by review." },
-    { "id": "RN insight/trendDown on accent tint",  "fg": "pattern.insight.trendDown", "bg": "#EEECF8", "modes": ["light"], "usage": "body-text" },
+    { "id": "RN insight/improving on accent tint",    "fg": "pattern.insight.improving", "bg": "#EEECF8", "modes": ["light"], "usage": "body-text", "note": "The trend badge word. Reached 4.39:1 before mood.ink was re-solved against this backdrop — found by measuring the port, not by review." },
+    { "id": "RN insight/trendDown on accent tint",  "fg": "pattern.insight.worsening", "bg": "#EEECF8", "modes": ["light"], "usage": "body-text" },
     { "id": "RN painScale/0 ink on raised",         "fg": "color.painScale.0.ink", "bg": "color.surface.raised", "usage": "large-text", "note": "The report's pain figure sits on a card; the onboarding numeral sits on the page. Both backdrops now declared." },
     { "id": "RN painScale/5 ink on raised",         "fg": "color.painScale.5.ink", "bg": "color.surface.raised", "usage": "large-text" },
     { "id": "RN painScale/10 ink on raised",        "fg": "color.painScale.10.ink", "bg": "color.surface.raised", "usage": "large-text" },
@@ -245,6 +245,12 @@
     { "id": "fastPath/worse edge when selected", "fg": "pattern.fastPath.worse.ink", "bg": "pattern.fastPath.optionFill", "usage": "ui-boundary" },
     { "id": "fastPath/option label at rest", "fg": "color.text.primary", "bg": "pattern.fastPath.optionFill", "usage": "body-text" },
     { "id": "fastPath/option descriptor at rest", "fg": "color.text.secondary", "bg": "pattern.fastPath.optionFill", "usage": "body-text" },
-    { "id": "fastPath/option edge at rest", "fg": "pattern.fastPath.optionEdge", "bg": "pattern.fastPath.optionFill", "usage": "decorative", "note": "Unselected outline. Decorative because the option fill already lifts off surface.base and the label carries the option." }
+    { "id": "fastPath/option edge at rest", "fg": "pattern.fastPath.optionEdge", "bg": "pattern.fastPath.optionFill", "usage": "decorative", "note": "Unselected outline. Decorative because the option fill already lifts off surface.base and the label carries the option." },
+    { "id": "insight/headline on card",  "fg": "pattern.insight.headline", "bg": "color.surface.card", "usage": "body-text", "note": "The sentence that outranks the chart (P4). Declared against the family rather than leaning on text/primary — these are refs today, and this is what notices if one is repointed." },
+    { "id": "insight/improving on card", "fg": "pattern.insight.improving", "bg": "color.surface.card", "usage": "body-text", "note": "The trend word, on the CARD — not on a tint of itself. The badge used to fill with 13% of its own category mark and print the word on top, which is the failure this system has hit four separate times. Removing the fill removed the class; the contract only ever asked for icon plus word." },
+    { "id": "insight/worsening on card", "fg": "pattern.insight.worsening", "bg": "color.surface.card", "usage": "body-text" },
+    { "id": "insight/steady on card",    "fg": "pattern.insight.steady",    "bg": "color.surface.card", "usage": "body-text" },
+    { "id": "insight/chart line on card","fg": "pattern.insight.chartLine", "bg": "color.surface.card", "usage": "ui-boundary", "note": "The data stroke. A sentence states the finding above it, so the line supports rather than carries (P4)." },
+    { "id": "insight/chart grid on card","fg": "pattern.insight.chartGrid", "bg": "color.surface.card", "usage": "decorative", "note": "Gridlines. Deliberately quieter than the data — a grid that competes with the line is noise." }
   ]
 }

@@ -1432,7 +1432,7 @@ function ProgressScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void
         {/* PAIN TREND CARD: C5 insight sentence above chart + C4 corridor */}
         <Card mode={mode}>
           {/* C5: InsightSentence comes FIRST (above chart), not below */}
-          <InsightSentence text="Pain trending down over the last 30 days." trend="down" category="pain" mode={mode} />
+          <InsightSentence text="Pain trending down over the last 30 days." direction="down" benefit="improving" mode={mode} />
           {/* C4: Corridor band (pain 2–5, common knee rehab range) */}
           <PainSparklineWithCorridor data={PAIN_DATA} category="pain" mode={mode} height={64}
             showCorridor corridorLabel="Common range for knee rehab, weeks 4–6 · Everyone heals differently ↗" />
@@ -1489,12 +1489,12 @@ function ProgressScreen({ mode, onPaywall }: { mode: Mode; onPaywall: () => void
             C5: InsightSentence above each chart.
             No corridor band (corridor only on main pain chart). */}
         {[
-          { label: "Sleep quality", insight: "Sleep averaging 7.1h — up from 6.2h last week.", cat: "sleep" as Category,  trend: "up" as const, data: [5,6,7,6,7,7,8,7,7,8] },
-          { label: "Energy",        insight: "Energy gradually improving over the past 10 days.", cat: "energy" as Category, trend: "up" as const, data: [2,3,3,4,3,4,5,4,5,5] },
-          { label: "Mobility",      insight: "Mobility scores climbing steadily since week 5.",   cat: "mood" as Category,   trend: "up" as const, data: [3,3,4,4,5,4,5,6,5,6] },
+          { label: "Sleep quality", insight: "Sleep averaging 7.1h — up from 6.2h last week.", cat: "sleep" as Category,  direction: "up" as const, benefit: "improving" as const, data: [5,6,7,6,7,7,8,7,7,8] },
+          { label: "Energy",        insight: "Energy gradually improving over the past 10 days.", cat: "energy" as Category, direction: "up" as const, benefit: "improving" as const, data: [2,3,3,4,3,4,5,4,5,5] },
+          { label: "Mobility",      insight: "Mobility scores climbing steadily since week 5.",   cat: "mood" as Category,   direction: "up" as const, benefit: "improving" as const, data: [3,3,4,4,5,4,5,6,5,6] },
         ].map(chart => (
           <Card key={chart.label} mode={mode} style={{ paddingBottom: 8 }}>
-            <InsightSentence text={chart.insight} trend={chart.trend} category={chart.cat} mode={mode} />
+            <InsightSentence text={chart.insight} direction={chart.direction} benefit={chart.benefit} mode={mode} />
             <PainSparklineWithCorridor data={chart.data} category={chart.cat} mode={mode} height={44} />
           </Card>
         ))}

@@ -347,9 +347,9 @@ const THEMES = {
           "lineHeight": 22,
           "tracking": 0
         },
-        "trendUp": "#A8D9B8",
-        "trendDown": "#F9ABA3",
-        "trendFlat": "#9B97B8",
+        "improving": "#A8D9B8",
+        "worsening": "#F9ABA3",
+        "steady": "#9B97B8",
         "chartLine": "#7C6FCD",
         "chartGrid": "#2E2C4588"
       },
@@ -753,9 +753,9 @@ const THEMES = {
           "lineHeight": 22,
           "tracking": 0
         },
-        "trendUp": "#35784B",
-        "trendDown": "#AE4571",
-        "trendFlat": "#6B6890",
+        "improving": "#35784B",
+        "worsening": "#AE4571",
+        "steady": "#6B6890",
         "chartLine": "#7C6FCD",
         "chartGrid": "#E4E1F588"
       },

@@ -51,7 +51,7 @@
 // EXIT:  1 if either count exceeds its budget.
 // ============================================================
 
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { consumerFiles, ROOT } from "./consumerFiles.mjs";
@@ -83,6 +83,30 @@ for (const [fam, node] of Object.entries(tokens.modes.dark.pattern)) {
   }
 }
 
+// ── THE SECOND CONSUMER ─────────────────────────────────────────────────────
+// This scanned only the web prototype until `insight.*` was renamed and the RN
+// app stopped compiling. The family was reported DORMANT while four screens in
+// app/src were consuming it — a half-truth, which is worse than an unknown
+// because it reads like an answer.
+//
+// The token source has two consumers by design (§7: one source, two platforms),
+// so dormancy has to mean "nothing anywhere renders it". The RN app is included
+// here on the same terms as the prototype: everything under app/src, minus the
+// generated vendored artifacts.
+function rnFiles() {
+  const base = resolve(ROOT, "app/src");
+  if (!existsSync(base)) return [];
+  const out = [];
+  (function walk(dir) {
+    for (const entry of readdirSync(dir)) {
+      const full = dir + "/" + entry;
+      if (statSync(full).isDirectory()) walk(full);
+      else if (/\.tsx?$/.test(entry) && !entry.includes(".generated.")) out.push(full);
+    }
+  })(base);
+  return out;
+}
+
 // ── CONSUMED (family level) ─────────────────────────────────────────────────
 // A family counts as consumed when its name is used as a token PATH, not merely
 // when the word appears — so a comment mentioning the Toast does not count as
@@ -90,6 +114,7 @@ for (const [fam, node] of Object.entries(tokens.modes.dark.pattern)) {
 const sources = consumerFiles()
   .filter((f) => /\.tsx?$/.test(f))
   .map((f) => readFileSync(resolve(ROOT, f), "utf8"))
+  .concat(rnFiles().map((f) => readFileSync(f, "utf8")))
   .join("\n");
 
 const consumed = new Set(

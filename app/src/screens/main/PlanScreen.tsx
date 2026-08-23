@@ -204,7 +204,7 @@ function ProgressionCard({
   const easeBack = progression.recommendation === "ease_back";
   const advance = progression.recommendation === "advance";
 
-  const accent = easeBack ? tokens.pattern.insight.trendDown : advance ? tokens.pattern.insight.trendUp : tokens.color.accent.default;
+  const accent = easeBack ? tokens.pattern.insight.worsening : advance ? tokens.pattern.insight.improving : tokens.color.accent.default;
   const accentSoft = tokens.color.accent.surface;
   const heading = easeBack
     ? "Ease back for now"
