@@ -2,12 +2,11 @@
   "$note": "Token consumption ratchet. BOTH NUMBERS MAY ONLY DECREASE.",
   "$principle": "defined -> consumed -> rendered -> measured. A definition is not evidence.",
   "$generated": "2026-08-23",
-  "dormant": 1,
+  "dormant": 0,
   "unmeasured": 0,
-  "$dormantFamilies": [
-    "welcomeBack"
-  ],
+  "$dormantFamilies": [],
   "$unmeasuredRoles": [],
   "unmeasuredSemantic": 0,
-  "$unmeasuredSemanticRoles": []
+  "$unmeasuredSemanticRoles": [],
+  "$closed": "Zero dormant families. Every one of the five that were ever dormant shipped a defect while nothing rendered it - toast.*, capture.*, share.* and paywall.savingsLabel carried wrong roles, and welcomeBack.* carried a wrong VALUE: the system's only use of the alpha step named 'Hairline fill', where every other tinted container uses the standard one. Dormancy was never a neutral fact here. The budget stays at zero so a NEW family cannot be added without a consumer."
 }

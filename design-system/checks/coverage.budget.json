@@ -1,12 +1,12 @@
 {
   "$note": "Maximum permitted raw literals per category in consumer code. MAY ONLY DECREASE. Regenerate with --update after a migration slice; --update will not raise a budget even if the count grew.",
-  "$generated": "2026-08-17",
+  "$generated": "2026-08-23",
   "budgets": {
     "rgba()": 2,
-    "raw hex": 58,
+    "raw hex": 54,
     "raw duration": 79,
     "raw z-index": 0,
     "raw radius": 0,
-    "raw font size": 23
+    "raw font size": 21
   }
 }

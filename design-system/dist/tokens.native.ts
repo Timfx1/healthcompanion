@@ -381,6 +381,7 @@ const THEMES = {
         "cardTo": "#1E1D2E",
         "title": "#F0EFFE",
         "meta": "#B0ACCF",
+        "edge": "#7C6FCD44",
         "brandmark": "#F0EFFE55",
         "aspectRatio": 0.5625
       },
@@ -392,7 +393,8 @@ const THEMES = {
         "divider": "#2E2C45"
       },
       "welcomeBack": {
-        "surface": "#7C6FCD14",
+        "surface": "#7C6FCD22",
+        "edge": "#7C6FCD44",
         "message": "#F0EFFE"
       },
       "paywall": {
@@ -787,6 +789,7 @@ const THEMES = {
         "cardTo": "#1E1D2E",
         "title": "#F0EFFE",
         "meta": "#B0ACCF",
+        "edge": "#7C6FCD44",
         "brandmark": "#F0EFFE55",
         "aspectRatio": 0.5625
       },
@@ -798,7 +801,8 @@ const THEMES = {
         "divider": "#E4E1F5"
       },
       "welcomeBack": {
-        "surface": "#7C6FCD14",
+        "surface": "#7C6FCD22",
+        "edge": "#7C6FCD44",
         "message": "#1A1830"
       },
       "paywall": {

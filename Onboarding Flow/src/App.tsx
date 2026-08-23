@@ -66,6 +66,8 @@ import type { Mode } from "./components/tokens";
 //                                     | noChange | readyWithRedFlags
 //   ?screen=app:report-exporting      the report with an export in flight
 //   ?screen=app:report-failed         the report after an export failed
+//   ?screen=app:welcome-back         Home on the first open after an absence (P2)
+//   ?screen=app:share                 the milestone share card preview (P8)
 //   &mode=dark|light                  forces colour mode (default dark)
 //   &motion=off                       suppresses animations via .no-motion
 //
@@ -77,7 +79,7 @@ import type { Mode } from "./components/tokens";
 // ============================================================
 type Route =
   | { kind: "onboarding"; step: number }
-  | { kind: "app"; tab: Tab; overlay: "checkin" | "paywall" | "add" | "capture" | null; pinToast?: boolean;
+  | { kind: "app"; tab: Tab; overlay: "checkin" | "paywall" | "add" | "capture" | null; pinToast?: boolean; welcomeBack?: boolean; share?: boolean;
       captureText?: string; safety?: boolean; article?: string | null; fastChoice?: number | null;
       saved?: boolean; premium?: boolean; detail?: DetailKey | null;
       report?: FixtureName | null; exportState?: ExportState };
@@ -149,6 +151,17 @@ function parseRoute(): { route: Route | null; mode: Mode } {
     // an interaction, and the harness advances the clock past that before it
     // captures. The toast carried a dead code path and an unused token family
     // for exactly as long as nothing could photograph it.
+    // The welcome-back state is DERIVED from a persisted timestamp, which makes
+    // it unphotographable by the harness: a baseline cannot wait three days.
+    // This route forces the rendered state WITHOUT touching storage, so the
+    // image proves the surface can be drawn while the behaviour spec - which
+    // seeds a real absence and reloads - proves the rule that reaches it. Those
+    // are two different claims and neither substitutes for the other.
+    if (target === "welcome-back") return { route: { kind: "app", tab: "home", overlay: null, welcomeBack: true }, mode };
+    // ShareCardScreen was the last surface in the product with no route and no
+    // baseline. share.* was found carrying dayCard's 1.58:1 bug for precisely
+    // that reason - nothing rendered the tokens, so nothing could disagree.
+    if (target === "share") return { route: { kind: "app", tab: "timeline", overlay: null, share: true }, mode };
     if (target === "toast") return { route: { kind: "app", tab: "home", overlay: null, pinToast: true }, mode };
     const tabs: Tab[] = ["home", "timeline", "progress", "profile"];
     if ((tabs as string[]).includes(target)) return { route: { kind: "app", tab: target as Tab, overlay: null }, mode };
@@ -171,7 +184,7 @@ export default function App() {
   if (DEV_ROUTE) {
     return DEV_ROUTE.kind === "onboarding"
       ? <Onboarding initialMode={DEV_MODE} initialScreen={DEV_ROUTE.step} />
-      : <MainApp initialMode={DEV_MODE} initialTab={DEV_ROUTE.tab} initialOverlay={DEV_ROUTE.overlay} pinToast={DEV_ROUTE.pinToast} initialReport={DEV_ROUTE.report ?? null} initialExport={DEV_ROUTE.exportState ?? "idle"} initialCaptureText={DEV_ROUTE.captureText ?? ""} initialSafety={DEV_ROUTE.safety ?? false} initialArticle={DEV_ROUTE.article ?? null} initialSaved={DEV_ROUTE.saved ?? false} initialPremium={DEV_ROUTE.premium ?? false} initialDetail={DEV_ROUTE.detail ?? null} initialFastChoice={DEV_ROUTE.fastChoice ?? null} />;
+      : <MainApp initialMode={DEV_MODE} initialTab={DEV_ROUTE.tab} initialOverlay={DEV_ROUTE.overlay} pinToast={DEV_ROUTE.pinToast} initialReport={DEV_ROUTE.report ?? null} initialExport={DEV_ROUTE.exportState ?? "idle"} initialCaptureText={DEV_ROUTE.captureText ?? ""} initialSafety={DEV_ROUTE.safety ?? false} initialArticle={DEV_ROUTE.article ?? null} initialSaved={DEV_ROUTE.saved ?? false} initialPremium={DEV_ROUTE.premium ?? false} initialDetail={DEV_ROUTE.detail ?? null} initialFastChoice={DEV_ROUTE.fastChoice ?? null} forceWelcomeBack={DEV_ROUTE.welcomeBack ?? false} initialShare={DEV_ROUTE.share ?? false} />;
   }
 
   if (phase === "onboarding") {

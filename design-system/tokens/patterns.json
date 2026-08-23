@@ -102,13 +102,14 @@
   "share": {
     "$intent": "Milestone artifacts people choose to send. The honest growth loop.",
     "$contract": "Dignified, story-friendly ratio, light brandmark, MODE-INVARIANT. STRICTLY user-initiated — no share prompts anywhere.",
-    "$status": "RESERVED — ShareCardScreen exists in code but has no Figma frame, and still has no dev route or baseline. MilestoneDetail is the first surface to consume this family.",
+    "$status": "CONSUMED. ShareCardScreen has no Figma frame and never will have one - it was drawn in code - but it now renders this family rather than hardcoding #fff, and has a dev route and baselines in both modes. That gap is why the family kept dayCard's 1.58:1 bug: a nominal consumer that consumes nothing looks exactly like no consumer, except that it does not report as dormant. MilestoneDetail was the first real consumer and is how the bug surfaced.",
     "$bug": "This family carried the SAME defect as dayCard, and it was never fixed because nothing consumed it. `cardFrom` referenced {color.accent.dim} — mode-invariant, a deep indigo — while `title` referenced {color.text.primary}, which flips to near-black in light. Light mode therefore put #1A1830 on #3D3668: 1.58:1, the identical figure §11 records as the worst contrast in the system. accent.dim's own note already said 'NOT safe behind secondary text'. It survived because ShareCardScreen hardcodes #fff and never rendered these tokens — the Toast situation exactly: the screen was right and the family was wrong.",
     "$why": "The resolution is NOT dayCard's, though. A share card is an ARTIFACT that leaves the app: the recipient never sees the sender's colour mode, so a card that changes with it is inventing a variable the medium does not have. The screen always drew one dark card in both modes, and the tokens now say what it always did — the same reasoning that made the Toast mode-invariant.",
     "cardFrom":   { "$type": "ref", "$value": "{color.lavender.700}", "$description": "Mode-invariant BY DECISION. Was {color.accent.dim}, which resolves to the same hex but implied it should track the accent." },
     "cardTo":     { "$type": "ref", "$value": "{color.indigo.800}",   "$description": "Mode-invariant. Was {color.surface.raised}, which flipped to white in light and gave the title nothing to sit on." },
     "title":      { "$type": "ref", "$value": "{color.ink.50}",       "$description": "9.60 on cardFrom, 14.55 on cardTo. Was {color.text.primary}." },
     "meta":       { "$type": "ref", "$value": "{color.paper.400}",    "$description": "5.01 on cardFrom, 7.59 on cardTo. Was {color.text.secondary}, which reached 3.90 at the gradient START even in dark — a failure that existed on BOTH sides and was declared on neither." },
+    "edge":       { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint27}" }, "$description": "The card's own boundary against the page. Added when ShareCardScreen was finally brought under measurement: the screen had been drawing accent at exactly this step as a raw literal since it was written, so nothing was chosen here - the value was promoted to the name it had already earned, the same move accent.surface records. Mode-invariant like the rest of this family, which is what makes it safe on a card that never changes with the sender's theme." },
     "brandmark":  { "$type": "colorAlpha", "$value": { "base": "{color.ink.50}", "alpha": "{alpha.tint33}" }, "$description": "Light touch. The user's milestone is the subject; the app is a footnote." },
     "aspectRatio":{ "$type": "number", "$value": 0.5625, "$description": "9:16 story ratio." }
   },
@@ -116,7 +117,7 @@
   "report": {
     "$intent": "The doctor report — the spec flagship and the category's emotional peak.",
     "$contract": "Restrained, print-friendly, scannable by a clinician in 60 seconds. 'What changed since last visit' is the visually dominant block.",
-    "$status": "RESERVED — exists in NEITHER Figma nor code, despite being linked from both Home and Profile. Recorded as a product risk in extraction/screens.json.",
+    "$status": "CONSUMED. This was stale: it claimed the report existed in neither Figma nor code, which stopped being true when ReportPreview was built with seven states, a date-range picker and a print layer of its own. A $status that outlives its own subject is the same species of drift as a stale open item in DESIGN_CRITERIA §11 - it teaches people to skim the field. Still no Figma frame; the screen is the source.",
     "$never": "No lock badge, no paywall, no premium treatment anywhere on this surface or its export. Free forever.",
     "surface":       { "$type": "ref", "$value": "{color.surface.raised}" },
     "heading":       { "$type": "ref", "$value": "{color.text.primary}" },
@@ -128,9 +129,10 @@
   "welcomeBack": {
     "$intent": "Meet a returning user with warmth, never a recap of what they missed.",
     "$contract": "One warm line, then straight into the fast path. No count of missed days, no catch-up prompt, no apology required.",
-    "$status": "RESERVED — no design in either source.",
-    "surface": { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint08}" } },
-    "message": { "$type": "ref", "$value": "{color.text.primary}" }
+    "$bug": "This family was RESERVED, and it shipped the same shape of defect the other four dormant families did - not a wrong role this time, but a wrong VALUE nothing had ever been measured against. `surface` was the system's ONLY use of alpha.tint08, whose own note calls it a 'Hairline fill'. Every other tinted container in the product - accent.surface, corridor.phaseChip, accumulation.counterFill, historyFade.pillFill, report.changeBlock, state.selectedFill - is tint13, 'the most common tint in the product'. A container built on the hairline step would have read as a rendering fault rather than as a decision, and nobody could see that because nothing drew it.",
+    "surface": { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint13}" }, "$description": "The standard tint step, not the hairline one. 1.16:1 against the page in both modes - the same presence as every other tinted container." },
+    "edge":    { "$type": "colorAlpha", "$value": { "base": "{color.accent.default}", "alpha": "{alpha.tint27}" }, "$description": "Added with the first consumer. Every accent-tinted container in the system pairs its fill with a tint27 edge; this family had a fill and nothing else, which is only invisible while nothing renders it. Decorative on the same argument as its four siblings: the fill carries the grouping, so the edge is reinforcement rather than the sole affordance." },
+    "message": { "$type": "ref", "$value": "{color.text.primary}", "$description": "PRIMARY ink, and it was already right. Text on an accent tint is precisely the class that failed four times at secondary weight, so this role is left alone and measured: 13.92 light, 13.88 dark on the new fill." }
   },
 
   "paywall": {

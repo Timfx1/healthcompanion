@@ -1033,6 +1033,104 @@ The fast path's SELECTED state is now closed too (`app:checkin-selected`); the e
 
 ---
 
+### Resolved — welcomeBack, the last dormant family, and the fifth defect found by rendering one
+
+Dormancy is now zero, and the ratchet is closed at zero.
+
+**Five families have been dormant in this system. All five shipped a defect.**
+`toast.*`, `capture.*` and `share.*` carried wrong roles; `paywall.savingsLabel`
+rendered a category MARK as text at 1.58:1. `welcomeBack.*` broke the pattern
+only in the sense that its roles were right and its VALUE was wrong:
+
+`surface` was the product's **only** use of `alpha.tint08`, a step whose own
+note in `primitives.json` calls it a *"Hairline fill"*. Every one of the eight
+other accent-tinted containers — `accent.surface`, `corridor.phaseChip`,
+`accumulation.counterFill`, `historyFade.pillFill`, `report.changeBlock`,
+`state.selectedFill` and their siblings — uses `tint13`, *"the most common tint
+in the product"*. A container built on the hairline step measures 1.08:1 against
+the page where the standard step measures 1.16:1; it would have read as a
+rendering fault rather than as a decision. The family also had a fill and **no
+edge**, alone among the tinted containers.
+
+Both were unfindable by reading. The family was marked `RESERVED — no design in
+either source`, which is an honest way of saying nobody had ever chosen these
+values against anything.
+
+`message` was left exactly as it was, and that is worth recording too: PRIMARY
+ink on an accent tint is precisely the resolution the four secondary-on-a-tint
+failures were each fixed into. Checking a contract against the measurement layer
+means confirming what is right as much as finding what is wrong.
+
+**The state had no route because it had no rule.** `HomeScreen` has carried an
+`isWelcomeBack` prop since it was written, defaulted to `false`, and **no caller
+had ever passed it**. §10 asks for a welcome-back flow that works after
+simulated absence; what existed was an unreachable branch containing a string.
+
+- `components/absence.ts` decides it from a persisted timestamp. Three days, so
+  an ordinary weekend is not an absence. A first-ever open is not a return.
+- **The module returns a boolean and destroys the duration.** That is P2 as
+  architecture rather than as copy review: a `daysAway` in scope is a number
+  somebody eventually renders, and "you've been away 12 days" is the exact guilt
+  mechanic the principle exists to make unbuildable. The safest place to stop a
+  count reaching a screen is before it leaves the module that computes it.
+- Reading the return **spends** it — deciding also records the present, so the
+  same return cannot be greeted twice. A welcome-back that reappears on every
+  reload is a nag, which is the failure mode one principle over.
+- On a return the time-of-day greeting is suppressed, so there is exactly one
+  warm line rather than two competing ones.
+
+**Route and baseline for the drawing; behaviour tests for the rule.** The route
+`?screen=app:welcome-back` forces the rendered state and writes no storage — a
+baseline must not be able to spend a real return. The five behaviour tests never
+touch that route: they seed the real storage key and load the app normally, so
+what runs is the rule. One of them asserts the rendered copy contains **no digit
+at all** and none of the debt vocabulary — a principle expressed as a test
+rather than as a review note.
+
+All five were then **mutation-tested**, because this section already records a
+ratchet that could never fail. Severing the `isWelcomeBack` prop — the defect
+that actually existed — fails three of them. Removing the storage write fails
+exactly the reload test. Putting "It has been 12 days" in the copy fails exactly
+the P2 test. A test that has not been seen to fail is not evidence.
+
+### Resolved — ShareCardScreen, the last surface with no address
+
+`?screen=app:share`, and a baseline in both modes. This closes the gap this
+section has carried since the screen inventory was taken.
+
+The screen was reachable only by tapping Share on a milestone, and that is not a
+cosmetic problem: **`share.*` kept the Day-N card's 1.58:1 bug for its entire
+life because this screen hardcoded `#fff` and never rendered the tokens it was
+declared for.** A family with a nominal consumer that consumes nothing is
+indistinguishable from a family with no consumer, except that it does not show
+up as dormant.
+
+Re-domained onto the family it was supposed to be using:
+
+- The three-stop gradient became **two** stops. `share.*` declares exactly two,
+  and the manifest measures title, meta and the day label against both of them.
+  The middle literal was a backdrop nothing measured.
+- `share.edge` was added — not chosen. The screen had been drawing accent at
+  exactly `tint27` as a raw literal since it was written, so the value was
+  promoted to the name it had already earned, the same move `accent.surface`
+  records.
+- The day pill uses `accumulation.counterFill` and `counterEdge` with the label
+  in `share.title`. Both fills are the accent at a fixed alpha and so are
+  mode-invariant, which is what makes them safe on an artifact that leaves the
+  app; the manifest already records `counterLabel` — which is mode-PAIRED —
+  measuring 2.65:1 here.
+- `#fff`, `#0D0C16` and `#FFFFFF80` are gone. The literal ratchet fell from 58
+  raw hex to 54, and the font-size ratchet from 23 to 21.
+
+### Resolved — `composited` learned to stack, because a border is not on the page
+
+Declaring the welcome-back edge needed two layers: a CSS border paints over the
+element's own background, so a translucent edge on a translucent fill really is
+two deep. The single-layer form could not express it, and the only alternative
+was the hand-computed literal this section has just finished removing. The field
+now accepts an ordered list. The share card's day-pill border needed the same
+thing for the same reason.
+
 ## 12. How this is enforced
 
 | Check | What it catches |
@@ -1171,13 +1269,15 @@ Product concepts with fixed contracts, defined once so they cannot drift between
 | `share.cardTo` | `#1E1D2E` | `#1E1D2E` |
 | `share.title` | `#F0EFFE` | `#F0EFFE` |
 | `share.meta` | `#B0ACCF` | `#B0ACCF` |
+| `share.edge` | `#7C6FCD44` | `#7C6FCD44` |
 | `share.brandmark` | `#F0EFFE55` | `#F0EFFE55` |
 | `report.surface` | `#1E1D2E` | `#FFFFFF` |
 | `report.heading` | `#F0EFFE` | `#1A1830` |
 | `report.meta` | `#9B97B8` | `#646186` |
 | `report.changeBlock` | `#7C6FCD22` | `#7C6FCD22` |
 | `report.divider` | `#2E2C45` | `#E4E1F5` |
-| `welcomeBack.surface` | `#7C6FCD14` | `#7C6FCD14` |
+| `welcomeBack.surface` | `#7C6FCD22` | `#7C6FCD22` |
+| `welcomeBack.edge` | `#7C6FCD44` | `#7C6FCD44` |
 | `welcomeBack.message` | `#F0EFFE` | `#1A1830` |
 | `paywall.sheet` | `#1E1D2E` | `#FFFFFF` |
 | `paywall.scrim` | `#0000008C` | `#0000008C` |
@@ -1274,13 +1374,13 @@ The `z` order is fixed: an overlay must never be authored with an ad-hoc z-index
 
 ### Contrast manifest
 
-**211 declared pairs, 372 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
+**215 declared pairs, 380 pair-mode combinations.** Audited by `checks/contrast.mjs`, with translucent foregrounds composited over their declared backdrop before measurement.
 
 | Usage class | Pairs |
 |---|---|
-| `body-text` | 117 |
+| `body-text` | 118 |
 | `ui-boundary` | 17 |
-| `decorative` | 43 |
+| `decorative` | 46 |
 | `large-text` | 14 |
 | `print-body` | 13 |
 | `print-rule` | 3 |

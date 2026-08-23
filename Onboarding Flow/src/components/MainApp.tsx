@@ -55,6 +55,8 @@ import { cat, type Category } from "./patterns/category";
 import ReportPreview, { type ExportState } from "./ReportPreview";
 import { fixtures, type FixtureName } from "./reportFixtures";
 import CaptureField from "./patterns/CaptureField";
+import WelcomeBack from "./patterns/WelcomeBack";
+import { openedNow } from "./absence";
 import QuickCaptureSheet from "./QuickCaptureSheet";
 import AddTimelineEntry, { type EntryKind } from "./AddTimelineEntry";
 import SafetyScreen from "./SafetyScreen";
@@ -576,78 +578,102 @@ function PaywallSheet({ mode, onClose }: { mode: Mode; onClose: () => void }) {
 
 // ============================================================
 // COMPONENT: ShareCardScreen
-// PURPOSE: C7 — Full-screen share card preview.
-//   Triggered only when user explicitly taps "Share" on a milestone entry
-//   in the Timeline. Never auto-prompted.
+// PURPOSE: C7 / P8 — Full-screen share card preview.
+//   Triggered only when the user explicitly taps "Share" on a milestone entry
+//   in the Timeline, or from MilestoneDetail. Never auto-prompted.
 //   zIndex 45 — above check-in (40), below paywall (50).
+//
+// THIS SCREEN WAS THE LAST ONE WITH NO ADDRESS.
+//
+// Every other surface in the product could be photographed; this one could be
+// reached only by tapping through a milestone, so the visual suite never saw
+// it. That is not a cosmetic gap. `share.*` shipped the SAME defect as the
+// Day-N card — `cardFrom` on a mode-invariant deep indigo under a `title` that
+// flipped to near-black in light, 1.58:1 — and it survived review because THIS
+// SCREEN HARDCODED #fff AND NEVER RENDERED THE TOKENS. The family was declared
+// for a consumer that was not consuming it. It now has `?screen=app:share` and
+// a baseline in both modes.
+//
+// TOKENS. The card is `share.*` and nothing else. That is a rule, not a
+// preference: the artifact LEAVES THE APP, and its recipient never sees the
+// sender's colour mode, so every value on it is mode-invariant by contract.
+// Mixing in a mode-paired family is the exact bug the manifest records against
+// the Day-N pill, which measured 2.65:1 in light when it used
+// `accumulation.counterLabel` — a dark lavender on a dark card.
+//
+//   background   share.cardFrom -> share.cardTo   (TWO stops, matching the two
+//                declared backdrops; the third literal stop this screen used to
+//                carry was a backdrop nothing measured)
+//   border       share.edge
+//   brandmark    share.brandmark
+//   title        share.title
+//   day pill     accumulation.counterFill + counterEdge, label in share.title
+//                (the fills are accent at a fixed alpha and so are invariant;
+//                only the mode-PAIRED counterLabel was unsafe here)
+//   date, quote  share.meta
 //
 // UI STRUCTURE:
 //   Header: back button (← Back) + "Share milestone" title + spacer.
-//   Center: Share card (280×496px, story ratio ≈ 9:16).
+//   Center: Share card (280px wide, share.aspectRatio ≈ 9:16 story ratio).
 //   Footer: "Share" button (52px gradient) + privacy disclaimer text.
-//
-// SHARE CARD VISUAL (280×496px):
-//   Background: linear-gradient(155deg, accentD, #0D0C16, accentD88).
-//   Border: 1px accent44.
-//   Border-radius: 24px (rounded-3xl).
-//   Content: brandmark (top) + 🎉 emoji + milestone title + day pill + date.
-//   Footer quote: "This app remembers my recovery so I don't have to."
 //   ANIMATION: animate-fade-up — fadeUp 350ms ease-out on mount.
 //
 // BUTTONS:
-//   "← Back":
-//     BUTTON: text + chevron left icon.
-//     ACTION: onClose() → setShareCard(null) in MainApp → screen unmounts.
-//   "Share":
-//     BUTTON: Gradient, 52px. Prototype — no native share API wired.
-//     ACTION: Stub (no-op in this prototype).
+//   "← Back":  onClose() → setShareCard(null) in MainApp → screen unmounts.
+//   "Share":   Prototype stub — no native share API in the web prototype.
+//              P8 is explicit that sharing is user-initiated; the stub is the
+//              absence of a Phase 2 integration, not the absence of a handler.
 //   Privacy note: "Share is always your choice — we never prompt automatically."
-//     Non-interactive text (C7 principle).
 // ============================================================
 function ShareCardScreen({ mode, milestone, onClose }: { mode: Mode; milestone: { title: string; day: number; date: string }; onClose: () => void }) {
+  const t = theme(mode);
+  const SH = t.pattern.share;
+  const CARD_WIDTH = 280;
   return (
     <div className="absolute inset-0 flex flex-col" style={{ zIndex: scale.z.feature, background: s(D.base, D.lBase, mode) }}>
       <div className="flex items-center justify-between px-5 pt-4 pb-3 shrink-0">
         {/* BUTTON: "← Back" → onClose() → ShareCardScreen unmounts */}
-        <button onClick={onClose} className="btn-press flex items-center gap-2" style={{ background: "none", border: "none", cursor: "pointer", color: s(D.textSec, D.lTextSec, mode) }}>
+        <button onClick={onClose} className="btn-press flex items-center gap-2" style={{ background: "none", border: "none", cursor: "pointer", color: t.color.text.secondary }}>
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5L7 10l5 5"/></svg>
           <span style={{ fontSize: scale.font.size.base }}>Back</span>
         </button>
-        <div style={{ fontSize: scale.font.size.md, fontWeight: 600, color: s(D.text, D.lText, mode) }}>Share milestone</div>
+        <div style={{ fontSize: scale.font.size.md, fontWeight: 600, color: t.color.text.primary }}>Share milestone</div>
         {/* Spacer for centered title layout */}
         <div style={{ width: 60 }} />
       </div>
       <div className="flex-1 flex items-center justify-center px-6">
-        {/* SHARE CARD: 280×496px, story ratio 9:16 approximated.
-            ANIMATION: animate-fade-up — fadeUp 350ms ease-out on mount. */}
+        {/* SHARE CARD. Height comes from share.aspectRatio rather than a second
+            literal, so the story ratio is a token the design system owns. */}
         <div className="animate-fade-up flex flex-col items-center justify-between rounded-3xl overflow-hidden"
-          style={{ width: 280, height: 496, background: `linear-gradient(155deg,${D.accentD} 0%,#0D0C16 60%,${D.accentD}88 100%)`, border: `1px solid ${D.accent}44`, padding: "40px 28px 32px" }}>
-          {/* Brandmark — subtle watermark at top */}
-          <div style={{ fontSize: scale.font.size["3xs"], fontWeight: 700, letterSpacing: "0.14em", color: `${D.accentL}66`, textTransform: "uppercase" }}>Recovery Companion</div>
+          style={{ width: CARD_WIDTH, height: Math.round(CARD_WIDTH / SH.aspectRatio), background: `linear-gradient(155deg, ${SH.cardFrom} 0%, ${SH.cardTo} 100%)`, border: `1px solid ${SH.edge}`, padding: "40px 28px 32px" }}>
+          {/* Brandmark — a watermark by contract. The milestone is the subject. */}
+          <div style={{ fontSize: scale.font.size["3xs"], fontWeight: 700, letterSpacing: "0.14em", color: SH.brandmark, textTransform: "uppercase" }}>Recovery Companion</div>
           {/* Center: milestone celebration content (dynamic from milestone prop) */}
           <div className="flex flex-col items-center text-center gap-3">
             <div style={{ fontSize: 48, lineHeight: 1 }}>🎉</div>
-            <div style={{ fontSize: 22, fontWeight: 700, color: "#fff", lineHeight: 1.2 }}>{milestone.title}</div>
+            <div style={{ fontSize: scale.font.size["2xl"], fontWeight: 700, color: SH.title, lineHeight: 1.2 }}>{milestone.title}</div>
             <div className="flex items-center gap-2">
-              <div className="px-3 py-1 rounded-full" style={{ background: `${D.accent}44`, border: `1px solid ${D.accent}66` }}>
-                <span style={{ fontSize: scale.font.size.sm, fontWeight: 700, color: D.accentL }}>Day {milestone.day}</span>
+              {/* P2: an accumulation pill, never a streak. The LABEL is share.title
+                  and not counterLabel — see the header note and the manifest. */}
+              <div className="px-3 py-1 rounded-full" style={{ background: t.pattern.accumulation.counterFill, border: `1px solid ${t.pattern.accumulation.counterEdge}` }}>
+                <span style={{ fontSize: scale.font.size.sm, fontWeight: 700, color: SH.title }}>Day {milestone.day}</span>
               </div>
-              <span style={{ fontSize: scale.font.size.sm, color: s(D.textSec, "#FFFFFF80", mode) }}>{milestone.date}</span>
+              <span style={{ fontSize: scale.font.size.sm, color: SH.meta }}>{milestone.date}</span>
             </div>
           </div>
           {/* Footer quote — fixed copy */}
-          <div style={{ fontSize: scale.font.size.xs, color: `${D.accentL}88`, textAlign: "center", fontStyle: "italic" }}>"This app remembers my recovery so I don't have to."</div>
+          <div style={{ fontSize: scale.font.size.xs, color: SH.meta, textAlign: "center", fontStyle: "italic" }}>"This app remembers my recovery so I don't have to."</div>
         </div>
       </div>
       <div className="px-5 pb-8 flex flex-col gap-3 shrink-0">
         {/* BUTTON: "Share" — prototype stub (no native share API) */}
         <button className="btn-press w-full flex items-center justify-center gap-2 rounded-2xl font-semibold"
-          style={{ height: 52, background: `linear-gradient(135deg,${theme(mode).color.cta.from},${theme(mode).color.cta.to})`, color: "#fff", border: "none", cursor: "pointer", fontSize: scale.font.size.md, boxShadow: `0 4px 20px ${D.accent}44` }}>
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round"><path d="M9 2v10M5 6l4-4 4 4M3 14h12"/></svg>
+          style={{ height: 52, background: `linear-gradient(135deg,${t.color.cta.from},${t.color.cta.to})`, color: t.color.cta.label, border: "none", cursor: "pointer", fontSize: scale.font.size.md, boxShadow: `0 4px 20px ${SH.edge}` }}>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M9 2v10M5 6l4-4 4 4M3 14h12"/></svg>
           Share
         </button>
-        {/* C7: explicit opt-in copy — never auto-prompted */}
-        <div style={{ fontSize: scale.font.size["2xs"], color: s(D.textMut, D.lTextSec, mode), textAlign: "center" }}>Share is always your choice — we never prompt automatically.</div>
+        {/* C7/P8: explicit opt-in copy — never auto-prompted */}
+        <div style={{ fontSize: scale.font.size["2xs"], color: t.color.text.secondary, textAlign: "center" }}>Share is always your choice — we never prompt automatically.</div>
       </div>
     </div>
   );
@@ -734,11 +760,11 @@ function HomeScreen({ mode, onCheckIn, onPaywall, onReport, onWeekly, isWelcomeB
       {/* HEADER: Greeting + name + counter + notification bell */}
       <div className="flex items-start justify-between px-5 pt-3 pb-2 shrink-0">
         <div>
-          {/* C3: welcome-back path — no recap of missed days */}
-          {isWelcomeBack
-            ? <div style={{ fontSize: scale.font.size.md, fontWeight: 600, color: s(D.text, D.lText, mode) }}>Good to see you again 🤗</div>
-            : <div style={{ fontSize: scale.font.size.sm, color: s(D.textSec, D.lTextSec, mode) }}>Good morning 👋</div>
-          }
+          {/* P2: on a return the time-of-day greeting is suppressed entirely,
+              so the warm line in the WelcomeBack card below is the ONLY one.
+              Two greetings stacked would read as a system announcing itself
+              rather than as somebody being pleased to see you. */}
+          {!isWelcomeBack && <div style={{ fontSize: scale.font.size.sm, color: s(D.textSec, D.lTextSec, mode) }}>Good morning 👋</div>}
           <div style={{ fontSize: 20, fontWeight: 700, color: s(D.text, D.lText, mode), lineHeight: 1.2 }}>Alex</div>
         </div>
         <div className="flex items-center gap-2">
@@ -756,6 +782,12 @@ function HomeScreen({ mode, onCheckIn, onPaywall, onReport, onWeekly, isWelcomeB
       </div>
 
       <div className="flex flex-col gap-3 px-5 pb-2">
+        {/* P2 WELCOME-BACK. Rendered only on the first open after an absence of
+            ABSENCE_DAYS or more, and never twice for the same return — the
+            decision is spent when it is read (absence.ts). It is given no
+            duration and so cannot render one. */}
+        {isWelcomeBack && <WelcomeBack mode={mode} />}
+
         {/* C2: QUICK CAPTURE FIELD (48px, full-width).
             PURPOSE: Zero-friction journaling. User can type a note and hit Enter
             or tap the ✓ button to save it to their timeline.
@@ -1762,12 +1794,23 @@ export default function MainApp({
   initialPremium = false,
   initialDetail = null as DetailKey | null,
   initialFastChoice = null as number | null,
+  // The welcome-back state is DERIVED from persisted time, not from a flag, so
+  // this hook exists only so the harness can photograph it without pretending
+  // to be a fortnight in the future. Forcing it also SKIPS the storage write:
+  // a baseline must not be able to spend a real user's return.
+  forceWelcomeBack = false,
+  // ShareCardScreen is reached only by tapping Share on a milestone, so it had
+  // no address and no baseline for the whole life of the prototype. That is
+  // exactly how share.* kept dayCard's 1.58:1 bug: the screen hardcoded #fff
+  // and never rendered the tokens it was supposed to be a consumer of.
+  initialShare = false,
 }: {
   initialMode?: Mode; initialTab?: Tab;
   initialOverlay?: "checkin" | "paywall" | "add" | "capture" | null; pinToast?: boolean;
   initialReport?: FixtureName | null; initialExport?: ExportState; initialCaptureText?: string;
   initialSafety?: boolean; initialArticle?: string | null; initialSaved?: boolean; initialPremium?: boolean;
   initialDetail?: DetailKey | null; initialFastChoice?: number | null;
+  forceWelcomeBack?: boolean; initialShare?: boolean;
 }) {
   const [mode, setMode] = useState<Mode>(initialMode);
   const [tab, setTab] = useState<Tab>(initialTab);
@@ -1780,7 +1823,17 @@ export default function MainApp({
   const [savedArticles, setSavedArticles] = useState<string[]>(initialSaved ? [initialArticle ?? ""] : []);
   const [showCheckIn, setShowCheckIn] = useState(initialOverlay === "checkin");
   const [showPaywall, setShowPaywall] = useState(initialOverlay === "paywall");
-  const [shareCard, setShareCard] = useState<{ title: string; day: number; date: string } | null>(null);
+  const [shareCard, setShareCard] = useState<{ title: string; day: number; date: string } | null>(
+    initialShare ? { title: TF.milestonePromoted.title, day: TF.milestonePromoted.dayN, date: TF.milestonePromoted.date } : null,
+  );
+
+  // P2 WELCOME-BACK. Decided in an effect rather than during render because
+  // deciding it WRITES - reading the previous open also spends it, so the card
+  // shows once per return and never becomes a nag. `openedNow` is memoised for
+  // the life of the document, so StrictMode's double mount cannot read back the
+  // timestamp it just wrote and conclude the absence never happened.
+  const [welcomeBack, setWelcomeBack] = useState(forceWelcomeBack);
+  useEffect(() => { if (!forceWelcomeBack) setWelcomeBack(openedNow()); }, [forceWelcomeBack]);
 
   // ROUTING: "checkin" tap opens modal instead of switching tab.
   function handleTab(t: Tab) {
@@ -1811,7 +1864,7 @@ export default function MainApp({
             position: relative is required for absolute-positioned overlays inside. */}
         <div key={tab} className="flex flex-col flex-1 overflow-hidden animate-fade-in" style={{ position: "relative" }}>
           {/* TAB CONTENT: Only the active tab renders */}
-          {tab === "home"     && <HomeScreen mode={mode} onCheckIn={() => setShowCheckIn(true)} onPaywall={() => setShowPaywall(true)} onReport={() => setReport("ready")} onWeekly={() => setDetail("weekly")} pinToast={pinToast} />}
+          {tab === "home"     && <HomeScreen mode={mode} onCheckIn={() => setShowCheckIn(true)} onPaywall={() => setShowPaywall(true)} onReport={() => setReport("ready")} onWeekly={() => setDetail("weekly")} pinToast={pinToast} isWelcomeBack={welcomeBack} />}
           {tab === "timeline" && <TimelineScreen mode={mode} onShareMilestone={m => setShareCard(m)} onAdd={() => setAddOpen(true)} />}
           {tab === "progress" && <ProgressScreen mode={mode} onPaywall={() => setShowPaywall(true)} />}
           {tab === "profile"  && <ProfileScreen mode={mode} onPaywall={() => setShowPaywall(true)} onSafety={() => setSafetyOpen(true)} onArticle={() => setArticleId(ARTICLES[0].id)} />}

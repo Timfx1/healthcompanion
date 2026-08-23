@@ -141,6 +141,20 @@ const APP: Screen[] = [
   // can be drawn — which is precisely the thing a baseline cannot be trusted to
   // establish. tests/persistence.spec.ts reloads the page and re-reads it.
   { id: "app-weekly", route: "app:detail-weekly", note: "the give-back plus an optional written reply; persistence is covered by the behaviour spec" },
+
+  // The last two surfaces in the product with no address.
+  //
+  // ShareCardScreen could be reached only by tapping Share on a milestone, and
+  // welcome-back only by not opening the app for three days. Neither is a state
+  // a baseline can arrive at by waiting, so both got routes — and share.* was
+  // found carrying the Day-N card's 1.58:1 bug precisely because nothing ever
+  // rendered it. A state with no route is a state nothing checks.
+  //
+  // The welcome-back ROUTE forces the rendered state and writes no storage. The
+  // RULE that reaches it — three days' absence, spent once, never repeated — is
+  // behaviour, and lives in tests/persistence.spec.ts where a reload can see it.
+  { id: "app-share", route: "app:share", note: "the milestone artifact, mode-invariant by contract because the recipient never sees the sender's theme (P8)" },
+  { id: "app-welcome-back", route: "app:welcome-back", note: "one warm line and no recap; the time-of-day greeting is suppressed so there is only one (P2)" },
 ];
 
 const SCREENS = [...ONBOARDING, ...APP];

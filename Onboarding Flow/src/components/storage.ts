@@ -77,4 +77,6 @@ export function clear(key: string): void {
 
 export const KEYS = {
   weeklyReflection: "weekly-reflection",
+  /** Epoch ms of the previous open. Read once per document, then overwritten - see absence.ts. */
+  lastOpened: "last-opened",
 } as const;

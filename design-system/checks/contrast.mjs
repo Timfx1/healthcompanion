@@ -205,11 +205,18 @@ for (const pair of manifest.pairs) {
     // as, so a change to a surface or an alpha moves the measurement with it.
     const surface = resolveSpec(pair.bg, tokens, mode);
     if (surface.a < 1) throw new Error(`Pair "${pair.id}" (${mode}): background "${pair.bg}" is translucent; declare the opaque surface beneath it.`);
+    // `composited` may name ONE layer or an ordered list of them, bottom-up.
+    // A list is not a convenience: a CSS border paints over the element's own
+    // background (background-clip is border-box by default), so a translucent
+    // border on a translucent fill really is two layers deep, and declaring it
+    // as one would measure a backdrop that is not on screen. The alternative -
+    // hand-computing the intermediate colour and pasting it in as a literal -
+    // is the practice this field was just rescued from.
     let bg = surface;
-    if (pair.composited) {
-      const layer = resolveSpec(pair.composited, tokens, mode);
-      if (layer.a >= 1) throw new Error(`Pair "${pair.id}" (${mode}): composited layer "${pair.composited}" is opaque. An opaque layer IS the backdrop - declare it as "bg" and drop "composited".`);
-      bg = { ...composite(layer, surface), a: 1 };
+    for (const spec of pair.composited ? [pair.composited].flat() : []) {
+      const layer = resolveSpec(spec, tokens, mode);
+      if (layer.a >= 1) throw new Error(`Pair "${pair.id}" (${mode}): composited layer "${spec}" is opaque. An opaque layer IS the backdrop - declare it as "bg" and drop it from "composited".`);
+      bg = { ...composite(layer, bg), a: 1 };
     }
 
     const fgRaw = resolveSpec(pair.fg, tokens, mode);

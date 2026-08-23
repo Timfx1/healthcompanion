@@ -17,7 +17,7 @@ Being precise about this, because the gap matters:
 | **Design system** (`design-system/`) | Real. One token source, two platforms **plus paper**, ten gates. |
 | **Web prototype** (`Onboarding Flow/`) | Real, and the reference implementation — 12 onboarding screens + 5 tabs, both colour modes. A Figma Make export, since evolved. |
 | **React Native app** (`app/`) | **Colour re-domain complete.** The AnklePath `ActivatePayment` tree, copied in with fresh history. All 172 colour references resolve to Recovery Companion roles and the app typechecks clean. Screens are still AnklePath's. |
-| **§5 detail/modal screens** | **3 of 17 exist, 2 partial, 3 have precedent, 9 greenfield** — counted below. Includes the Doctor Report, the flagship. |
+| **§5 detail/modal screens** | **All 17 exist** in the prototype, each with a dev route and a baseline. Includes the Doctor Report, the flagship, which is free forever and enforced as such by `restricted.mjs`. |
 
 `tokens.native.ts` is now consumed by `app/`, vendored as
 `app/src/theme/tokens.generated.ts`.
@@ -69,13 +69,17 @@ still has AnklePath's five (`Home · Plan · Track · Learn · Profile`).
 
 Two things this count surfaced.
 
-**`ShareCardScreen` is the 20th surface and has no baseline.** The visual suite
-covers 57 screens × 2 modes; ShareCard is not among them, and `?screen=app:`
-accepts only `home|timeline|progress|profile|checkin|paywall`. It is
-unphotographable — the exact condition that hid the dead `Toast` branch for the
-whole life of that component. `welcomeBack.*` has the same problem for a
-different reason: it is a *state* of Home rather than a §5 screen, so nothing
-routes to it either.
+**Every surface now has an address.** The visual suite covers **59 screens × 2
+modes**. The last two to get one were `ShareCardScreen` — reachable only by
+tapping Share on a milestone — and the welcome-back state of Home, which is not
+a §5 screen at all but a *state* nothing could route to.
+
+Neither gap was cosmetic. `share.*` carried the Day-N card's 1.58:1 bug for the
+whole life of the family because ShareCardScreen hardcoded `#fff` and never
+rendered the tokens it was declared for. `welcomeBack.*` was the last dormant
+family and shipped a wrong value for the same reason: nothing drew it. Five
+families have been dormant in this repository and all five were carrying a
+defect. That is why the dormancy ratchet is now **closed at zero**.
 
 **`ReportsScreen` was not a colour re-domain.** It gated the report behind
 `usePremium()`, which N6 forbids outright. See `DESIGN_CRITERIA.md` §11.
@@ -177,14 +181,19 @@ what is not finished. Full detail in `DESIGN_CRITERIA.md` §11.
   imitate. Full log in `DESIGN_CRITERIA.md` §11 and `playwright.config.ts`.
 - **The contrast manifest is hand-maintained.** Nothing verifies it covers what
   the screens actually render. A sweep found six undeclared combinations, five
-  of which failed; the next one will be just as invisible.
+  of which failed; the next one will be just as invisible. It is at least no
+  longer hand-COMPUTED: `composited` used to be a prose field the checker never
+  read, with the tinted backdrops pasted in as literals somebody had worked out
+  by hand. It now resolves and composites, and stacks layers where a translucent
+  border sits on a translucent fill.
 - **Interactive states are unbaselined.** The check-in sheet is captured with
   nothing selected and its detail panel collapsed, so two real contrast fixes
   are not exercised by any baseline. Not theoretical: this gap hid a dead code
   path in `Toast` for the whole life of the component, because nothing could
   photograph a state that exists for 2.4 seconds behind an interaction. That one
   is closed (`?screen=app:toast`); the check-in's states need the same.
-- **`insight.*` and `welcomeBack.*` are defined and unused**, and would reintroduce a fixed bug if
-  adopted as written — its trend roles still point at category `mark`.
+- **The onboarding `SignUp` screen still has no prototype route or baseline.**
+  It exists only in the RN app. It is the one remaining surface in either
+  codebase that nothing photographs.
 - **Off-scale font sizes and raw hex values remain** in consumer code, under a
   ratchet that can only tighten.
