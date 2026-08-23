@@ -4,8 +4,15 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
-    }
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
-  "exclude": ["figma design", "node_modules"]
+  "exclude": [
+    "figma design",
+    "node_modules"
+  ]
 }

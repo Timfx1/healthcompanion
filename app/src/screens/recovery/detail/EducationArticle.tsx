@@ -30,16 +30,10 @@ import { Linking, View } from "react-native";
 import { useAppData } from "../../../state/AppDataContext";
 import { useAppTheme } from "../../../state/AppThemeContext";
 import { scale } from "../../../theme/tokens.generated";
-import { ARTICLES, NEEDS_CLINICAL_REVIEW, type Article } from "../../../data/educationContent";
+import { ARTICLES, NEEDS_CLINICAL_REVIEW } from "../../../data/educationContent";
+import { accessOf } from "../../../rules";
 import { DetailScreen, DetailButton, DetailCard, DetailSection } from "../../../components/recovery/DetailScreen";
 import { Body, Caption } from "../../../components/recovery/primitives";
-
-export type ArticleAccess = "free" | "deepDiveLocked" | "deepDiveOpen";
-
-export function accessOf(article: Article, isPremium: boolean): ArticleAccess {
-  if (article.tier === "free") return "free";
-  return isPremium ? "deepDiveOpen" : "deepDiveLocked";
-}
 
 export function EducationArticle({
   articleId, onClose, onUnlock,
@@ -64,7 +58,7 @@ export function EducationArticle({
     );
   }
 
-  const access = accessOf(article, isPremium);
+  const access = accessOf(article.tier, isPremium);
   const saved = savedArticles.includes(article.title);
   const locked = access === "deepDiveLocked";
 

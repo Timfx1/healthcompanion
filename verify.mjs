@@ -22,7 +22,13 @@
 //   6. redomain     — the RN re-domain ratchet. The app typecheck is RED ON
 //                     PURPOSE (the generated palette omits every key needing a
 //                     human decision), so the COUNT is the gate, not the pass.
-//   7. typecheck    — token name typos, via as-const unions.
+//   7. rules        — the product's DECISIONS, without a renderer. Which state
+//                     a subscriber with one photo sees, whether the report can
+//                     claim a trend, where a gap becomes "quiet days". Every one
+//                     of these used to live inside a component that imported
+//                     react-native, which made the whole monetisation boundary
+//                     unreachable by anything except a running app.
+//   8. typecheck    — token name typos, via as-const unions.
 //   8. behaviour    — the claims a screenshot cannot make. A baseline proves a
 //                     state can be DRAWN: the report's export button drew
 //                     perfectly while its handler was missing, and quick
@@ -52,6 +58,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const FAST = process.argv.includes("--fast");
 const APP = resolve(ROOT, "Onboarding Flow");
+const RN = resolve(ROOT, "app");
 const PNPM = "corepack pnpm@10.34.3";
 
 // The design-system gates are dependency-free Node; the prototype's two are not.
@@ -77,6 +84,10 @@ const GATES = [
   { name: "consumption", cmd: "node design-system/checks/consumption.mjs",     cwd: ROOT, why: "defined -> consumed -> rendered -> measured" },
   { name: "coverage",   cmd: "node design-system/checks/coverage.mjs",         cwd: ROOT, why: "raw-literal ratchet" },
   { name: "redomain",   cmd: "node design-system/checks/redomain.mjs",         cwd: ROOT, why: "RN re-domain ratchet (skips if app/ is not installed)" },
+  // Needs no install and no build: Node 22 strips the types itself. The one
+  // gate here that still works in a bare checkout, which is the right property
+  // for the gate that guards the product's actual decisions.
+  { name: "rules",      cmd: "node tests/run.mjs", cwd: RN, why: "the product's decisions and its writes, tested without a renderer" },
   ...(INSTALLED ? [
     { name: "typecheck", cmd: `${PNPM} exec tsc --noEmit`,                     cwd: APP,  why: "token name typos" },
     ...(FAST ? [] : [

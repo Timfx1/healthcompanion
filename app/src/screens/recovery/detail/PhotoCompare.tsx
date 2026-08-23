@@ -35,18 +35,9 @@ import { useAppTheme } from "../../../state/AppThemeContext";
 import { useRecoveryData } from "../../../state/RecoveryDataContext";
 import { scale } from "../../../theme/tokens.generated";
 import type { PhotoEntry } from "../../../types/recovery";
+import { comparePair, compareStateOf } from "../../../rules";
 import { DetailScreen, DetailButton, DetailCard } from "../../../components/recovery/DetailScreen";
 import { Body, Caption } from "../../../components/recovery/primitives";
-
-export type CompareState = "locked" | "insufficient" | "ready";
-
-export function compareStateOf(photoCount: number, isPremium: boolean): CompareState {
-  // Entitlement is checked FIRST on purpose. A non-subscriber with one photo
-  // sees `locked`, not `insufficient` — telling them to come back with more
-  // photos and then gating them would be two disappointments in a row.
-  if (!isPremium) return "locked";
-  return photoCount < 2 ? "insufficient" : "ready";
-}
 
 function Frame({ photo }: { photo: PhotoEntry }) {
   const { tokens } = useAppTheme();
@@ -73,9 +64,12 @@ export function PhotoCompare({ onClose, onUnlock }: { onClose: () => void; onUnl
   const { isPremium } = useAppData();
   const state = compareStateOf(photos.length, isPremium);
 
-  const sorted = [...photos].sort((a, b) => a.date.localeCompare(b.date));
-  const first = sorted[0];
-  const last = sorted[sorted.length - 1];
+  // OLDEST against NEWEST, not the two most recent — Day 3 against Day 30 is
+  // the whole point, and the newest pair would make the feature least useful
+  // for whoever has been most diligent. The rule is in `rules/select`.
+  const pair = comparePair(photos);
+  const first = pair?.first ?? photos[0];
+  const last = pair?.last;
 
   return (
     <DetailScreen title="Compare photos" onClose={onClose}>

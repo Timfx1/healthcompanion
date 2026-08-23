@@ -32,9 +32,8 @@ import { useAppTheme } from "../../state/AppThemeContext";
 import { useRecoveryData } from "../../state/RecoveryDataContext";
 import { scale } from "../../theme/tokens.generated";
 import type { TimelineEntry, TimelineEntryType } from "../../types/recovery";
+import { restLabel, withRestRows } from "../../rules";
 import { Body, Card, Caption, CategoryChip, SectionLabel } from "../../components/recovery/primitives";
-
-const DAY_MS = 86_400_000;
 
 /** Filter chips (§4.3). "All" is first and is the default — a filter is never required. */
 const FILTERS: { key: TimelineEntryType | "all"; label: string }[] = [
@@ -47,31 +46,6 @@ const FILTERS: { key: TimelineEntryType | "all"; label: string }[] = [
   { key: "medication", label: "Medication" },
   { key: "appointment", label: "Appointments" },
 ];
-
-type Row =
-  | { kind: "entry"; entry: TimelineEntry }
-  | { kind: "rest"; days: number };
-
-/**
- * Interleave rest rows between entries.
- *
- * Runs of empty days become ONE row rather than one row per day: seven separate
- * "a quiet day" rows would be a list of reproaches even with gentle wording,
- * which is how a principle gets honoured in the tokens and lost in the layout.
- */
-function withRestRows(entries: TimelineEntry[]): Row[] {
-  const rows: Row[] = [];
-  for (let i = 0; i < entries.length; i++) {
-    rows.push({ kind: "entry", entry: entries[i] });
-    const next = entries[i + 1];
-    if (!next) continue;
-    const a = new Date(entries[i].date.slice(0, 10)).getTime();
-    const b = new Date(next.date.slice(0, 10)).getTime();
-    const gap = Math.round((a - b) / DAY_MS) - 1;
-    if (gap > 0) rows.push({ kind: "rest", days: gap });
-  }
-  return rows;
-}
 
 const CATEGORY_FOR: Partial<Record<TimelineEntryType, "pain" | "sleep" | "energy" | "mood" | "meds">> = {
   checkin: "mood",
@@ -164,9 +138,7 @@ export function RecoveryTimelineScreen({ onAdd, onOpenEntry }: { onAdd: () => vo
                   backgroundColor: tokens.pattern.rest.mark,
                 }}
               />
-              <Body style={{ color: tokens.pattern.rest.label }}>
-                {row.days === 1 ? "A quiet day" : `${row.days} quiet days`}
-              </Body>
+              <Body style={{ color: tokens.pattern.rest.label }}>{restLabel(row.days)}</Body>
             </View>
           ) : (
             <Pressable key={row.entry.id} accessibilityRole="button" onPress={() => onOpenEntry(row.entry)}>

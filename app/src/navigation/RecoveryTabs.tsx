@@ -33,6 +33,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { useAppTheme } from "../state/AppThemeContext";
 import { useRecoveryData } from "../state/RecoveryDataContext";
+import { nextAppointment } from "../rules";
 import { scale } from "../theme/tokens.generated";
 import { RecoveryHomeScreen } from "../screens/recovery/HomeScreen";
 import { RecoveryTimelineScreen } from "../screens/recovery/TimelineScreen";
@@ -58,12 +59,10 @@ export function RecoveryTabs() {
   const { appointments, medications, milestones } = useRecoveryData();
   const [checkInOpen, setCheckInOpen] = useState(false);
 
-  // The soonest appointment, falling back to the most recent one. Resolving it
-  // HERE rather than inside the screens keeps every detail screen ignorant of
-  // the navigator — see detail/routes.tsx.
-  const nextAppointmentId =
-    (appointments.filter((a) => new Date(a.date).getTime() > Date.now())
-      .sort((a, b) => a.date.localeCompare(b.date))[0] ?? appointments[0])?.id ?? "";
+  // Resolved HERE rather than inside the screens, so every detail screen stays
+  // ignorant of the navigator — see detail/routes.tsx. The rule itself is in
+  // `rules/select` and is tested there.
+  const nextAppointmentId = nextAppointment(appointments, Date.now())?.id ?? "";
 
   return (
     <View style={{ flex: 1 }}>

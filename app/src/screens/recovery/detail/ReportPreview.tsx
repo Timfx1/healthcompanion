@@ -47,14 +47,10 @@ import { View } from "react-native";
 import { useAppTheme } from "../../../state/AppThemeContext";
 import { useRecoveryData } from "../../../state/RecoveryDataContext";
 import { scale } from "../../../theme/tokens.generated";
-import { dayNumber, type CheckIn, type Trend } from "../../../types/recovery";
+import { dayNumber } from "../../../types/recovery";
+import { deriveReport, lastVisit, MIN_FOR_TREND } from "../../../rules";
 import { DetailScreen, DetailButton, DetailCard, DetailSection } from "../../../components/recovery/DetailScreen";
 import { Body, Caption, InsightSentence } from "../../../components/recovery/primitives";
-
-export type ReportDepth = "empty" | "sparse" | "first" | "ready";
-export type ChangeState = "noAnchor" | "insufficient" | "noChange" | "changes";
-
-const MIN_FOR_TREND = 4;
 
 export function ReportPreview({
   onClose, onOpenRange,
@@ -65,54 +61,14 @@ export function ReportPreview({
   const { tokens } = useAppTheme();
   const { journey, timeline, medications, appointments, photos } = useRecoveryData();
 
-  const model = useMemo(() => {
-    const inRange = [...timeline].sort((a, b) => b.date.localeCompare(a.date));
-    const pains = inRange
-      .filter((e) => e.type === "checkin" && typeof (e.data as CheckIn | undefined)?.pain === "number")
-      .map((e) => (e.data as CheckIn).pain as number);
-
-    const lastVisit = appointments
-      .filter((a) => new Date(a.date).getTime() < Date.now())
-      .sort((a, b) => b.date.localeCompare(a.date))[0];
-
-    const depth: ReportDepth =
-      inRange.length === 0 ? "empty"
-        : pains.length < MIN_FOR_TREND ? "sparse"
-          : !lastVisit ? "first"
-            : "ready";
-
-    // Split around the anchor, not around "now". "Since last visit" has to mean
-    // since the visit or the block is a different claim wearing its label.
-    const anchor = lastVisit ? new Date(lastVisit.date).getTime() : undefined;
-    const since = anchor ? pains.slice(0, inRange.filter((e) => new Date(e.date).getTime() >= anchor).length) : [];
-    const before = anchor ? pains.slice(since.length) : [];
-
-    let change: ChangeState = "noAnchor";
-    let trend: Trend = "steady";
-    let changeText = "";
-    if (anchor) {
-      if (since.length < 2 || before.length < 2) {
-        change = "insufficient";
-      } else {
-        const avg = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
-        const delta = avg(since) - avg(before);
-        if (Math.abs(delta) < 0.5) {
-          change = "noChange";
-          trend = "steady";
-          changeText = "Pain has held steady since the last visit.";
-        } else {
-          change = "changes";
-          trend = delta < 0 ? "improving" : "worsening";
-          changeText =
-            delta < 0
-              ? "Pain has been lower on average since the last visit."
-              : "Pain has been higher on average since the last visit.";
-        }
-      }
-    }
-
-    return { depth, change, trend, changeText, entries: inRange, lastVisit, pains };
-  }, [timeline, appointments]);
+  // The whole shape comes from `rules/report`. This screen decides how to draw
+  // it and decides nothing else — which is what makes the degradation testable
+  // without a renderer.
+  const visit = useMemo(() => lastVisit(appointments, Date.now()), [appointments]);
+  const model = useMemo(
+    () => deriveReport(timeline, visit ? Date.parse(visit.date) : undefined),
+    [timeline, visit],
+  );
 
   const day = dayNumber(journey.startDate);
 
@@ -129,7 +85,7 @@ export function ReportPreview({
           <Body>{journey.condition}</Body>
           <Caption>
             Day {day} · started {new Date(journey.startDate).toLocaleDateString()}
-            {model.lastVisit ? ` · since ${new Date(model.lastVisit.date).toLocaleDateString()}` : " · since you started"}
+            {visit ? ` · since ${new Date(visit.date).toLocaleDateString()}` : " · since you started"}
           </Caption>
         </DetailCard>
       </DetailSection>
@@ -182,10 +138,10 @@ export function ReportPreview({
           )}
 
           <DetailSection label="PAIN">
-            {model.pains.length >= MIN_FOR_TREND ? (
+            {model.painScores.length >= MIN_FOR_TREND ? (
               <DetailCard>
                 <View style={{ flexDirection: "row", alignItems: "flex-end", gap: scale.space[1], height: scale.size.buttonPrimary }}>
-                  {model.pains.slice(0, 20).reverse().map((p, i) => (
+                  {model.painScores.slice(0, 20).reverse().map((p, i) => (
                     <View
                       key={i}
                       style={{
@@ -197,15 +153,15 @@ export function ReportPreview({
                     />
                   ))}
                 </View>
-                <Caption>{model.pains.length} pain scores logged.</Caption>
+                <Caption>{model.painScores.length} pain scores logged.</Caption>
               </DetailCard>
             ) : (
-              <DetailCard><Caption>{model.pains.length} pain scores logged so far.</Caption></DetailCard>
+              <DetailCard><Caption>{model.painScores.length} pain scores logged so far.</Caption></DetailCard>
             )}
           </DetailSection>
 
           <DetailSection label="KEY EVENTS">
-            {model.entries
+            {timeline
               .filter((e) => e.type === "milestone" || e.type === "journal")
               .slice(0, 6)
               .map((e) => (
@@ -231,9 +187,9 @@ export function ReportPreview({
             </DetailSection>
           )}
 
-          {!!model.lastVisit?.questions.length && (
+          {!!visit?.questions.length && (
             <DetailSection label="QUESTIONS YOU ASKED">
-              {model.lastVisit.questions.map((q, i) => (
+              {visit!.questions.map((q, i) => (
                 <DetailCard key={i}><Body>{q}</Body></DetailCard>
               ))}
             </DetailSection>

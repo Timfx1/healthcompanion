@@ -32,15 +32,9 @@ import { useAppTheme } from "../../../state/AppThemeContext";
 import { useRecoveryData } from "../../../state/RecoveryDataContext";
 import { scale } from "../../../theme/tokens.generated";
 import type { TimelineEntry } from "../../../types/recovery";
+import { journalStateOf } from "../../../rules";
 import { DetailScreen, DetailButton, DetailCard, DetailSection } from "../../../components/recovery/DetailScreen";
 import { Body, Caption } from "../../../components/recovery/primitives";
-
-export type JournalState = "composing" | "reading" | "promoted";
-
-export function journalStateOf(entry: TimelineEntry | undefined, isMilestone: boolean): JournalState {
-  if (!entry || !entry.detail?.trim()) return "composing";
-  return isMilestone ? "promoted" : "reading";
-}
 
 export function JournalEntryScreen({
   entry, onClose,
@@ -51,8 +45,7 @@ export function JournalEntryScreen({
   const { tokens } = useAppTheme();
   const { addJournal, promoteToMilestone, milestones } = useRecoveryData();
 
-  const alreadyMilestone = !!entry && milestones.some((m) => m.fromJournalEntryId === entry.id);
-  const state = journalStateOf(entry, alreadyMilestone);
+  const state = journalStateOf(entry, milestones);
 
   const [title, setTitle] = useState(entry?.title ?? "");
   const [text, setText] = useState(entry?.detail ?? "");

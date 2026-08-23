@@ -38,23 +38,12 @@ import { ScrollView, View } from "react-native";
 import { useAppTheme } from "../../state/AppThemeContext";
 import { useRecoveryData } from "../../state/RecoveryDataContext";
 import { scale } from "../../theme/tokens.generated";
-import { dayNumber, type CheckIn, type Trend } from "../../types/recovery";
+import { dayNumber, type CheckIn } from "../../types/recovery";
+import { painTrend } from "../../rules";
 import { EVERYONE_HEALS_DIFFERENTLY, corridorFor, phaseForDay } from "../../data/recoveryCorridors";
 import { Body, Card, Caption, InsightSentence, QuietButton, SectionLabel, Title } from "../../components/recovery/primitives";
 
 const FREE_HISTORY_DAYS = 30;
-
-/** Trend vocabulary is improving / worsening / steady everywhere — screen, paper, report. */
-function painTrend(recent: number[], earlier: number[]): { trend: Trend; text: string } {
-  if (recent.length < 2 || earlier.length < 2) {
-    return { trend: "steady", text: "Not enough logged yet to describe a trend. That is fine — it builds up." };
-  }
-  const avg = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
-  const delta = avg(recent) - avg(earlier);
-  if (delta <= -0.5) return { trend: "improving", text: "Pain has been lower over the last two weeks than the two before." };
-  if (delta >= 0.5) return { trend: "worsening", text: "Pain has been higher over the last two weeks than the two before." };
-  return { trend: "steady", text: "Pain has held about the same over the last two weeks." };
-}
 
 export function RecoveryProgressScreen({ onUnlock }: { onUnlock: () => void }) {
   const { tokens } = useAppTheme();
