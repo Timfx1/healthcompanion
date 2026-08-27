@@ -1,8 +1,9 @@
-import { PropsWithChildren, useEffect, useState } from "react";
-import { Keyboard, Platform, ScrollView, StyleSheet, View, ViewStyle } from "react-native";
+import { PropsWithChildren } from "react";
+import { ScrollView, StyleSheet, View, ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { spacing } from "../theme";
 import { useAppTheme } from "../state/AppThemeContext";
+import { useKeyboardHeight } from "../hooks/useKeyboardHeight";
 
 /**
  * Height of the on-screen keyboard, 0 when hidden.
@@ -13,26 +14,6 @@ import { useAppTheme } from "../state/AppThemeContext";
  * unreachable. Padding the scroll content by the real keyboard height instead
  * always leaves enough room to scroll to the very last control, header or not.
  */
-function useKeyboardHeight(): number {
-  const [height, setHeight] = useState(0);
-
-  useEffect(() => {
-    // `Will` events fire in step with the animation on iOS; Android only has `Did`.
-    const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
-    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
-
-    const show = Keyboard.addListener(showEvent, (event) => setHeight(event.endCoordinates?.height ?? 0));
-    const hide = Keyboard.addListener(hideEvent, () => setHeight(0));
-
-    return () => {
-      show.remove();
-      hide.remove();
-    };
-  }, []);
-
-  return height;
-}
-
 type ScreenContainerProps = PropsWithChildren<{
   scroll?: boolean;
   style?: ViewStyle;

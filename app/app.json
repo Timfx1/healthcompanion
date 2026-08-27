@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "AnklePath",
-    "slug": "anklepath",
+    "name": "Healthcompanion",
+    "slug": "healthcompanion",
     "version": "1.0.4",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
@@ -16,16 +16,16 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "scheme": "anklepath",
+    "scheme": "healthcompanion",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.timfx1.anklepath",
+      "bundleIdentifier": "com.timfx1.healthcompanion",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
-      "package": "com.timfx1.anklepath",
+      "package": "com.timfx1.healthcompanion",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0E1E32"
@@ -41,7 +41,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow AnklePath to choose a profile picture from your photo library."
+          "photosPermission": "Allow Healthcompanion to choose a recovery photo from your photo library."
         }
       ],
       [

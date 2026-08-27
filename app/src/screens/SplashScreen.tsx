@@ -9,8 +9,8 @@ export function SplashScreen() {
       <View style={styles.iconWrap}>
         <Ionicons name="pulse" size={56} color="#FFFFFF" />
       </View>
-      <Text style={styles.title}>AnklePath</Text>
-      <Text style={styles.tagline}>Your guided ankle recovery companion</Text>
+      <Text style={styles.title}>Healthcompanion</Text>
+      <Text style={styles.tagline}>Your recovery companion</Text>
     </LinearGradient>
   );
 }

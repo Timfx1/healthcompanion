@@ -25,7 +25,7 @@ function logFirestoreError(action: string, error: unknown) {
     errorCode: typeof error === "object" && error !== null && "code" in error ? String(error.code) : undefined
   });
   if (__DEV__) {
-    console.log(`[AnklePath/Firestore] ${action} failed`, {
+    console.log(`[Healthcompanion/Firestore] ${action} failed`, {
       message: error instanceof Error ? error.message : "Unknown Firestore error",
       code: typeof error === "object" && error !== null && "code" in error ? String(error.code) : undefined
     });
@@ -99,7 +99,7 @@ export async function fetchUserState(uid: string): Promise<RestoredUserState | n
       : undefined;
 
     if (__DEV__) {
-      console.log("[AnklePath/Firestore] User state fetched", {
+      console.log("[Healthcompanion/Firestore] User state fetched", {
         uid,
         onboardingCompleted: Boolean(profile.onboardingCompleted),
         hasAnswers: Boolean(answers),
@@ -138,7 +138,7 @@ export async function upsertUserProfile(user: User, extra: Record<string, unknow
     }),
     { merge: true }
   );
-  if (__DEV__) console.log("[AnklePath/Firestore] User profile upserted", { uid: user.uid });
+  if (__DEV__) console.log("[Healthcompanion/Firestore] User profile upserted", { uid: user.uid });
 }
 
 export async function saveOnboardingAnswers(uid: string, answers: OnboardingAnswersPayload) {
@@ -170,7 +170,7 @@ export async function saveOnboardingAnswers(uid: string, answers: OnboardingAnsw
     }),
     { merge: true }
   );
-  if (__DEV__) console.log("[AnklePath/Firestore] Onboarding answers saved", { uid });
+  if (__DEV__) console.log("[Healthcompanion/Firestore] Onboarding answers saved", { uid });
 }
 
 // GDPR Art. 5(2) accountability: keep a server-side record of what the user
@@ -198,7 +198,7 @@ export async function saveConsentRecord(
     },
     { merge: true }
   );
-  if (__DEV__) console.log("[AnklePath/Firestore] Consent recorded", { uid, ...consent });
+  if (__DEV__) console.log("[Healthcompanion/Firestore] Consent recorded", { uid, ...consent });
 }
 
 export async function savePainLog(uid: string, payload: { painScore: number; symptoms: string[]; painLocation: string; notes: string }) {
@@ -210,7 +210,7 @@ export async function savePainLog(uid: string, payload: { painScore: number; sym
     notes: payload.notes,
     createdAt: serverTimestamp()
   });
-  if (__DEV__) console.log("[AnklePath/Firestore] Pain log saved", { uid, painScore: payload.painScore });
+  if (__DEV__) console.log("[Healthcompanion/Firestore] Pain log saved", { uid, painScore: payload.painScore });
 }
 
 export async function saveNextRecoveryAreaRequest(params: {
@@ -251,7 +251,7 @@ export async function saveNextRecoveryAreaRequest(params: {
   }
 
   if (__DEV__) {
-    console.log("[AnklePath/Firestore] Next recovery area request saved", {
+    console.log("[Healthcompanion/Firestore] Next recovery area request saved", {
       uid: params.uid ?? null,
       selectedArea: params.selectedArea
     });
@@ -270,7 +270,7 @@ export async function joinPremiumWaitlist(params: {
   if (params.idToken && params.uid) {
     try {
       await joinPremiumWaitlistWithRest(params);
-      if (__DEV__) console.log("[AnklePath/Firestore REST] Waitlist signup saved", { uid: params.uid });
+      if (__DEV__) console.log("[Healthcompanion/Firestore REST] Waitlist signup saved", { uid: params.uid });
       return { alreadyJoined: false };
     } catch (restError) {
       restFailure = restError;
@@ -309,7 +309,7 @@ export async function joinPremiumWaitlist(params: {
       }, { merge: true }), 10000, "Firestore user waitlist update timed out.");
     }
 
-    if (__DEV__) console.log("[AnklePath/Firestore] Waitlist signup saved", { waitlistId, uid: params.uid ?? null });
+    if (__DEV__) console.log("[Healthcompanion/Firestore] Waitlist signup saved", { waitlistId, uid: params.uid ?? null });
     return { alreadyJoined: false };
   } catch (error) {
     logFirestoreError("Waitlist signup", error);

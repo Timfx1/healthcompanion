@@ -39,11 +39,21 @@ export function PhotoCapture({ onClose, onSave }: { onClose: () => void; onSave:
     // Permission refusal is not an error state. Somebody declining to give a
     // health app camera access has made a reasonable choice, and the screen has
     // nothing to say about it beyond staying where it is.
-    const result =
-      from === "camera"
-        ? await ImagePicker.launchCameraAsync({ quality: 0.8 })
-        : await ImagePicker.launchImageLibraryAsync({ quality: 0.8 });
-    if (!result.canceled && result.assets[0]) setUri(result.assets[0].uri);
+    try {
+      const permission =
+        from === "camera"
+          ? await ImagePicker.requestCameraPermissionsAsync()
+          : await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) return;
+
+      const result =
+        from === "camera"
+          ? await ImagePicker.launchCameraAsync({ quality: 0.8 })
+          : await ImagePicker.launchImageLibraryAsync({ quality: 0.8, legacy: true });
+      if (!result.canceled && result.assets[0]) setUri(result.assets[0].uri);
+    } catch {
+      return;
+    }
   }
 
   return (

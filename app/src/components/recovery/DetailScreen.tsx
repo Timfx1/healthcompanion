@@ -21,6 +21,7 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 
 import { useAppTheme } from "../../state/AppThemeContext";
 import { scale } from "../../theme/tokens.generated";
+import { useKeyboardHeight } from "../../hooks/useKeyboardHeight";
 import { Body, Caption } from "./primitives";
 
 export function DetailScreen({
@@ -39,6 +40,7 @@ export function DetailScreen({
   children: ReactNode;
 }) {
   const { tokens } = useAppTheme();
+  const keyboardHeight = useKeyboardHeight();
   return (
     <View style={{ flex: 1, backgroundColor: tokens.color.surface.raised }}>
       <View
@@ -83,9 +85,11 @@ export function DetailScreen({
         contentContainerStyle={{
           paddingHorizontal: scale.space[5],
           paddingTop: scale.space[4],
-          paddingBottom: scale.space[8],
+          paddingBottom: scale.space[8] + keyboardHeight,
           gap: scale.space[gap],
         }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
       >
         {children}
       </ScrollView>

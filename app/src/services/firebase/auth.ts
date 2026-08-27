@@ -44,7 +44,7 @@ async function linkOrSignInWithCredential(credential: AuthCredential): Promise<U
   if (current?.isAnonymous) {
     try {
       const linked = await linkWithCredential(current, credential);
-      if (__DEV__) console.log("[AnklePath/Firebase Auth] Guest upgraded in place", { uid: linked.user.uid });
+      if (__DEV__) console.log("[Healthcompanion/Firebase Auth] Guest upgraded in place", { uid: linked.user.uid });
       return linked.user;
     } catch (error) {
       const code = (error as { code?: string } | null)?.code;
@@ -100,7 +100,7 @@ async function safeUpsertUserProfile(user: User, extra: Record<string, unknown> 
       errorMessage: error instanceof Error ? error.message : "Unknown Firestore error"
     });
     if (__DEV__) {
-      console.log("[AnklePath/Firebase Auth] Profile write skipped safely", {
+      console.log("[Healthcompanion/Firebase Auth] Profile write skipped safely", {
         uid: user.uid,
         message: error instanceof Error ? error.message : "Unknown Firestore error"
       });
@@ -135,7 +135,7 @@ function identifyFirebaseUser(user: User, authMethod: FirebaseAuthMethod, extra:
 
 export async function signInAsGuest(): Promise<User | null> {
   if (!isFirebaseConfigured || !auth) {
-    if (__DEV__) console.log("[AnklePath/Firebase Auth] Guest sign-in skipped: Firebase is not configured.");
+    if (__DEV__) console.log("[Healthcompanion/Firebase Auth] Guest sign-in skipped: Firebase is not configured.");
     return null;
   }
   try {
@@ -143,7 +143,7 @@ export async function signInAsGuest(): Promise<User | null> {
     void safeUpsertUserProfile(credential, classifyUser(credential, "guest"));
     identifyFirebaseUser(credential, "guest", { onboardingCompleted: false });
     if (__DEV__) {
-      console.log("[AnklePath/Firebase Auth] Anonymous user ready", {
+      console.log("[Healthcompanion/Firebase Auth] Anonymous user ready", {
         uid: credential.uid,
         isAnonymous: credential.isAnonymous
       });
@@ -151,7 +151,7 @@ export async function signInAsGuest(): Promise<User | null> {
     return credential;
   } catch (error) {
     if (__DEV__) {
-      console.log("[AnklePath/Firebase Auth] Guest sign-in failed safely", {
+      console.log("[Healthcompanion/Firebase Auth] Guest sign-in failed safely", {
         message: error instanceof Error ? error.message : "Unknown Firebase Auth error"
       });
     }
@@ -170,7 +170,7 @@ export async function signUpWithEmail(email: string, password: string): Promise<
     : (await createUserWithEmailAndPassword(auth, email, password)).user;
   await safeUpsertUserProfile(user, classifyUser(user, "email"));
   identifyFirebaseUser(user, "email", { onboardingCompleted: false });
-  if (__DEV__) console.log("[AnklePath/Firebase Auth] Email sign-up completed", { uid: user.uid });
+  if (__DEV__) console.log("[Healthcompanion/Firebase Auth] Email sign-up completed", { uid: user.uid });
   return user;
 }
 
@@ -179,7 +179,7 @@ export async function loginWithEmail(email: string, password: string): Promise<U
   const credential = await signInWithEmailAndPassword(auth, email, password);
   await safeUpsertUserProfile(credential.user, classifyUser(credential.user, "email"));
   identifyFirebaseUser(credential.user, "email");
-  if (__DEV__) console.log("[AnklePath/Firebase Auth] Email login completed", { uid: credential.user.uid });
+  if (__DEV__) console.log("[Healthcompanion/Firebase Auth] Email login completed", { uid: credential.user.uid });
   return credential.user;
 }
 
@@ -188,7 +188,7 @@ export async function signInWithGoogleIdToken(idToken: string): Promise<User | n
   const user = await linkOrSignInWithCredential(GoogleAuthProvider.credential(idToken));
   await safeUpsertUserProfile(user, classifyUser(user, "google"));
   identifyFirebaseUser(user, "google", { onboardingCompleted: false });
-  if (__DEV__) console.log("[AnklePath/Firebase Auth] Google login completed", { uid: user.uid });
+  if (__DEV__) console.log("[Healthcompanion/Firebase Auth] Google login completed", { uid: user.uid });
   return user;
 }
 
@@ -206,6 +206,6 @@ export async function signInWithAppleIdentityToken(
   }
   await safeUpsertUserProfile(user, classifyUser(user, "apple"));
   identifyFirebaseUser(user, "apple", { onboardingCompleted: false });
-  if (__DEV__) console.log("[AnklePath/Firebase Auth] Apple login completed", { uid: user.uid });
+  if (__DEV__) console.log("[Healthcompanion/Firebase Auth] Apple login completed", { uid: user.uid });
   return user;
 }

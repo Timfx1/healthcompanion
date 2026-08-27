@@ -83,7 +83,7 @@ export function ProfileScreen() {
   const emailDeletionRequest = () => {
     const subject = encodeURIComponent("Delete my account");
     const body = encodeURIComponent(
-      `Please delete my AnklePath account and associated data.\n\nAccount: ${profile.displayName}`
+      `Please delete my Healthcompanion account and associated data.\n\nAccount: ${profile.displayName}`
     );
     Linking.openURL(`mailto:${LEGAL.supportEmail}?subject=${subject}&body=${body}`).catch(() => {});
   };
@@ -143,7 +143,7 @@ export function ProfileScreen() {
         completedExerciseIds
       });
       await Share.share({
-        title: "AnklePath data export",
+        title: "Healthcompanion data export",
         message: JSON.stringify(payload, null, 2)
       });
     } catch (error) {
@@ -376,7 +376,7 @@ export function ProfileScreen() {
             subtitle="Development and preview builds only"
             icon="bug"
             onPress={() =>
-              captureAppError(new Error("AnklePath Sentry test error"), {
+              captureAppError(new Error("Healthcompanion Sentry test error"), {
                 source: "manual_test",
                 sourceScreen: "Profile",
                 buildProfile
@@ -421,13 +421,13 @@ export function ProfileScreen() {
         />
         <InfoCard
           title="Terms of Use"
-          subtitle="The rules for using AnklePath"
+          subtitle="The rules for using Healthcompanion"
           icon="document-text"
           onPress={() => WebBrowser.openBrowserAsync(LEGAL.termsUrl)}
         />
         <InfoCard
           title="Impressum"
-          subtitle="Who operates AnklePath"
+          subtitle="Who operates Healthcompanion"
           icon="business"
           onPress={() => WebBrowser.openBrowserAsync(LEGAL.impressumUrl)}
         />

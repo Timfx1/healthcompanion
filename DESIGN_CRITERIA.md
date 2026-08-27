@@ -1470,9 +1470,11 @@ CSS. That substitution is load-bearing rather than cosmetic — the Day-N card's
 the end.
 
 And the harness supplies the context, so the real `RecoveryDataProvider` —
-hydration, seeding, AsyncStorage, the welcome-back decision — is not exercised.
-Those are pure functions in `tests/store.test.ts` and are tested there. **The
-wiring between provider and screen is the one seam nothing yet checks.**
+hydration, seeding, AsyncStorage, the welcome-back decision — is not exercised
+*here*. That was the one seam nothing checked; it is closed by `slice.spec.ts`
+and the entry below records the four defects that were living in it. This
+harness still does not exercise the provider, deliberately: a baseline must not
+depend on hydration order.
 
 ### `RecoveryDataContext` left the N7 list, and why that is not a hollowing-out
 
@@ -1495,6 +1497,164 @@ keeps AsyncStorage. Anything wanting to READ the context used to import a native
 module with it, which is the mechanical reason twenty-one screens could not be
 rendered anywhere.
 
+### Resolved — the provider-to-screen seam, and four defects living in it
+
+The one seam nothing checked, named as such in `README.md`, in
+`harness/main.tsx`, in `behaviour.spec.ts` and at the end of the section above.
+`tests/store.test.ts` proved the pure transitions with no React;
+`render.spec.ts` and `behaviour.spec.ts` proved the screens with a **stubbed**
+context. So hydration, seeding, the AsyncStorage round trip, the optimistic
+write and the welcome-back decision were each proven in isolation and never
+proven together.
+
+`harness/slice.spec.ts` is that slice: the **real** `RecoveryDataProvider` over
+a fake-but-real AsyncStorage, rendering the **real** screens from the same
+`RENDERERS` registry the render suite draws, interacted with, then asked what
+actually landed in storage — and in several tests remounted from that storage
+and asked whether it came back. 27 tests, a fourteenth gate (`rn-slice`),
+blocking like the other two behaviour gates. 13 mutants planted, 13 caught.
+
+**The second fidelity substitution, declared like the first.**
+`harness/shims/async-storage.ts` sits beside the gradient shim and states what
+is real (the API contract, genuine asynchrony, rejection as a rejected promise,
+persistence across a remount via `localStorage`, operation ordering) and what is
+not (the backend — no SQLite, no quota, no OS eviction; and a `setTimeout` where
+a device crosses the native bridge).
+
+The vendor ships its own web build, also `localStorage`-backed, and it would
+have resolved here on its own. It is aliased away deliberately: it is
+**synchronous underneath** and resolves in a microtask, so hydration always wins
+the race against first paint. A harness in which the bug cannot occur is a
+harness that certifies its absence — and "a screen must not flash empty and then
+fill" is one of the claims the slice exists to make. Latency has to be
+injectable, so the storage has to be ours.
+
+#### What the slice found
+
+**`hydrated` had no consumers. Not one.** It was on the context from the first
+commit, documented, typed — and no Recovery Companion screen read it. So every
+screen read `timeline` before it was loaded. Under a 120ms read the accumulation
+pill sampled `["0 check-ins", "24 check-ins"]`: Home's first paint states a fact
+about somebody's forty-five-day recovery, and the fact is wrong. The timeline
+says "Nothing here yet." in the same window. Both are indistinguishable on
+screen from the true day-one state.
+
+In the shipped app this was **masked, not prevented**. `RootNavigator` holds a
+splash for a minimum of two seconds, so eight sequential `getItem`s almost
+always land first. That is a coincidence of an unrelated timer:
+`AppDataContext`'s hydrate is **one** read and this one is **eight**, and a cold
+or contended device can lose that race with nothing on screen to say it did.
+
+Fixed structurally rather than per-screen. `RecoveryDataProvider` withholds its
+children until it has hydrated, so a consumer cannot read a half-loaded timeline
+— there is no consumer yet. A `fallback` prop keeps the UI decision with the
+caller, the same shape as Suspense and for the same reason; `App.tsx` passes the
+splash the app was already showing at that moment, so the wait looks identical.
+`PremiumSync` moved out from under the gate, since it reads AnklePath's
+entitlement and has no business waiting on a different store. **No new visual
+state, no new route, no new colour pair.**
+
+**A storage write lived inside a `setState` updater.** Five of them:
+
+```
+setTimeline((prev) => { const next = [entry, ...prev]; writeJson(k, next); return next; });
+```
+
+It typechecks, it reads well, and React updaters must be **pure** — the runtime
+is free to call one more than once for a single update, and does. The slice
+measured it: one capture, `pending()` of 2, two `set recovery-companion:timeline`
+operations back to back. StrictMode double-invokes deliberately to surface
+exactly this; concurrent rendering re-invokes when a render is discarded and
+rebased.
+
+Two identical writes are only wasteful. The failure that is **not** harmless is
+the rebase: the updater is replayed against a different `prev`, two *different*
+values are written for one key with no ordering guarantee between them, and the
+older can land last. That loses an entry silently, on the capture path, which is
+the one place P1 says must lose nothing.
+
+`usePersisted` replaces the pattern — a ref holds what has been committed,
+`commit` computes the next value from it, sets state, and writes once outside
+React. Persistence stays **at the call site** rather than moving to an effect on
+the value, and that is deliberate: an effect re-persists after hydration too, so
+a transient read failure would fall back to `[]` and then write that fallback
+over good data, turning a recoverable read error into permanent loss. Writing
+only what the user did cannot do that.
+
+**`parseStored` guarded the parse and not the shape.** It was
+`try { JSON.parse(raw) } catch { fallback }`, which makes "corrupt" mean
+"throws". `"null"`, `"5"` and `"{}"` are all valid JSON. Each hydrated `timeline`
+as a non-array, and the next line to touch it spread it. Measured through the
+slice:
+
+| Stored `timeline` | Result |
+|---|---|
+| `"null"` | `TypeError: timeline is not iterable`, **empty body** |
+| `"5"` | `TypeError: timeline is not iterable`, **empty body** |
+| `"{}"` | `TypeError: timeline is not iterable`, **empty body** |
+| `"{ not json"` | fallback, screen draws — the case it *was* looking at |
+
+A total crash on launch. On a device: a white screen on a health app holding
+somebody's recovery record, with no way out but clearing app data — the exact
+outcome the function exists to prevent, reached through the half of the input
+space it was not looking at. Nothing the app writes today produces those values;
+a version skew, a partial write or storage corruption does. The guard costs one
+comparison, so how likely that is need not be answered.
+
+The fallback **is** the schema, so the check compares against it rather than
+against a separate validator somebody has to keep in step. Covered twice: pure
+in `tests/store.test.ts`, wired in the slice.
+
+**The coupling, and it is stated rather than worked around.**
+`RecoveryDataProvider` calls `useAppData()` to forward one boolean, and that
+hook throws outside its provider — so this product's store cannot be mounted
+anywhere, app or harness or test, without also mounting AnklePath's exercise
+store, its own AsyncStorage hydration and its own persist-on-change effect. The
+slice mounts it rather than stubbing it, because stubbing would hide the finding
+and because `App.tsx` nests them this way. `?uncoupled=1` gives the constraint an
+address, and two tests assert both halves — that it throws without, and mounts
+with — so if the coupling is ever removed the test fails and says so.
+
+#### Three checks that could not fail, again caught while writing them
+
+The pattern that keeps recurring, so it is recorded again:
+
+- **`pending() > 0` as the optimistic-write assertion.** The seed writes eight
+  keys fire-and-forget, so it was already true before anything was typed. It
+  would have held with the save button wired to nothing. Latency is now applied
+  *after* hydration and the assertion is `pending() === 1`.
+- **The optimistic test never asserted its own headline.** Titled "the entry is
+  on screen before the write resolves", written against Home — where a capture
+  goes to the *timeline tab* and cannot be seen — so it asserted the field had
+  cleared, `pending()`, and storage, and never the screen. A mutant that awaited
+  the write before updating state **survived**. It runs on `questions` now, the
+  one §5 surface that renders the result of its own write.
+- **Pairing photos by `uri`.** The fixture's uris are deliberately empty — the
+  prototype ships no invented photographs of injuries — so a uri match was three
+  empty strings agreeing with each other, and would have held with the pairing
+  broken. It pairs by caption.
+
+And one harness bug that read as a product bug: `addInitScript` runs on **every**
+navigation, reloads included, so planting a precondition unconditionally
+re-planted it on top of what the launch under test had just written. The
+welcome-back greeting reappeared after a reload because the harness had put the
+twelve-day-old timestamp back, not because the decision was unspent.
+
+#### What the slice does NOT cover, stated rather than implied
+
+- **`addPhoto`.** The only screen that calls it is `PhotoCapture`, which goes
+  through `expo-image-picker` and cannot mount in a browser. `store.test.ts`
+  covers `photoEntry` returning both records and the slice covers both records
+  round-tripping, but nothing covers the provider persisting a photo somebody
+  just took. The mutant aimed at `addPhoto` survived, correctly, and was
+  re-pointed at the seed's photo write with this note rather than at something
+  the test could already see.
+- **`logMedication` and `addMilestone`** are reachable only through screens that
+  take navigation callbacks the harness wires to no-ops.
+- **The device.** Everything here runs under `react-native-web`. See the
+  standing limit above; the slice narrows what is unproven about the *provider*
+  and narrows nothing about iOS or Android.
+
 ## 12. How this is enforced
 
 | Check | What it catches |
@@ -1506,8 +1666,13 @@ rendered anywhere.
 | `build/emit-docs.mjs --check` | The appendix below diverging from the tokens — so this document cannot quietly start describing a palette that no longer exists |
 | `tests/visual.spec.ts` | Any rendered pixel changing, across 18 screens × 2 modes, above a measured 12-pixel noise floor |
 | `tsc --noEmit` | Token name typos, via `as const` union types |
+| `app/tests/run.mjs` | The product's decisions, without a renderer — 91 pure tests over `src/rules/`, including that the directory stays pure |
+| `harness/render.spec.ts` | The RN screens drawn, 23 screens × 2 modes plus data-only states, asserting on visible CONTENT before capturing |
+| `harness/behaviour.spec.ts` | The RN screens under a tap. A screenshot cannot see a missing handler |
+| `harness/slice.spec.ts` | The REAL provider over storage into a real screen and back — hydration order, seed-once, the optimistic write, the round trip, the welcome-back decision, namespacing |
+| `harness/mutants.mjs` | Not a gate: plants 13 defects and fails if any survives its test. Run by hand after touching the provider or the slice |
 
-None of these run automatically. There is no CI configuration in the repository, so every gate above is a gate somebody has to remember.
+`verify.mjs` runs all fourteen gates in one command. There is a CI workflow, and it runs the two visual suites ADVISORY — see the flake entry in §11. Everything else is blocking.
 
 **Appendix — generated token tables:** generated by `design-system/build/emit-docs.mjs` from `design-system/dist/tokens.json`.
 **Everything below this line is written by that program. Do not hand-edit it** — the next run overwrites it, and `--check` fails the moment the two diverge. To change a value, edit `design-system/tokens/` and rebuild.

@@ -1,9 +1,8 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { MainStackParamList } from "./types";
-// The five Recovery Companion tabs replace AnklePath's. `MainTabs` is kept in
-// the tree, unreferenced, until the AnklePath screens it hosts are removed —
-// deleting it now would take Plan, Track and Learn with it in the same change,
-// and a re-domain and a deletion should not be reviewed as one diff.
+// The five Recovery Companion tabs replace AnklePath's old Plan / Track /
+// Learn decomposition. The obsolete tab navigator has been removed; the older
+// screens remain unreferenced until a deletion-only cleanup.
 import { RecoveryTabs } from "./RecoveryTabs";
 import { ExerciseDetailScreen } from "../screens/main/ExerciseDetailScreen";
 import { ArticleDetailScreen } from "../screens/main/ArticleDetailScreen";

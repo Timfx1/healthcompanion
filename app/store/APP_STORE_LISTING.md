@@ -1,4 +1,4 @@
-# AnklePath — App Store Connect listing (paste-ready)
+# Healthcompanion — App Store Connect listing (paste-ready)
 
 All text below fits Apple's character limits. Replace the placeholder URLs once your
 legal site is live (see `legal/` folder → host on GitHub Pages).
@@ -6,64 +6,62 @@ legal site is live (see `legal/` folder → host on GitHub Pages).
 ---
 
 ## App name (max 30 chars)
-`AnklePath: Ankle Recovery`  ← 25 chars
-
-(Alternative if "AnklePath" alone is taken/preferred: `AnklePath – Ankle Rehab` = 23)
+`Healthcompanion Recovery`  ← 24 chars
 
 ## Subtitle (max 30 chars)
-`Sprain rehab & pain tracker`  ← 27 chars
+`Recovery notes & reports`  ← 24 chars
 
 ## Promotional text (max 170 chars — can be changed anytime without review)
-`Recovering from an ankle sprain? Get a guided plan, daily rehab exercises, pain and swelling tracking, and clear advice on what to do at every stage. Free to start.`
+`Recovering from an injury, surgery, illness, or flare-up? Track changes, save notes, and create a doctor-ready report. Free to start.`
 
 ## Keywords field (max 100 chars, comma-separated, NO spaces after commas)
-`ankle,sprain,rehab,physio,recovery,injury,pain,swelling,foot,exercises,strain,ligament,balance,mobility`
-(99 chars — see `## Keyword strategy` below for the why)
+`recovery,injury,pain,symptoms,health,doctor,notes,rehab,tracking,report,flare,surgery`
+(86 chars — see `## Keyword strategy` below for the why)
 
 ## Description (max 4000 chars)
 
-AnklePath is your guided ankle recovery companion. Whether you've just rolled your ankle, you're weeks into a sprain, or you're rebuilding after surgery, AnklePath gives you a clear, personalized path back to walking, moving, and your sport — free to start.
+Healthcompanion is a calm recovery companion for injuries, surgery, illness, and flare-ups. It helps you remember what happened, spot changes over time, and bring a useful summary to your clinician — free to start.
 
 WHAT YOU GET
 
-• A personalized recovery plan
-Answer a few quick questions about your injury type, how long ago it happened, your symptoms, and your goals. AnklePath builds a plan matched to your current recovery stage.
+• A quick recovery setup
+Answer a few questions about what you are recovering from, when it started, your symptoms, and your goal. Healthcompanion keeps your recovery context in one place.
 
-• Daily guided rehab exercises
-Follow simple, stage-appropriate mobility, strength, and balance exercises with clear step-by-step instructions, recommended sets and reps, and physiotherapist-led videos. Each exercise includes safety notes so you stay within a comfortable, pain-light range.
+• Fast check-ins and notes
+Log how you are doing in a few taps. Add journal notes, questions for your doctor, medication records, appointments, and weekly reflections without pressure or streaks.
 
-• Pain and swelling tracking
-Log how your ankle feels each day and watch your trend over time. Spot whether things are improving and keep a simple record you can share.
+• Progress and photo comparison
+See your recovery timeline, pain trends, common recovery ranges, and optional recovery photos. Gaps are treated as rest, not failure.
 
 • Recovery education you can trust
-Read short, plain-language articles on the first 48 hours, grades of sprains, swelling and bruising, braces and supports, walking and crutches, returning to sport, and more — drawn from reputable sources including the NHS, Mayo Clinic, Cleveland Clinic, OrthoInfo (AAOS), and ChoosePT (APTA).
+Read short, plain-language recovery articles with sources and safety reminders. Content is educational and does not replace clinician guidance.
 
 • Safety guidance and a doctor summary
 Know the warning signs that mean you should see a clinician, and generate a quick summary of your symptoms and pain history to bring to an appointment.
 
-WHY ANKLEPATH
+WHY HEALTHCOMPANION
 
-Most people leave a sprained ankle to "just heal" and end up with lingering stiffness, weakness, or repeat injuries. AnklePath turns recovery into clear daily steps so you know exactly what to do — and what to avoid — at every stage.
+Recovery is hard to remember clearly, especially when symptoms change slowly. Healthcompanion gives you a simple place to capture what matters and turn it into something useful later.
 
 FREE TO START
 
-AnklePath is free to use. Optional premium features may be offered in the future, but the core plan, tracking, and education are available at no cost.
+Healthcompanion is free to use. Optional premium features may be offered in the future, but the core check-in, timeline, safety guidance, and doctor report are available at no cost.
 
 IMPORTANT — MEDICAL DISCLAIMER
 
-AnklePath is a general health & fitness / recovery-education app. It is not a medical device and does not diagnose, treat, or prevent any condition. It provides educational guidance and general recovery information, and does not replace assessment, diagnosis, or treatment by a qualified clinician. Always seek professional care for your specific situation, and seek urgent help for severe or worsening symptoms.
+Healthcompanion is a general health & fitness / recovery-education app. It is not a medical device and does not diagnose, treat, cure, or prevent any condition. It provides educational recovery information and does not replace assessment, diagnosis, or treatment by a qualified clinician. Always seek professional care for your specific situation, and seek urgent help for severe or worsening symptoms.
 
 Questions or feedback? Email 24.stom.wasswatimothy@gmail.com
 
 ## What's New (version 0.1.0 release notes)
-`First release of AnklePath. Get your personalized ankle recovery plan, daily guided exercises, pain and swelling tracking, trusted recovery education, and safety guidance — free to start.`
+`First Healthcompanion release. Track recovery changes, save notes and photos, review safety guidance, and create a doctor-ready report — free to start.`
 
 ---
 
 ## URLs
-- Support URL:        https://timfx1.github.io/anklepath/         (landing page → has Support email link)
-- Marketing URL:      https://timfx1.github.io/anklepath/         (optional, can be same)
-- Privacy Policy URL: https://timfx1.github.io/anklepath/privacy-policy.html   (REQUIRED)
+- Support URL:        https://timfx1.github.io/healthcompanion/         (landing page → has Support email link)
+- Marketing URL:      https://timfx1.github.io/healthcompanion/         (optional, can be same)
+- Privacy Policy URL: https://timfx1.github.io/healthcompanion/privacy-policy.html   (REQUIRED)
 
 ## Category
 - Primary:   Health & Fitness

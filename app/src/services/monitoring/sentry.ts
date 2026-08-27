@@ -14,14 +14,14 @@ export const isSentryConfigured = Boolean(sentryDsn);
 
 export function initSentry() {
   if (!sentryDsn) {
-    if (__DEV__) console.log("[AnklePath/Sentry] Not configured. Add EXPO_PUBLIC_SENTRY_DSN to .env.");
+    if (__DEV__) console.log("[Healthcompanion/Sentry] Not configured. Add EXPO_PUBLIC_SENTRY_DSN to .env.");
     return;
   }
 
   Sentry.init({
     dsn: sentryDsn,
     environment: buildProfile,
-    release: `${Constants.expoConfig?.slug ?? "anklepath"}@${Constants.expoConfig?.version ?? "0.0.0"}`,
+    release: `${Constants.expoConfig?.slug ?? "healthcompanion"}@${Constants.expoConfig?.version ?? "0.0.0"}`,
     tracesSampleRate: buildProfile === "production" ? 0.05 : 0.2,
     debug: __DEV__,
     enableAutoSessionTracking: true
@@ -33,7 +33,7 @@ export function initSentry() {
     platform: Platform.OS
   });
 
-  if (__DEV__) console.log("[AnklePath/Sentry] Connected", { buildProfile });
+  if (__DEV__) console.log("[Healthcompanion/Sentry] Connected", { buildProfile });
 }
 
 export function setSentryUser(user: { uid: string; email?: string | null; isAnonymous?: boolean }) {

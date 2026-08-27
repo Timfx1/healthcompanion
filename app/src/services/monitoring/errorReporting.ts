@@ -8,7 +8,7 @@ export function captureAppError(error: unknown, context: ErrorContext = {}) {
   const safeContext = sanitizeErrorContext(context);
 
   if (__DEV__) {
-    console.error("[AnklePath/Error]", normalizedError, safeContext);
+    console.error("[Healthcompanion/Error]", normalizedError, safeContext);
   }
 
   if (!isSentryConfigured) return;
@@ -25,7 +25,7 @@ export function captureUserMessage(message: string, level: MessageLevel = "warni
   const safeContext = sanitizeErrorContext(context);
 
   if (__DEV__) {
-    console.log("[AnklePath/Message]", { message, level, context: safeContext });
+    console.log("[Healthcompanion/Message]", { message, level, context: safeContext });
   }
 
   if (!isSentryConfigured) return;

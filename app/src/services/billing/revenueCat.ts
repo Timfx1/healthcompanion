@@ -26,7 +26,7 @@ export async function configureRevenueCat(appUserID?: string | null) {
   if (!BILLING_ENABLED) return false;
   const apiKey = getRevenueCatApiKey();
   if (!apiKey) {
-    if (__DEV__) console.log("[AnklePath/RevenueCat] Missing platform API key.");
+    if (__DEV__) console.log("[Healthcompanion/RevenueCat] Missing platform API key.");
     return false;
   }
 
@@ -35,15 +35,15 @@ export async function configureRevenueCat(appUserID?: string | null) {
     if (!configured) {
       Purchases.configure({ apiKey, appUserID: appUserID ?? undefined });
       configured = true;
-      if (__DEV__) console.log("[AnklePath/RevenueCat] Configured", { platform: Platform.OS });
+      if (__DEV__) console.log("[Healthcompanion/RevenueCat] Configured", { platform: Platform.OS });
     } else if (appUserID) {
       await Purchases.logIn(appUserID);
-      if (__DEV__) console.log("[AnklePath/RevenueCat] User identified", { uid: appUserID });
+      if (__DEV__) console.log("[Healthcompanion/RevenueCat] User identified", { uid: appUserID });
     }
     return true;
   } catch (error) {
     if (__DEV__) {
-      console.log("[AnklePath/RevenueCat] Configure failed safely", {
+      console.log("[Healthcompanion/RevenueCat] Configure failed safely", {
         message: error instanceof Error ? error.message : "Unknown RevenueCat error"
       });
     }
@@ -117,7 +117,7 @@ export async function getPremiumOffer(appUserID?: string | null): Promise<Premiu
     };
   } catch (error) {
     if (__DEV__) {
-      console.log("[AnklePath/RevenueCat] getPremiumOffer failed safely", {
+      console.log("[Healthcompanion/RevenueCat] getPremiumOffer failed safely", {
         message: error instanceof Error ? error.message : "Unknown RevenueCat error"
       });
     }
@@ -166,7 +166,7 @@ export async function getPremiumStatus(appUserID?: string | null): Promise<{ act
     return { active: hasPremiumEntitlement(customerInfo) };
   } catch (error) {
     if (__DEV__) {
-      console.log("[AnklePath/RevenueCat] getCustomerInfo failed safely", {
+      console.log("[Healthcompanion/RevenueCat] getCustomerInfo failed safely", {
         message: error instanceof Error ? error.message : "Unknown RevenueCat error"
       });
     }
@@ -193,7 +193,7 @@ export function addPremiumStatusListener(onChange: (active: boolean) => void): (
     };
   } catch (error) {
     if (__DEV__) {
-      console.log("[AnklePath/RevenueCat] addCustomerInfoUpdateListener failed safely", {
+      console.log("[Healthcompanion/RevenueCat] addCustomerInfoUpdateListener failed safely", {
         message: error instanceof Error ? error.message : "Unknown RevenueCat error"
       });
     }

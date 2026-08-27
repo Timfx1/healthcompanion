@@ -33,9 +33,32 @@
 // because the fixture would keep supplying the right answer for the wrong
 // reason. `seeded` is its own key so the seed can be absent AND the store can
 // be legitimately empty.
+//
+// ─────────────────────────────────────────────────────────────────────────────
+// NOTHING BELOW THIS PROVIDER EXISTS BEFORE IT HAS HYDRATED
+//
+// `hydrated` was on the context from the start and NOTHING read it. Not one
+// Recovery Companion screen. So every screen read `timeline` before it was
+// loaded, and the first paint of Home said "0 check-ins" — a factual claim
+// about somebody's recovery, made before the data existed — before swapping to
+// 24. `harness/slice.spec.ts` caught it on its first run: the pill went
+// `["0 check-ins", "24 check-ins"]` under a 120ms read.
+//
+// In the shipped app that was MASKED, not prevented: `RootNavigator` holds a
+// splash for a minimum of two seconds, so eight sequential `getItem`s almost
+// always land first. That is a coincidence of an unrelated timer, not a
+// guarantee — `AppDataContext`'s hydrate is ONE read and this one is eight, so
+// a cold or contended device can lose that race with nothing on screen to say
+// it did.
+//
+// So the guard is structural rather than per-screen: children do not mount
+// until the store is ready, and a consumer that cannot exist cannot read a
+// half-loaded timeline. `fallback` keeps the UI decision with the caller —
+// `App.tsx` passes the splash the app already shows, so the wait looks exactly
+// as it did before. Same shape as Suspense, for the same reason.
 // ============================================================
 
-import { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { PropsWithChildren, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import type {
@@ -46,7 +69,8 @@ import { RecoveryDataContext, type RecoveryDataValue } from "./recoveryContext";
 // Entitlement is still OWNED by AppDataContext; this provider only forwards it,
 // so the Recovery Companion screens depend on one context instead of two.
 import { useAppData } from "./AppDataContext";
-import { APPOINTMENTS, JOURNEY, MEDICATIONS, MILESTONES, PHOTOS, REFLECTIONS, TIMELINE } from "../data/mockJourney";
+import { useOnboarding } from "./OnboardingContext";
+import { DEMO_RECOVERY_SEED, recoverySeedFromOnboarding } from "../data/recoverySeed";
 // One tagging vocabulary, shared with the chip that renders it. This file
 // briefly carried a SECOND keyword list with a different set of categories
 // and substring matching, which tagged half of everything.
@@ -94,6 +118,63 @@ function writeJson<T>(key: string, value: T): void {
   AsyncStorage.setItem(key, JSON.stringify(value)).catch(() => {});
 }
 
+// ── One persisted slice: state, and the write that goes with it ─────────────
+//
+// THE WRITE USED TO LIVE INSIDE THE `setState` UPDATER:
+//
+//   setTimeline((prev) => { const next = [entry, ...prev]; writeJson(k, next); return next; });
+//
+// which typechecks, reads well and is wrong. React updaters must be PURE — the
+// runtime is free to call one more than once for a single update, and does:
+// under StrictMode it double-invokes deliberately to surface exactly this, and
+// in concurrent rendering it re-invokes when a render is discarded and rebased.
+// `harness/slice.spec.ts` measured it: one capture, `pending()` of 2, two
+// `set recovery-companion:timeline` operations back to back.
+//
+// Two identical writes are only wasteful. The failure mode that is NOT
+// harmless is a rebase: the updater is replayed against a different `prev`, so
+// two DIFFERENT values are written for one key with no ordering guarantee
+// between them, and the older one can land last. That loses an entry silently,
+// on the capture path, which is the one place P1 says must not lose anything.
+//
+// So the updater is gone. A ref holds what has been committed, `commit`
+// computes the next value from it, sets state and writes — once, outside React,
+// in a plain function call. Rapid successive commits are safe because the ref
+// is updated synchronously before `setValue`.
+//
+// PERSISTENCE IS STILL AT THE CALL SITE rather than in an effect on the value,
+// which is the other obvious shape and is deliberately not used here. An effect
+// re-persists after HYDRATION too, so a transient read failure would fall back
+// to `[]` and then write that empty fallback over good data — turning a
+// recoverable read error into permanent loss. Writing only what the user did
+// cannot do that.
+function usePersisted<T>(key: string, initial: T) {
+  const [value, setValue] = useState<T>(initial);
+  const committed = useRef<T>(initial);
+
+  /** Set and persist. Takes a value or a function of the committed one. */
+  const commit = useCallback(
+    (next: T | ((prev: T) => T)) => {
+      const resolved = typeof next === "function" ? (next as (prev: T) => T)(committed.current) : next;
+      // An unchanged value is never written. This is what `addQuestion` and
+      // `saveReflectionReply` already meant by returning `prev` untouched.
+      if (Object.is(resolved, committed.current)) return;
+      committed.current = resolved;
+      setValue(resolved);
+      writeJson(key, resolved);
+    },
+    [key],
+  );
+
+  /** Adopt a value from storage WITHOUT writing it back. Hydration is a read. */
+  const adopt = useCallback((next: T) => {
+    committed.current = next;
+    setValue(next);
+  }, []);
+
+  return [value, commit, adopt] as const;
+}
+
 // ── Context ─────────────────────────────────────────────────────────────────
 
 
@@ -105,16 +186,30 @@ export { RecoveryDataContext, useRecoveryData, type RecoveryDataValue } from "./
 
 const uid = () => `e-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
-export function RecoveryDataProvider({ children }: PropsWithChildren) {
+export function RecoveryDataProvider({
+  children,
+  /**
+   * Rendered instead of `children` until the store has hydrated. Defaults to
+   * nothing, so a caller that does not care gets a blank frame rather than a
+   * screen making claims about data it has not read. `App.tsx` passes the
+   * splash, which is what the app was already showing at that moment anyway.
+   */
+  fallback = null,
+  useDemoSeed = false,
+}: PropsWithChildren<{ fallback?: ReactNode; useDemoSeed?: boolean }>) {
   const { isPremium, savedArticles, toggleArticleSaved } = useAppData();
+  const { state: onboarding, hydrated: onboardingHydrated } = useOnboarding();
   const [hydrated, setHydrated] = useState(false);
-  const [journey, setJourney] = useState<RecoveryJourney>(JOURNEY);
-  const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
+  // `journey` and `medications` are read at hydration and never written back by
+  // any screen, so they stay plain state — a `commit` they never call would be
+  // a persistence path nothing exercises.
+  const [journey, setJourney] = useState<RecoveryJourney>(DEMO_RECOVERY_SEED.journey);
   const [medications, setMedications] = useState<Medication[]>([]);
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [photos, setPhotos] = useState<PhotoEntry[]>([]);
-  const [milestones, setMilestones] = useState<Milestone[]>([]);
-  const [reflections, setReflections] = useState<WeeklyReflection[]>([]);
+  const [timeline, commitTimeline, adoptTimeline] = usePersisted<TimelineEntry[]>(KEYS.timeline, []);
+  const [appointments, commitAppointments, adoptAppointments] = usePersisted<Appointment[]>(KEYS.appointments, []);
+  const [photos, commitPhotos, adoptPhotos] = usePersisted<PhotoEntry[]>(KEYS.photos, []);
+  const [milestones, commitMilestones, adoptMilestones] = usePersisted<Milestone[]>(KEYS.milestones, []);
+  const [reflections, commitReflections, adoptReflections] = usePersisted<WeeklyReflection[]>(KEYS.reflections, []);
   const [isWelcomeBack, setIsWelcomeBack] = useState(false);
 
   // Guards the hydrate effect against React's double-invoke in development. The
@@ -124,35 +219,42 @@ export function RecoveryDataProvider({ children }: PropsWithChildren) {
   const hydrating = useRef(false);
 
   useEffect(() => {
+    if (!onboardingHydrated) return;
     if (hydrating.current) return;
     hydrating.current = true;
 
     (async () => {
+      const initialSeed = useDemoSeed ? DEMO_RECOVERY_SEED : recoverySeedFromOnboarding(onboarding);
       const seeded = await readJson<boolean>(KEYS.seeded, false);
       if (!seeded) {
         writeJson(KEYS.seeded, true);
-        writeJson(KEYS.journey, JOURNEY);
-        writeJson(KEYS.timeline, TIMELINE);
-        writeJson(KEYS.medications, MEDICATIONS);
-        writeJson(KEYS.appointments, APPOINTMENTS);
-        writeJson(KEYS.photos, PHOTOS);
-        writeJson(KEYS.milestones, MILESTONES);
-        writeJson(KEYS.reflections, REFLECTIONS);
-        setJourney(JOURNEY);
-        setTimeline(TIMELINE);
-        setMedications(MEDICATIONS);
-        setAppointments(APPOINTMENTS);
-        setPhotos(PHOTOS);
-        setMilestones(MILESTONES);
-        setReflections(REFLECTIONS);
+        writeJson(KEYS.journey, initialSeed.journey);
+        writeJson(KEYS.timeline, initialSeed.timeline);
+        writeJson(KEYS.medications, initialSeed.medications);
+        writeJson(KEYS.appointments, initialSeed.appointments);
+        writeJson(KEYS.photos, initialSeed.photos);
+        writeJson(KEYS.milestones, initialSeed.milestones);
+        writeJson(KEYS.reflections, initialSeed.reflections);
+        setJourney(initialSeed.journey);
+        setMedications(initialSeed.medications);
+        // `adopt`, not `commit`: the eight lines above have already written the
+        // fixture, and committing it again would be the seed happening twice.
+        adoptTimeline(initialSeed.timeline);
+        adoptAppointments(initialSeed.appointments);
+        adoptPhotos(initialSeed.photos);
+        adoptMilestones(initialSeed.milestones);
+        adoptReflections(initialSeed.reflections);
       } else {
-        setJourney(await readJson(KEYS.journey, JOURNEY));
-        setTimeline(await readJson(KEYS.timeline, [] as TimelineEntry[]));
+        setJourney(await readJson(KEYS.journey, initialSeed.journey));
         setMedications(await readJson(KEYS.medications, [] as Medication[]));
-        setAppointments(await readJson(KEYS.appointments, [] as Appointment[]));
-        setPhotos(await readJson(KEYS.photos, [] as PhotoEntry[]));
-        setMilestones(await readJson(KEYS.milestones, [] as Milestone[]));
-        setReflections(await readJson(KEYS.reflections, [] as WeeklyReflection[]));
+        // Hydration is a READ. Adopting rather than committing is what keeps a
+        // transient read failure from persisting its own fallback over good
+        // data — see the note on `usePersisted`.
+        adoptTimeline(await readJson(KEYS.timeline, [] as TimelineEntry[]));
+        adoptAppointments(await readJson(KEYS.appointments, [] as Appointment[]));
+        adoptPhotos(await readJson(KEYS.photos, [] as PhotoEntry[]));
+        adoptMilestones(await readJson(KEYS.milestones, [] as Milestone[]));
+        adoptReflections(await readJson(KEYS.reflections, [] as WeeklyReflection[]));
       }
 
       // P2 welcome-back. A first-ever open is NOT a return: there is nothing to
@@ -166,16 +268,13 @@ export function RecoveryDataProvider({ children }: PropsWithChildren) {
 
       setHydrated(true);
     })();
-  }, []);
+  }, [onboarding, onboardingHydrated, useDemoSeed]);
 
   /** Prepend and persist. The state update is what the UI waits on. */
-  const pushEntry = useCallback((entry: TimelineEntry) => {
-    setTimeline((prev) => {
-      const next = [entry, ...prev];
-      writeJson(KEYS.timeline, next);
-      return next;
-    });
-  }, []);
+  const pushEntry = useCallback(
+    (entry: TimelineEntry) => commitTimeline((prev) => [entry, ...prev]),
+    [commitTimeline],
+  );
 
   const addCapture = useCallback(
     (text: string, viaVoice?: boolean) => {
@@ -210,14 +309,10 @@ export function RecoveryDataProvider({ children }: PropsWithChildren) {
       // PhotoCompare with nothing to compare.
       const made = photoEntry(journey.id, uri, caption, new Date().toISOString(), uid(), uid());
       if (!made) return;
-      setPhotos((prev) => {
-        const next = [made.photo, ...prev];
-        writeJson(KEYS.photos, next);
-        return next;
-      });
+      commitPhotos((prev) => [made.photo, ...prev]);
       pushEntry(made.entry);
     },
-    [journey.id, pushEntry],
+    [journey.id, commitPhotos, pushEntry],
   );
 
   const addMilestone = useCallback(
@@ -230,11 +325,7 @@ export function RecoveryDataProvider({ children }: PropsWithChildren) {
         title: title.trim(),
         emoji,
       };
-      setMilestones((prev) => {
-        const next = [milestone, ...prev];
-        writeJson(KEYS.milestones, next);
-        return next;
-      });
+      commitMilestones((prev) => [milestone, ...prev]);
       pushEntry({
         id: uid(),
         journeyId: journey.id,
@@ -245,7 +336,7 @@ export function RecoveryDataProvider({ children }: PropsWithChildren) {
         isAutoGenerated: false,
       });
     },
-    [journey.id, pushEntry],
+    [journey.id, commitMilestones, pushEntry],
   );
 
   /**
@@ -259,11 +350,7 @@ export function RecoveryDataProvider({ children }: PropsWithChildren) {
       const entry = timeline.find((e) => e.id === entryId);
       if (!entry) return;
       const milestone = milestoneFromEntry(entry, uid());
-      setMilestones((prev) => {
-        const next = [milestone, ...prev];
-        writeJson(KEYS.milestones, next);
-        return next;
-      });
+      commitMilestones((prev) => [milestone, ...prev]);
       pushEntry({
         id: uid(),
         journeyId: journey.id,
@@ -273,7 +360,7 @@ export function RecoveryDataProvider({ children }: PropsWithChildren) {
         isAutoGenerated: false,
       });
     },
-    [journey.id, pushEntry, timeline],
+    [journey.id, commitMilestones, pushEntry, timeline],
   );
 
   const logMedication = useCallback(
@@ -294,23 +381,20 @@ export function RecoveryDataProvider({ children }: PropsWithChildren) {
     [journey.id, medications, pushEntry],
   );
 
-  const addQuestion = useCallback((appointmentId: string, question: string) => {
-    setAppointments((prev) => {
-      const next = withQuestion(prev, appointmentId, question);
-      if (next === prev) return prev;
-      writeJson(KEYS.appointments, next);
-      return next;
-    });
-  }, []);
+  // `withQuestion` returns the SAME array when there is nothing to add, and
+  // `commit` writes nothing for an unchanged value. The no-op stays a no-op —
+  // no state update, no write, no re-render.
+  const addQuestion = useCallback(
+    (appointmentId: string, question: string) =>
+      commitAppointments((prev) => withQuestion(prev, appointmentId, question)),
+    [commitAppointments],
+  );
 
-  const saveReflectionReply = useCallback((weekStart: string, reply: string) => {
-    setReflections((prev) => {
-      const next = withReflectionReply(prev, weekStart, reply);
-      if (next === prev) return prev;
-      writeJson(KEYS.reflections, next);
-      return next;
-    });
-  }, []);
+  const saveReflectionReply = useCallback(
+    (weekStart: string, reply: string) =>
+      commitReflections((prev) => withReflectionReply(prev, weekStart, reply)),
+    [commitReflections],
+  );
 
   const value = useMemo<RecoveryDataValue>(
     () => ({
@@ -344,7 +428,14 @@ export function RecoveryDataProvider({ children }: PropsWithChildren) {
     ],
   );
 
-  return <RecoveryDataContext.Provider value={value}>{children}</RecoveryDataContext.Provider>;
+  // The provider is mounted either way, so the hydrate effect above runs and
+  // `value` stays referentially stable across the switch. Only the SUBTREE
+  // waits. Returning early before the hooks would be a different bug.
+  return (
+    <RecoveryDataContext.Provider value={value}>
+      {hydrated ? children : fallback}
+    </RecoveryDataContext.Provider>
+  );
 }
 
 

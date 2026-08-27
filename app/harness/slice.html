@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Recovery Companion — provider-to-screen vertical slice</title>
+    <style>
+      /* Same phone shell as `index.html`, so a screen behaves here exactly as it
+         does under the render harness and any difference is the provider. */
+      html, body, #root { margin: 0; padding: 0; height: 100%; }
+      #root { width: 390px; height: 844px; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./slice.tsx"></script>
+  </body>
+</html>

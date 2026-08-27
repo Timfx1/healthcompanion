@@ -2,9 +2,9 @@
 // FILE: harness/stubs.tsx — the context, filled from the real fixture.
 //
 // These are FIXTURES, not mocks. Every value below comes from
-// `data/mockJourney.ts` — the same 45-day journey the app seeds itself with,
-// gaps and setback included — so a screenshot here is a screenshot of the data
-// the product actually ships with.
+// `data/mockJourney.ts` — the 45-day journey used by the harness to keep
+// screenshots deterministic. Fresh app users are seeded from onboarding answers
+// instead, so this fixture is deliberately not the product's first-run data.
 //
 // WHAT IS SUBSTITUTED, and it is only ever the edges:
 //   • AsyncStorage. A browser has no such thing, and a screenshot must not

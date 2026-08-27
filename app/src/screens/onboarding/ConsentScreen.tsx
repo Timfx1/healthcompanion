@@ -80,7 +80,7 @@ export function ConsentScreen() {
         <ConsentCheckbox
           checked={healthAccepted}
           onToggle={() => setHealthAccepted((current) => !current)}
-          label="I consent to AnklePath processing my health information to create my recovery plan."
+          label="I consent to Healthcompanion processing my health information to create my recovery plan."
           caption="Required — the plan cannot be built without it."
         />
         <ConsentCheckbox

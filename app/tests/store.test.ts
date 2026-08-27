@@ -239,6 +239,36 @@ describe("storage — a corrupt value is treated as absent", () => {
   it("parses a good value", () => {
     assert.deepEqual(parseStored('{"a":1}', null), { a: 1 });
   });
+
+  it("A VALUE THAT PARSES BUT IS THE WRONG SHAPE IS ALSO ABSENT", () => {
+    // The half of the input space the first version was not looking at. It
+    // guarded the PARSE, so "corrupt" meant "throws" — and `"null"`, `"5"` and
+    // `"{}"` are all valid JSON. Each one hydrated `timeline` as a non-array,
+    // and the next line to touch it was `[entry, ...timeline]`.
+    //
+    // `harness/slice.spec.ts` measured what that produces: `TypeError: timeline
+    // is not iterable`, an empty body, a total crash on launch. On a device
+    // that is a white screen on a health app holding somebody's recovery, with
+    // no way out but clearing app data.
+    for (const wrong of ["null", "5", "{}", '"a string"', "true"]) {
+      assert.deepEqual(parseStored(wrong, [] as unknown[]), [], `array fallback vs ${wrong}`);
+    }
+    // And the other direction: an array where a record was expected.
+    assert.deepEqual(parseStored("[1,2,3]", { a: 1 }), { a: 1 });
+    assert.deepEqual(parseStored("null", { a: 1 }), { a: 1 });
+    // Primitives keep their own type too — `seeded` is a boolean.
+    assert.equal(parseStored('"true"', false), false);
+    assert.equal(parseStored("null", false), false);
+    assert.equal(parseStored("true", false), true);
+  });
+
+  it("a null fallback still accepts a value, because the caller asked for one", () => {
+    // `lastOpened` is `number | null`. Rejecting a number there would break the
+    // welcome-back decision on every launch after the first — a guard that
+    // "fixes" corruption by discarding good data is not a fix.
+    assert.equal(parseStored("1772000000000", null as number | null), 1772000000000);
+    assert.equal(parseStored("null", null as number | null), null);
+  });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────

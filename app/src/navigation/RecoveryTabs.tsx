@@ -30,6 +30,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useAppTheme } from "../state/AppThemeContext";
 import { useRecoveryData } from "../state/recoveryContext";
@@ -55,6 +56,7 @@ const ICONS: Record<keyof RecoveryTabsParamList, keyof typeof Ionicons.glyphMap>
 
 export function RecoveryTabs() {
   const { tokens } = useAppTheme();
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation<Nav>();
   const { appointments, medications, milestones } = useRecoveryData();
   const [checkInOpen, setCheckInOpen] = useState(false);
@@ -75,8 +77,8 @@ export function RecoveryTabs() {
             // The bar leaves a gap in the middle for the centre action, which
             // floats above it rather than living inside it.
             paddingTop: scale.space[2],
-            paddingBottom: scale.space[3],
-            minHeight: scale.size.buttonPrimary + scale.space[5],
+            paddingBottom: insets.bottom + scale.space[3],
+            minHeight: scale.size.buttonPrimary + insets.bottom + scale.space[5],
           },
           tabBarActiveTintColor: tokens.color.accent.strong,
           tabBarInactiveTintColor: tokens.color.text.secondary,
@@ -145,7 +147,7 @@ export function RecoveryTabs() {
         style={{
           position: "absolute",
           alignSelf: "center",
-          bottom: scale.space[5],
+          bottom: insets.bottom + scale.space[5],
           width: scale.size.buttonPrimary,
           height: scale.size.buttonPrimary,
           borderRadius: scale.radius.full,

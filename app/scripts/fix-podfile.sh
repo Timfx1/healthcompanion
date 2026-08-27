@@ -12,8 +12,8 @@ if grep -q "use_modular_headers!" "$PODFILE"; then
   exit 0
 fi
 
-# Add use_modular_headers! after target 'AnklePath' line
-sed -i '' "/target 'AnklePath' do/a\\
+# Add use_modular_headers! after target 'Healthcompanion' line
+sed -i '' "/target 'Healthcompanion' do/a\\
   use_modular_headers!
 " "$PODFILE"
 

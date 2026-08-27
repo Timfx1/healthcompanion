@@ -14,11 +14,11 @@ import { AnalyticsEvents } from "../../services/analytics/events";
 import { trackButtonClick, trackEvent, trackWaitlistJoined } from "../../services/analytics/posthog";
 
 const features = [
-  "Advanced progress insights",
-  "Smarter rehab progression",
-  "Return-to-sport readiness tools",
+  "Deeper insights and correlations",
+  "Your full history, beyond the last 30 days",
+  "More than one recovery at a time",
   "Photo progress compare",
-  "Extended exercise library"
+  "Education deep dives"
 ];
 
 function getWaitlistErrorMessage(error: unknown) {
@@ -121,7 +121,7 @@ export function PremiumTeaserScreen() {
         sourceScreen: "PremiumTeaser"
       });
       if (__DEV__) {
-        console.log("[AnklePath/Waitlist] Join failed", {
+        console.log("[Healthcompanion/Waitlist] Join failed", {
           message: error instanceof Error ? error.message : "Unknown waitlist error"
         });
       }

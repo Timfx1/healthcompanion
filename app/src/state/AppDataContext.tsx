@@ -1,7 +1,7 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const STORAGE_KEY = "@anklepath/appData/v1";
+const STORAGE_KEY = "@healthcompanion/appData/v1";
 
 export type PainEntry = {
   id: string;

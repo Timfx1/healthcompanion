@@ -246,7 +246,7 @@ export function TrialPaywallScreen() {
       </View>
 
       <Text style={[styles.finePrint, { color: palette.textSubtle }]}>
-        AnklePath Premium is an auto-renewing subscription billed at {priceText} through your{" "}
+        Healthcompanion Premium is an auto-renewing subscription billed at {priceText} through your{" "}
         {Platform.OS === "ios" ? "App Store" : "Google Play"} account.{" "}
         {offer?.hasFreeTrial
           ? `Your ${trialText} free trial converts to a paid subscription unless you cancel at least 24 hours before it ends. `

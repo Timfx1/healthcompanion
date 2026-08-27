@@ -5,6 +5,7 @@ import { StatusBar } from "expo-status-bar";
 import { NavigationContainer, DefaultTheme, createNavigationContainerRef } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { RootNavigator } from "./src/navigation/RootNavigator";
+import { SplashScreen } from "./src/screens/SplashScreen";
 import { AppThemeProvider, useAppTheme } from "./src/state/AppThemeContext";
 import { AppDataProvider } from "./src/state/AppDataContext";
 // The Recovery Companion store, on AsyncStorage (§7 Phase 1). Kept alongside
@@ -76,12 +77,24 @@ function App() {
           <ConsentProvider>
             <AnalyticsProvider>
               <AppDataProvider>
-                <RecoveryDataProvider>
-                <PremiumSync />
                 <OnboardingProvider>
+                {/* Outside the Recovery store on purpose. It reads AnklePath's
+                    entitlement and renders nothing, so gating it behind a
+                    different store's hydration would delay the billing sync for
+                    no reason at all. */}
+                <PremiumSync />
+                {/* The splash is the fallback because it is what the app was
+                    already showing at that moment: `RootNavigator` holds it for
+                    a minimum of two seconds. Before this, that timer was the
+                    only thing keeping Home from painting "0 check-ins" over
+                    somebody's real recovery — a race this store could lose on a
+                    cold device, since its hydrate is eight reads to
+                    AppDataContext's one. Now the wait is stated instead of
+                    raced, and it looks identical. */}
+                <RecoveryDataProvider fallback={<SplashScreen />}>
                   <ThemedAppShell />
-                </OnboardingProvider>
                 </RecoveryDataProvider>
+                </OnboardingProvider>
               </AppDataProvider>
             </AnalyticsProvider>
           </ConsentProvider>
@@ -97,7 +110,7 @@ function RootErrorFallback() {
   return (
     <View style={styles.errorFallback}>
       <Text style={styles.errorTitle}>Something went wrong</Text>
-      <Text style={styles.errorText}>Please close and reopen AnklePath. The error has been reported.</Text>
+      <Text style={styles.errorText}>Please close and reopen Healthcompanion. The error has been reported.</Text>
     </View>
   );
 }

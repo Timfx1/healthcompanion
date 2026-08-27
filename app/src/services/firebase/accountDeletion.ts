@@ -236,5 +236,5 @@ export async function deleteAccountAndData(options: { password?: string } = {}):
     await deleteUser(user);
   }
 
-  if (__DEV__) console.log("[AnklePath/Firebase Auth] Account and data deleted", { uid });
+  if (__DEV__) console.log("[Healthcompanion/Firebase Auth] Account and data deleted", { uid });
 }

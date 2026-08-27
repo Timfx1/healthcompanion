@@ -2,7 +2,7 @@ import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useSt
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { OnboardingAnswersPayload } from "../types/onboarding";
 
-const STORAGE_KEY = "@anklepath/onboarding/v1";
+const STORAGE_KEY = "@healthcompanion/onboarding/v1";
 
 export type OnboardingState = {
   injuryType?: string;
@@ -23,6 +23,7 @@ export type OnboardingState = {
 
 type OnboardingContextValue = {
   state: OnboardingState;
+  hydrated: boolean;
   setField: <K extends keyof OnboardingState>(key: K, value: OnboardingState[K]) => void;
   toggleSymptom: (symptom: string) => void;
   /** Re-apply answers stored against this account (see `fetchUserState`). */
@@ -69,6 +70,7 @@ export function OnboardingProvider({ children }: PropsWithChildren) {
   const value = useMemo<OnboardingContextValue>(
     () => ({
       state,
+      hydrated,
       setField: (key, valueForKey) => {
         setState((current) => ({ ...current, [key]: valueForKey }));
       },
@@ -98,7 +100,7 @@ export function OnboardingProvider({ children }: PropsWithChildren) {
         setState(defaultState);
       }
     }),
-    [state]
+    [hydrated, state]
   );
 
   return <OnboardingContext.Provider value={value}>{children}</OnboardingContext.Provider>;

@@ -111,6 +111,17 @@ const GATES = [
       // quick-capture button was drawn perfectly for months with no handler.
       { name: "rn-behaviour", cmd: `${PNPM} exec playwright test --config harness/playwright.config.ts behaviour`, cwd: RN, why: "the RN screens respond to a tap, not merely to a screenshot" },
       { name: "rn-render", cmd: `${PNPM} exec playwright test --config harness/playwright.config.ts render`, cwd: RN, why: "50 baselines, 23 RN screens x 2 modes, plus the data-only states" },
+      // THE SEAM THE OTHER TWO DELIBERATELY DO NOT COVER. `rules` proves the
+      // transitions with no React; `rn-render` and `rn-behaviour` prove the
+      // screens with a STUBBED context. So hydration, seeding, the AsyncStorage
+      // round trip, the optimistic write and the welcome-back decision were
+      // each proven in isolation and never proven together.
+      //
+      // Its first run found that `hydrated` had no consumers anywhere in the
+      // Recovery Companion tree, so Home's first paint said "0 check-ins" over
+      // a 45-day recovery — masked in the app by an unrelated splash timer.
+      // BLOCKING, like the other two behaviour gates.
+      { name: "rn-slice", cmd: `${PNPM} exec playwright test --config harness/playwright.config.ts slice`, cwd: RN, why: "the REAL provider over storage, into a real screen, and back out again" },
     ]),
   ] : []),
 ];

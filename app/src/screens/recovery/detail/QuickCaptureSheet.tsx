@@ -85,7 +85,7 @@ export function QuickCaptureSheet({ onClose }: { onClose: () => void }) {
         onChangeText={setText}
         multiline
         autoFocus
-        placeholder="Anything at all. 'knee hurt after stairs today'"
+        placeholder="Anything you want to remember from today"
         placeholderTextColor={tokens.pattern.capture.placeholder}
         accessibilityLabel="Capture text"
         style={{

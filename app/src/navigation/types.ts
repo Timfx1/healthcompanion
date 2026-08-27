@@ -1,5 +1,3 @@
-import { NavigatorScreenParams } from "@react-navigation/native";
-
 // `mode` distinguishes the paywall shown during onboarding (default — continuing
 // routes forward into the app) from the "upgrade" paywall opened later from a
 // locked feature (continuing/success just returns the user where they were).
@@ -25,14 +23,6 @@ export type OnboardingStackParamList = {
   PremiumTeaser: undefined;
 };
 
-export type MainTabsParamList = {
-  Home: undefined;
-  Plan: undefined;
-  Track: undefined;
-  Learn: undefined;
-  Profile: undefined;
-};
-
 /**
  * The Recovery Companion tabs (spec §5). Four navigable tabs plus a CENTRE
  * ACTION that is not one: check-in opens as a modal, because it is something
@@ -47,7 +37,7 @@ export type RecoveryTabsParamList = {
 };
 
 export type MainStackParamList = {
-  MainTabs: NavigatorScreenParams<MainTabsParamList> | undefined;
+  MainTabs: undefined;
   ExerciseDetail: { exerciseId: string };
   ArticleDetail: { articleId: string };
   TrackerCheckIn: { tracker: "swelling" | "walking" | "rangeOfMotion" | "balance" };
@@ -89,6 +79,6 @@ export type MainStackParamList = {
 };
 
 export type RootStackParamList = {
-  Onboarding: NavigatorScreenParams<OnboardingStackParamList> | undefined;
-  Main: NavigatorScreenParams<MainStackParamList> | undefined;
+  Onboarding: undefined;
+  Main: undefined;
 };

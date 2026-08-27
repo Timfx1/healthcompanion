@@ -104,8 +104,8 @@ export function buildDoctorSummary(input: DoctorSummaryInput, now = new Date()):
   }
 
   lines.push("—");
-  lines.push("This is a self-reported summary from the AnklePath app. It is not a medical assessment,");
-  lines.push("and AnklePath is not a medical device. It does not diagnose or provide clinical advice.");
+  lines.push("This is a self-reported summary from the Healthcompanion app. It is not a medical assessment,");
+  lines.push("and Healthcompanion is not a medical device. It does not diagnose or provide clinical advice.");
 
   return lines.join("\n");
 }

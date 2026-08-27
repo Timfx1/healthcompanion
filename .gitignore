@@ -65,3 +65,5 @@ desktop.ini
 app/harness/.shots/
 app/test-results/
 app/harness/test-results/
+app/device/__evidence__/
+android-current.png

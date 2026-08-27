@@ -21,12 +21,14 @@
 
 import { useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { shortDate } from "../../rules";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { useAppTheme } from "../../state/AppThemeContext";
 import { useRecoveryData } from "../../state/recoveryContext";
+import { useKeyboardHeight } from "../../hooks/useKeyboardHeight";
 import { scale } from "../../theme/tokens.generated";
 import { dayNumber } from "../../types/recovery";
 import {
@@ -44,6 +46,8 @@ export function RecoveryHomeScreen({
   onOpenAppointment: () => void;
 }) {
   const { tokens } = useAppTheme();
+  const insets = useSafeAreaInsets();
+  const keyboardHeight = useKeyboardHeight();
   const { journey, timeline, appointments, reflections, isWelcomeBack, addCapture } = useRecoveryData();
   const [text, setText] = useState("");
 
@@ -75,7 +79,14 @@ export function RecoveryHomeScreen({
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: tokens.color.surface.base }}
-      contentContainerStyle={{ padding: scale.space[4], gap: scale.space[4] }}
+      contentContainerStyle={{
+        paddingHorizontal: scale.space[4],
+        paddingTop: insets.top + scale.space[4],
+        paddingBottom: insets.bottom + scale.space[4] + keyboardHeight,
+        gap: scale.space[4],
+      }}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="interactive"
     >
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <Title>Alex</Title>
@@ -121,7 +132,7 @@ export function RecoveryHomeScreen({
           onChangeText={setText}
           onSubmitEditing={save}
           returnKeyType="done"
-          placeholder="Note anything… ('knee hurt after stairs')"
+          placeholder="Note anything from today..."
           placeholderTextColor={tokens.pattern.capture.placeholder}
           accessibilityLabel="Quick capture"
           style={{

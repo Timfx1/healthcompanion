@@ -283,7 +283,7 @@ export function SignUpScreen() {
     if (Constants.appOwnership === "expo") {
       Alert.alert(
         "Use a development build for Google",
-        "Google sign-in cannot be tested reliably inside Expo Go because OAuth needs AnklePath's own app scheme. Email and Guest work in Expo Go. To test Google, run an EAS development build."
+        "Google sign-in cannot be tested reliably inside Expo Go because OAuth needs Healthcompanion's own app scheme. Email and Guest work in Expo Go. To test Google, run an EAS development build."
       );
       return;
     }
@@ -301,7 +301,7 @@ export function SignUpScreen() {
     if (!NativeModules.RNGoogleSignin) {
       Alert.alert(
         "Rebuild needed",
-        "Google Sign-In was added as a native module. Rebuild and reinstall the AnklePath development app, then start Metro again."
+        "Google Sign-In was added as a native module. Rebuild and reinstall the Healthcompanion development app, then start Metro again."
       );
       return;
     }
@@ -363,7 +363,7 @@ export function SignUpScreen() {
     if (Constants.appOwnership === "expo") {
       Alert.alert(
         "Use a development build for Apple",
-        "Apple sign-in needs AnklePath's own app build and Firebase Apple provider setup. Email and Guest work in Expo Go."
+        "Apple sign-in needs Healthcompanion's own app build and Firebase Apple provider setup. Email and Guest work in Expo Go."
       );
       return;
     }

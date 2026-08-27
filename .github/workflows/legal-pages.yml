@@ -1,0 +1,45 @@
+name: legal-pages
+
+on:
+  push:
+    branches: ["main", "master"]
+    paths:
+      - "app/legal/**"
+      - ".github/workflows/legal-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: legal-pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare legal pages
+        run: |
+          test -f app/legal/index.html
+          test -f app/legal/privacy-policy.html
+          test -f app/legal/terms.html
+          test -f app/legal/delete-account.html
+          test -f app/legal/impressum.html
+          touch app/legal/.nojekyll
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/legal
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

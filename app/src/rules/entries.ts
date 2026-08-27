@@ -170,12 +170,44 @@ export function withReflectionReply(
  * refusing to open the screen it belongs to — the same reasoning that gives the
  * capture path no failure branch. This is separated from AsyncStorage so the
  * corruption case can be asserted without a device.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * IT GUARDS THE SHAPE, NOT ONLY THE PARSE, and it did not always.
+ *
+ * The first version was `try { JSON.parse(raw) } catch { fallback }`, which
+ * treats "corrupt" as "throws". `"null"`, `"5"` and `"{}"` are all perfectly
+ * valid JSON, so each sailed through the `try` and hydrated `timeline` as a
+ * non-array — and the next line to touch it was `[entry, ...timeline]`.
+ * `harness/slice.spec.ts` measured the result: `TypeError: timeline is not
+ * iterable`, an EMPTY BODY, and a total crash on launch. On a device that is a
+ * white screen on a health app holding somebody's recovery record, with no way
+ * out but clearing app data — the exact outcome this function exists to prevent,
+ * reached through the half of the input space it was not looking at.
+ *
+ * Nothing the app writes today produces those values; a version skew, a partial
+ * write or storage corruption does. The guard costs one comparison, so the
+ * question of how likely that is need not be answered.
+ *
+ * The fallback is the schema. Comparing against it needs no separate validator
+ * to keep in step, and a call site that wants an array necessarily passes one.
  */
 export function parseStored<T>(raw: string | null, fallback: T): T {
   if (raw === null) return fallback;
+
+  let parsed: unknown;
   try {
-    return JSON.parse(raw) as T;
+    parsed = JSON.parse(raw);
   } catch {
     return fallback;
   }
+
+  // `typeof null` is "object", and `typeof []` is "object" too, so neither test
+  // alone separates an array from a record from nothing at all. All three are
+  // needed, and all three have a failing case in `tests/store.test.ts`.
+  if (Array.isArray(parsed) !== Array.isArray(fallback)) return fallback;
+  // A `null` fallback means the caller genuinely accepts one — `lastOpened` is
+  // `number | null` — so only an unexpected null is rejected.
+  if (fallback !== null && (parsed === null || typeof parsed !== typeof fallback)) return fallback;
+
+  return parsed as T;
 }

@@ -60,6 +60,19 @@ export default defineConfig({
       // blank page. The shim draws the same two stops at the same angle in CSS.
       { find: /^expo-linear-gradient$/, replacement: resolve(HERE, "shims/expo-linear-gradient.tsx") },
 
+      // The SECOND declared fidelity substitution, and the one that made the
+      // provider-to-screen slice possible (`slice.tsx`). AsyncStorage reaches
+      // for a native module a browser has no answer for.
+      //
+      // The package ships its own web build and it would resolve here on its
+      // own. It is aliased away on purpose: that build is synchronous
+      // underneath and resolves in a microtask, so hydration always wins the
+      // race against first paint and "a screen must not flash empty and then
+      // fill" becomes unaskable. The shim's latency is injectable, which is the
+      // whole reason the claim can be made at all. Full note in its header.
+      { find: /^@react-native-async-storage\/async-storage$/, replacement: resolve(HERE, "shims/async-storage.ts") },
+      { find: /^react-native-safe-area-context$/, replacement: resolve(HERE, "shims/react-native-safe-area-context.tsx") },
+
       // ONE COPY OF EACH, resolved from this package. pnpm's store legitimately
       // holds several react-dom versions at once, and the optimizer will
       // happily pick one that differs from the app's react. That produced
@@ -79,10 +92,10 @@ export default defineConfig({
     global: "globalThis",
   },
   optimizeDeps: {
-    // AsyncStorage reaches for native modules a browser has no answer for. The
-    // harness renders screens, and no screen touches storage — only
-    // `RecoveryDataContext` does, and the harness supplies that context itself.
-    exclude: ["@react-native-async-storage/async-storage"],
+    // Belt and braces with the alias above. The alias is what actually replaces
+    // it; this keeps the optimizer from pre-bundling the real package on the
+    // way past, which it will still try to do from a transitive import.
+    exclude: ["@react-native-async-storage/async-storage", "react-native-safe-area-context"],
   },
   server: { host: "127.0.0.1", port: 5199 },
   plugins: [react()],

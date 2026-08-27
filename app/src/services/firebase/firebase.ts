@@ -55,13 +55,13 @@ export const db: Firestore | null = initializedDb;
 
 if (__DEV__) {
   if (isFirebaseConfigured && firebaseApp && auth && db) {
-    console.log("[AnklePath/Firebase] Connected", {
+    console.log("[Healthcompanion/Firebase] Connected", {
       projectId: firebaseConfig.projectId,
       auth: "available",
       firestore: "available",
       appsInitialized: getApps().length
     });
   } else {
-    console.log("[AnklePath/Firebase] Not configured. Add EXPO_PUBLIC_FIREBASE_* values to .env.");
+    console.log("[Healthcompanion/Firebase] Not configured. Add EXPO_PUBLIC_FIREBASE_* values to .env.");
   }
 }

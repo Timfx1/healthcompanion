@@ -17,7 +17,7 @@ function createPostHogClient() {
     return new PostHog(posthogKey, {
       host: posthogHost,
       captureAppLifecycleEvents: true,
-      // AnklePath reads no feature flags, so skip the /flags/ call the SDK
+      // Healthcompanion reads no feature flags, so skip the /flags/ call the SDK
       // otherwise makes on every launch — it was returning 401 and adding a
       // failed request to every session.
       preloadFeatureFlags: false,
@@ -34,9 +34,9 @@ export const posthog = createPostHogClient();
 
 if (__DEV__) {
   if (posthog) {
-    console.log("[AnklePath/PostHog] Connected", { host: posthogHost });
+    console.log("[Healthcompanion/PostHog] Connected", { host: posthogHost });
   } else {
-    console.log("[AnklePath/PostHog] Not configured. Add EXPO_PUBLIC_POSTHOG_API_KEY to .env.");
+    console.log("[Healthcompanion/PostHog] Not configured. Add EXPO_PUBLIC_POSTHOG_API_KEY to .env.");
   }
 }
 
@@ -68,7 +68,7 @@ function sendToPostHog(eventName: string, eventProperties: AnalyticsProperties) 
   try {
     posthog.capture(eventName, eventProperties as never);
   } catch (error) {
-    if (__DEV__) console.log("[AnklePath/PostHog] Event failed safely", { eventName });
+    if (__DEV__) console.log("[Healthcompanion/PostHog] Event failed safely", { eventName });
     captureUserMessage("PostHog event failed", "warning", {
       source: "posthog",
       eventName,
@@ -92,11 +92,11 @@ export function trackEvent(eventName: AnalyticsEventName | string, properties?: 
   try {
     posthog.capture(eventName, eventProperties as never);
     if (__DEV__ && (eventName === AnalyticsEvents.premiumWaitlistClicked || eventName === AnalyticsEvents.premiumWaitlistJoined)) {
-      console.log("[AnklePath/PostHog] Event sent", { eventName, properties: eventProperties });
+      console.log("[Healthcompanion/PostHog] Event sent", { eventName, properties: eventProperties });
     }
   } catch (error) {
     // Analytics must never block the app experience.
-    if (__DEV__) console.log("[AnklePath/PostHog] Event failed safely", { eventName });
+    if (__DEV__) console.log("[Healthcompanion/PostHog] Event failed safely", { eventName });
     captureUserMessage("PostHog event failed", "warning", {
       source: "posthog",
       eventName,
@@ -115,10 +115,10 @@ export function identifyUser(uid: string, properties?: AnalyticsProperties) {
   if (!posthog) return;
   try {
     posthog.identify(uid, withDefaults({ uid, ...properties }) as never);
-    if (__DEV__) console.log("[AnklePath/PostHog] User identified", { uid });
+    if (__DEV__) console.log("[Healthcompanion/PostHog] User identified", { uid });
   } catch (error) {
     // Identification failures should not affect auth or navigation.
-    if (__DEV__) console.log("[AnklePath/PostHog] Identify failed safely", { uid });
+    if (__DEV__) console.log("[Healthcompanion/PostHog] Identify failed safely", { uid });
     captureUserMessage("PostHog identify failed", "warning", {
       source: "posthog",
       uid,
@@ -151,7 +151,7 @@ export function setAnalyticsOptIn(granted: boolean) {
     }
 
     if (__DEV__) {
-      console.log("[AnklePath/PostHog] Analytics consent applied", { granted, replayed: granted ? buffered.length : 0 });
+      console.log("[Healthcompanion/PostHog] Analytics consent applied", { granted, replayed: granted ? buffered.length : 0 });
     }
   } catch (error) {
     // Never let a consent toggle throw into the UI.

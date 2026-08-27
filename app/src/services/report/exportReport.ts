@@ -22,7 +22,7 @@ export async function exportRecoveryReport(data: ReportData): Promise<void> {
   await Sharing.shareAsync(uri, {
     mimeType: "application/pdf",
     UTI: "com.adobe.pdf",
-    dialogTitle: "Share your Recovery Companion report"
+    dialogTitle: "Share your Healthcompanion report"
   });
 
   if (__DEV__) {

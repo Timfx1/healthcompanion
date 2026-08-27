@@ -1,6 +1,6 @@
-# Recovery Companion
+# Healthcompanion
 
-A calm, guilt-free companion for anyone recovering from an injury, surgery,
+A calm, guilt-free recovery companion for anyone recovering from an injury, surgery,
 illness or chronic flare. It remembers your recovery so you don't have to, and
 it hands you something useful to show your doctor.
 
@@ -16,7 +16,7 @@ Being precise about this, because the gap matters:
 |---|---|
 | **Design system** (`design-system/`) | Real. One token source, two platforms **plus paper**, ten gates. |
 | **Web prototype** (`Onboarding Flow/`) | Real, and the reference implementation — 12 onboarding screens + 5 tabs, both colour modes. A Figma Make export, since evolved. |
-| **React Native app** (`app/`) | **Feature-complete for Phase 1 §5, and now tested.** Five tabs and all seventeen detail screens over `types/recovery.ts`, a cited corridor, a 45-day mock journey and an AsyncStorage store. 89 pure-rule tests, 66 render and behaviour tests, 50 baselines. AnklePath's Plan / Track / Learn are still in the tree, unreferenced. |
+| **React Native app** (`app/`) | **Feature-complete for Phase 1 §5, and now tested.** The public app name is **Healthcompanion**. Five Recovery Companion tabs and all seventeen detail screens run over `types/recovery.ts`, a cited corridor and an AsyncStorage store. Fresh users now start from their onboarding answers rather than the 45-day demo journey; that demo remains explicit harness-only fixture data. 93 pure-rule tests, 66 render and behaviour tests over 50 baselines, and 27 vertical-slice tests run the REAL provider over storage into a real screen. The obsolete AnklePath tab navigator has been removed; older Plan / Track / Learn screens remain only as unreferenced legacy code. |
 | **§5 detail/modal screens** | **All 17 exist** in the prototype, each with a dev route and a baseline. Includes the Doctor Report, the flagship, which is free forever and enforced as such by `restricted.mjs`. |
 
 `tokens.native.ts` is now consumed by `app/`, vendored as
@@ -56,7 +56,8 @@ stack has 13 screens but they are AnklePath's decomposition — `InjuryType` /
 `InjuryTiming` / `PainWalking` plus a `Consent` step, and **no `ConditionDetail`**.
 
 **Main tabs (5).** All five exist and are baselined in the prototype. The RN app
-still has AnklePath's five (`Home · Plan · Track · Learn · Profile`).
+now uses the Recovery Companion shell: `Home · Timeline · Check-in action ·
+Progress · Profile`.
 
 **Detail/modal (17).**
 
@@ -87,7 +88,8 @@ defect. That is why the dormancy ratchet is now **closed at zero**.
 ## Quick start
 
 ```bash
-node verify.mjs                 # every gate; --fast skips the visual suite
+node verify.mjs                 # all fourteen gates; --fast skips the browser suites
+cd app && node harness/mutants.mjs   # plant 13 defects, watch each test fail
 
 cd "Onboarding Flow"
 pnpm install
@@ -102,21 +104,24 @@ The prototype has a dev route so any screen can be addressed directly:
 
 ## Mocked vs real
 
-Everything is local. There are no network calls, no accounts, and no writes to
-any backend anywhere in this repository.
+The prototype is local-only. The Expo app is store-oriented: it remains fully
+usable in guest/offline mode, but it now includes optional Firebase Auth /
+Firestore, consent-gated PostHog analytics, Sentry monitoring and dormant
+RevenueCat billing. Those services no-op when their environment variables or
+feature flags are absent.
 
 | Feature | State | Notes |
 |---|---|---|
-| Quick Capture (P1) | **Built, in-memory** | The Home field, the FAB sheet and silent keyword tagging all work; nothing persists yet. Phase 1 target is AsyncStorage. The path must never block on the network and must never fail — which is why the sheet has no saving state and no error state. |
+| Quick Capture (P1) | **Built, AsyncStorage** | The Home field, the FAB sheet and silent keyword tagging all work. Recovery Companion entries persist locally through `RecoveryDataContext`; writes are optimistic and never block on the network. |
 | Corridor data (P5) | **Placeholder mock, cited** | "Common range for knee rehab, weeks 4–6" is illustrative. Real content needs source attribution per §10 before it ships. |
 | Safety + education content | **Placeholder mock, cited** | Every red flag and article names a source, and `NEEDS_CLINICAL_REVIEW` is rendered on the Safety screen so it states that it is pending review rather than implying sign-off. No item names a condition (§10). |
-| Weekly reflections (P7) | **Mock copy, REAL persistence** | The app-generated lines are still fixed. What the user writes back is stored via `components/storage.ts` and verified by reloading the page — `tests/persistence.spec.ts`, not a baseline. |
-| Share cards (P8) | **Local render** | In-app preview only. No OS share sheet — that is `expo-sharing` in Phase 1. |
-| Doctor report (P6) | **Built** | The RN app has AnklePath’s `ReportsScreen` plus a print/PDF template. The template now draws from `tokens/print.json` — its own single-valued print layer, 7:1 body contrast, verified by rendering and by a photocopy approximation. The gate is gone (it was premium). `ReportPreview` is built — seven states, all routable and baselined. Free forever, no lock, ever — enforced by `restricted.mjs`. |
-| Photo timeline / compare | **Built, placeholder frames** | Capture is free and registered as a core-loop surface; only compare is gated (P9). No real image handling yet — the prototype does not ship invented photographs of injuries. |
+| Weekly reflections (P7) | **Mock copy, REAL persistence** | The app-generated lines are still fixed. What the user writes back is stored in the Recovery Companion store and verified through the vertical-slice harness. |
+| Share cards (P8) | **Local render** | In-app preview exists. OS-level report PDF sharing exists in the RN report flow; milestone card sharing is still preview-only. |
+| Doctor report (P6) | **Built** | The RN app has the free Recovery Companion report plus a print/PDF template. The template draws from `tokens/print.json` — its own single-valued print layer, 7:1 body contrast, verified by rendering and by a photocopy approximation. `ReportPreview` is built — seven states, all routable and baselined. Free forever, no lock, ever — enforced by `restricted.mjs`. |
+| Photo timeline / compare | **Built, native picker path** | Capture is free and registered as a core-loop surface; only compare is gated (P9). The app uses `expo-image-picker`; the browser harness does not cover that native path. |
 | Medications, appointments | **Built, static mock data** | Detail screens exist for both. No reminders or notifications yet. Adherence is shown as accumulation and rest — a count of doses logged, never a percentage, because a percentage is a count of what did not happen (P2/N1/N2). |
 | Widgets, native voice | **Phase 2** | Deep link `recoverycompanion://capture` is reserved. Phase 1 uses OS keyboard dictation. |
-| Auth, sync, billing | **Phase 2** | No Firebase, no RevenueCat, no writes. Guest mode is the only mode. |
+| Auth, sync, billing | **Present, guarded** | Firebase Auth/Firestore are implemented and safely no-op when unconfigured. RevenueCat is installed but dormant unless `EXPO_PUBLIC_PAYWALL_ENABLED` and `EXPO_PUBLIC_BILLING_ENABLED` are both true. |
 | Insights / correlations | **Rule-based mock** | Advanced correlations are premium; AI is Phase 3. |
 
 **Research alignment:** every product principle traces to a finding in
@@ -192,20 +197,30 @@ what is not finished. Full detail in `DESIGN_CRITERIA.md` §11.
   path in `Toast` for the whole life of the component, because nothing could
   photograph a state that exists for 2.4 seconds behind an interaction. That one
   is closed (`?screen=app:toast`); the check-in's states need the same.
-- **The provider-to-screen seam is the one thing nothing checks.** The pure
-  rules are tested without a renderer; the screens are tested without the real
-  provider, because the harness supplies the context. So hydration, seeding,
-  the AsyncStorage round trip and the welcome-back decision are each proven in
-  isolation and never proven together. That is the next gap worth closing.
+- **The provider-to-screen seam is closed.** `harness/slice.spec.ts` mounts the
+  REAL `RecoveryDataProvider` over a fake-but-real AsyncStorage, renders a real
+  screen, interacts, and asks storage what landed — then remounts from that
+  storage and asks whether it came back. 27 tests, blocking, 13 mutants planted
+  and 13 caught. It found four defects in the seam, including a `hydrated` flag
+  with **no consumers anywhere** (so Home painted "0 check-ins" over a 45-day
+  recovery), a storage write inside a `setState` updater, and a `parseStored`
+  that guarded the parse but not the shape — a stored `null` crashed the app to
+  an empty page. Full detail in `DESIGN_CRITERIA.md` §11.
+  What it still does NOT cover: `addPhoto`, because `PhotoCapture` goes through
+  `expo-image-picker` and cannot mount in a browser.
 - **The render harness is web, not iOS.** `react-native` aliases to
   `react-native-web`, so a baseline is evidence about structure, hierarchy and
   colour — what the token system makes claims about — and not about how a
   shadow, a font metric or a safe-area inset lands on a device.
   `expo-linear-gradient` is a declared fidelity substitution.
-- **AnklePath's `MainTabs`, Plan, Track and Learn are still in the tree**, now
-  unreferenced by the stack. Left deliberately — a rewrite and a deletion should
-  not be reviewed as one diff.
+- **Legacy Plan, Track and Learn screens are still in the tree**, now
+  unreferenced by the stack. The obsolete `MainTabs` navigator has been deleted;
+  the remaining legacy screens should be removed in a separate deletion-only
+  cleanup after the store-ready app has been smoke-tested.
 - **The onboarding `SignUp` screen still has no prototype route or baseline.**
   It exists only in the RN app.
+- **Store readiness still has external steps.** Play/App Store declarations,
+  legal-page publication, DPAs, Firebase provider setup, Firestore rules
+  deployment and native-device smoke tests must be completed outside the repo.
 - **Off-scale font sizes and raw hex values remain** in consumer code, under a
   ratchet that can only tighten.

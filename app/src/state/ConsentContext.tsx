@@ -1,7 +1,7 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const CONSENT_STORAGE_KEY = "@anklepath/consent/v1";
+export const CONSENT_STORAGE_KEY = "@healthcompanion/consent/v1";
 
 // Bump when the wording of what users agree to changes materially. A stored
 // consent recorded against an older version no longer counts as granted, so the

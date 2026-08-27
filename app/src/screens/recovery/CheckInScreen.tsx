@@ -29,10 +29,12 @@
 // ============================================================
 
 import { useState } from "react";
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Dimensions, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useAppTheme } from "../../state/AppThemeContext";
 import { useRecoveryData } from "../../state/recoveryContext";
+import { useKeyboardHeight } from "../../hooks/useKeyboardHeight";
 import { painStep, scale } from "../../theme/tokens.generated";
 import type { QuickAnswer, ThreeLevel } from "../../types/recovery";
 import { Body, Card, Caption, PrimaryButton, QuietButton, SectionLabel, Title } from "../../components/recovery/primitives";
@@ -45,7 +47,10 @@ const OPTIONS: { key: QuickAnswer; label: string; descriptor: string }[] = [
 
 export function RecoveryCheckInScreen({ onDone }: { onDone: () => void }) {
   const { mode, tokens } = useAppTheme();
+  const insets = useSafeAreaInsets();
+  const keyboardHeight = useKeyboardHeight();
   const { addCheckIn } = useRecoveryData();
+  const viewportHeight = Dimensions.get("window").height;
 
   const [choice, setChoice] = useState<QuickAnswer | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
@@ -83,7 +88,16 @@ export function RecoveryCheckInScreen({ onDone }: { onDone: () => void }) {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: tokens.color.surface.base }}
-      contentContainerStyle={{ padding: scale.space[4], gap: scale.space[5] }}
+      contentContainerStyle={{
+        flexGrow: 1,
+        justifyContent: "flex-end",
+        paddingHorizontal: scale.space[4],
+        paddingTop: insets.top + Math.max(scale.space[4], viewportHeight * 0.34),
+        paddingBottom: insets.bottom + scale.space[6] + keyboardHeight,
+        gap: scale.space[5],
+      }}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="interactive"
     >
       {/* LAYER ONE — largest, first, typing-free. */}
       <View style={{ gap: scale.space[3] }}>

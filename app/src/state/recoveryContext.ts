@@ -22,6 +22,21 @@ import type {
 } from "../types/recovery";
 
 export type RecoveryDataValue = {
+  /**
+   * ALWAYS TRUE FOR ANYTHING THAT CAN READ IT, and that is the point.
+   *
+   * It used to be a flag every screen was free to ignore, and every screen did:
+   * it had no consumers anywhere in the Recovery Companion tree, so Home's
+   * first paint said "0 check-ins" over a forty-five-day recovery and the
+   * timeline said "Nothing here yet." before it had looked. Both are factual
+   * claims about somebody's own recovery, made before the data existed.
+   *
+   * `RecoveryDataProvider` now withholds its children until it is true, so a
+   * consumer cannot read `timeline` before `hydrated` — there is no consumer
+   * yet. It stays on the type because the provider still has the state and
+   * because removing it would make the guarantee harder to find, not because a
+   * screen should branch on it.
+   */
   hydrated: boolean;
   journey: RecoveryJourney;
   timeline: TimelineEntry[];

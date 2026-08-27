@@ -1,11 +1,15 @@
-# AnklePath
+# Healthcompanion
 
-Expo React Native frontend for AnklePath, a free-first ankle injury recovery app.
+Expo React Native frontend for Healthcompanion, a free-first recovery companion app.
+The Recovery Companion experience is the active app shell; older AnklePath Plan,
+Track, and Learn screens remain only as unreferenced legacy code until a
+deletion-only cleanup.
 
 ## Must do before the next store submission
 
 Compliance work that lands outside the codebase. Tick these off before submitting
-the premium release — several are rejection or fine risks, not nice-to-haves.
+the store-ready free MVP — several are rejection or fine risks, not nice-to-haves.
+The short operational checklist lives in [`STORE_READY_MVP_CHECKLIST.md`](STORE_READY_MVP_CHECKLIST.md).
 
 ### Store declarations (changed since 1.0.2 — must be updated)
 
@@ -19,12 +23,12 @@ the premium release — several are rejection or fine risks, not nice-to-haves.
       consent-gated, and account deletion is available in-app (Guideline
       5.1.1(v)). Declare health data as collected and linked to the user.
 - [ ] Confirm the **account deletion URL** is set in Play Console:
-      <https://timfx1.github.io/anklepath/delete-account.html>
+      <https://timfx1.github.io/healthcompanion/delete-account.html>
 
 ### Legal pages (staged, not yet live)
 
 - [ ] Merge the **`premium-policies`** branch of
-      <https://github.com/Timfx1/anklepath> into `main`. GitHub Pages only serves
+      <https://github.com/Timfx1/healthcompanion> into `main`. GitHub Pages only serves
       `main`, so nothing is live until that merge. Do it **before** submitting —
       reviewers open the privacy policy URL during review.
 - [ ] Add a **USt-IdNr** to `impressum.html` if you are VAT-registered.
@@ -79,13 +83,13 @@ This uses LAN because it is more reliable for the installed development build. I
 npm.cmd run start:dev-client:tunnel
 ```
 
-Open the installed AnklePath development app after Metro starts. A development build does not include the JavaScript bundle inside the APK, so it shows "Unable to load script" when Metro is not running.
+Open the installed Healthcompanion development app after Metro starts. A development build does not include the JavaScript bundle inside the APK, so it shows "Unable to load script" when Metro is not running.
 
 ## Firebase Setup
 
 Create a Firebase web app in the Firebase console, enable Authentication, enable Anonymous sign-in, and create a Firestore database.
 
-Important: AnklePath uses **Cloud Firestore**, not Realtime Database. If the waitlist says the client is offline while your internet works, check that Firebase Console has `Build > Firestore Database` created for this project. The Realtime Database screen is a different Firebase product and will not receive AnklePath waitlist writes.
+Important: Healthcompanion uses **Cloud Firestore**, not Realtime Database. If the waitlist says the client is offline while your internet works, check that Firebase Console has `Build > Firestore Database` created for this project. The Realtime Database screen is a different Firebase product and will not receive Healthcompanion waitlist writes.
 
 Create a local `.env` file from `.env.example`:
 
@@ -107,7 +111,7 @@ npm.cmd start -- --clear
 In development, Metro will print a safe connection log when Firebase is available:
 
 ```text
-[AnklePath/Firebase] Connected
+[Healthcompanion/Firebase] Connected
 ```
 
 ### Sign-In Provider Setup
@@ -127,7 +131,7 @@ EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=your_web_client_id
 
 Apple sign-in requires Firebase Authentication > Sign-in method > Apple to be enabled. It is available on supported iOS devices and will need Apple developer configuration before production release.
 
-OAuth note: Google and Apple sign-in should be tested in an EAS development build, not Expo Go. Expo Go cannot use AnklePath's own custom URL scheme for OAuth redirects. Email and Guest can still be tested in Expo Go.
+OAuth note: Google and Apple sign-in should be tested in an EAS development build, not Expo Go. Expo Go cannot use Healthcompanion's own custom URL scheme for OAuth redirects. Email and Guest can still be tested in Expo Go.
 
 After installing or changing native auth packages, rebuild the development app:
 
@@ -237,7 +241,7 @@ npm.cmd start -- --clear
 In development, Metro will print a safe connection log when PostHog is available:
 
 ```text
-[AnklePath/PostHog] Connected
+[Healthcompanion/PostHog] Connected
 ```
 
 ## Test Analytics
@@ -265,8 +269,8 @@ pain_log_saved
 When testing the waitlist, Metro should also show:
 
 ```text
-[AnklePath/PostHog] Event sent
-[AnklePath/Firestore] Waitlist signup saved
+[Healthcompanion/PostHog] Event sent
+[Healthcompanion/Firestore] Waitlist signup saved
 ```
 
 Events are centralized in:
@@ -280,7 +284,7 @@ Add new events there first, then call the helper from screens or service flows.
 
 ## Dormant Paywall Setup
 
-AnklePath includes a dormant paywall screen that can be previewed later without changing the app flow today. The app remains free-first by default:
+Healthcompanion includes a dormant paywall screen that can be previewed later without changing the app flow today. The app remains free-first by default:
 
 ```bash
 EXPO_PUBLIC_PAYWALL_ENABLED=false
@@ -320,14 +324,14 @@ All five advertised benefits on the paywall (`PAYWALL_COPY.benefits`) are implem
 rejection risk under Apple Guideline 3.1.2 and Google's subscription policy, so keep this list and
 the paywall copy in step whenever either changes.
 
-- **Exportable recovery report** (`ReportsScreen`) — free users see an upsell; entitled users get the full summary **and** a PDF export (`src/services/report/`). The PDF is rendered on device with `expo-print` and handed to the OS share sheet with `expo-sharing`; it is never uploaded anywhere.
+- **Deeper report insights** (`ReportsScreen`) — the report itself and PDF export stay free forever. When billing is live, premium can add extra depth to insights without gating the report surface.
 - **Advanced progress insights** (`buildProgressInsights`) — 7-day vs previous-7-day rolling averages, check-in streak and consistency, exercise-day vs rest-day pain comparison, most-reported symptom, best/hardest day, and a plateau flag. Shown on `ReportsScreen` and included in the PDF.
-- **Smarter rehab progression** (`buildProgression`) — the recovery phase and progress bar are derived from the user's own check-ins instead of the old hardcoded `recoveryPhase` constant. The phase and bar stay **free**; the premium card explains why the plan is holding/advancing, which criteria are still open, and what to add next. Rising pain or swelling returns `ease_back` and routes to the safety screen.
-- **Return-to-sport readiness** (`ReadinessScreen`, `buildReadiness`) — checks the four signs from the app's own "When can I return to sport?" article against the user's logs. Never phrased as clearance; always routes back to a clinician.
-- **Extended exercise library** (`premiumExercises` in `src/data/mockRecoveryPlan.ts`) — the free daily plan is unchanged; premium adds later-stage progressions shown on the Plan tab.
+- **Smarter recovery progression** (`buildProgression`) — the recovery phase and progress bar are derived from the user's own check-ins. The phase and bar stay **free**; premium adds explanation depth only.
+- **Readiness signals** (`buildReadiness`) — checks recovery signals against the user's logs. Never phrased as clearance; always routes back to a clinician.
+- **Education deep dives** — the free education path is unchanged; premium deep dives add depth after the core explanation.
 
 All of the analysis lives in one pure module, `src/utils/recoveryInsights.ts` (no React, no storage,
-no network), so Reports, the Plan tab, Readiness and the PDF can never disagree about the same
+no network), so Reports, Progress, readiness logic and the PDF can never disagree about the same
 numbers. Two things to watch when editing it: `painEntries`/`trackerCheckIns` are stored **newest
 first**, and direction differs per signal (`HIGHER_IS_BETTER`) — getting either wrong still
 typechecks but silently inverts a trend.
@@ -344,12 +348,12 @@ Entitlement is the store's source of truth via RevenueCat. `PremiumSync` re-chec
 ### RevenueCat and Google Play Billing setup
 
 0. In Google Play Console, set up your **Payments profile / merchant account** (bank account, tax, and identity) under Setup → Payments profile. Subscriptions cannot be sold until this exists.
-1. In Google Play Console, create the AnklePath app with package name `com.timfx1.anklepath`.
-2. Create a subscription product, for example `anklepath_premium_monthly`.
+1. In Google Play Console, create the Healthcompanion app with package name `com.timfx1.healthcompanion`.
+2. Create a subscription product, for example `healthcompanion_premium_monthly`.
 3. Add an auto-renewing monthly base plan priced at EUR 9.99/month, and set the countries/regions it is available in.
 4. Add a free-trial offer for 14 days if you want the trial shown in the native Google purchase sheet.
 5. Activate the subscription/base plan/offer in Play Console.
-6. In RevenueCat, create a project and add an Android app with package `com.timfx1.anklepath`.
+6. In RevenueCat, create a project and add an Android app with package `com.timfx1.healthcompanion`.
 7. Connect RevenueCat to Google Play using a Google Play service account key.
 8. Import the Google Play subscription product into RevenueCat.
 9. Create an entitlement with identifier `premium`.
@@ -361,7 +365,7 @@ Entitlement is the store's source of truth via RevenueCat. `PremiumSync` re-chec
 For iOS, repeat the same pattern in App Store Connect and RevenueCat:
 
 0. In App Store Connect, sign the **Paid Applications agreement** and complete banking + tax under Business → Agreements, Tax, and Banking. Auto-renewable subscriptions cannot be sold until this is active.
-1. Create the iOS app with bundle ID `com.timfx1.anklepath`.
+1. Create the iOS app with bundle ID `com.timfx1.healthcompanion`.
 2. Create a monthly auto-renewable subscription priced to match (EUR 9.99) with a 14-day introductory free trial, and set its availability by country.
 3. Add the iOS app in RevenueCat.
 4. Import the App Store Connect product.
@@ -458,7 +462,7 @@ Recommendation for now: stay with the curated in-app articles and, when ready, d
 
 ## Sentry Crash Monitoring
 
-AnklePath uses Sentry only for crash and error monitoring. Firebase remains the data layer, and PostHog remains the product analytics layer.
+Healthcompanion uses Sentry only for crash and error monitoring. Firebase remains the data layer, and PostHog remains the product analytics layer.
 
 ### Environment variables
 
@@ -484,7 +488,7 @@ Also add `EXPO_PUBLIC_SENTRY_DSN` to your EAS environment so the app can send ev
 ### Create Sentry project
 
 1. Create a Sentry account or open your Sentry organization.
-2. Create a React Native project for AnklePath.
+2. Create a React Native project for Healthcompanion.
 3. Copy the DSN from Project Settings > Client Keys.
 4. Paste it into `.env` as `EXPO_PUBLIC_SENTRY_DSN`.
 5. Create an auth token with source map upload/release permissions.
@@ -520,7 +524,7 @@ Open Profile. In development or preview builds, a dev-only card appears:
 Test Sentry Error
 ```
 
-Tap it, then check Sentry Issues for `AnklePath Sentry test error`.
+Tap it, then check Sentry Issues for `Healthcompanion Sentry test error`.
 
 ### Android preview build
 
