@@ -7,8 +7,8 @@
     "userInterfaceStyle": "dark",
     "icon": "./assets/icon.png",
     "updates": {
-      "url": "https://u.expo.dev/36805750-1c1d-42d2-b72e-38d518668f9c",
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/6ea0247c-adb7-494f-8479-d41de75cc50d"
     },
     "runtimeVersion": {
       "policy": "appVersion"
@@ -75,8 +75,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "36805750-1c1d-42d2-b72e-38d518668f9c"
+        "projectId": "6ea0247c-adb7-494f-8479-d41de75cc50d"
       }
-    }
+    },
+    "owner": "timfx1"
   }
 }
