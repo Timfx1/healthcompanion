@@ -34,7 +34,7 @@ function toPlainDocument(data: Record<string, unknown>, id?: string): Record<str
 }
 
 /**
- * Collects everything Healthcompanion holds about the signed-in user, for the GDPR
+ * Collects everything Recovery Health Companion holds about the signed-in user, for the GDPR
  * Art. 20 portability right. `deviceData` is passed in by the caller because it
  * lives in AppDataContext rather than Firestore — a guest who never synced
  * still gets a complete export of what is on their device.
@@ -48,7 +48,7 @@ export async function buildUserDataExport(deviceData: Record<string, unknown>): 
     painLogs: [],
     deviceData,
     notes: [
-      "This file contains everything Healthcompanion stores about your account.",
+      "This file contains everything Recovery Health Companion stores about your account.",
       "Questions or corrections: see the contact address in our Privacy Policy."
     ]
   };

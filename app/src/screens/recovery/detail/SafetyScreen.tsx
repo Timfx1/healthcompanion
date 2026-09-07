@@ -79,7 +79,7 @@ export function SafetyScreen({ onClose }: { onClose: () => void }) {
       <DetailCard>
         <Body>This is general information, not advice about you.</Body>
         <Caption>
-          Healthcompanion does not diagnose anything. If you are worried about a symptom, contact a clinician —
+          Recovery Health Companion does not diagnose anything. If you are worried about a symptom, contact a clinician —
           including when it is not on this list.
         </Caption>
         {NEEDS_CLINICAL_REVIEW && (

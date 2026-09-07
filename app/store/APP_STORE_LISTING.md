@@ -1,4 +1,4 @@
-# Healthcompanion — App Store Connect listing (paste-ready)
+# Recovery Health Companion — App Store Connect listing (paste-ready)
 
 All text below fits Apple's character limits. Replace the placeholder URLs once your
 legal site is live (see `legal/` folder → host on GitHub Pages).
@@ -6,7 +6,7 @@ legal site is live (see `legal/` folder → host on GitHub Pages).
 ---
 
 ## App name (max 30 chars)
-`Healthcompanion Recovery`  ← 24 chars
+`Recovery Health Companion`  ← 25 chars
 
 ## Subtitle (max 30 chars)
 `Recovery notes & reports`  ← 24 chars
@@ -20,12 +20,12 @@ legal site is live (see `legal/` folder → host on GitHub Pages).
 
 ## Description (max 4000 chars)
 
-Healthcompanion is a calm recovery companion for injuries, surgery, illness, and flare-ups. It helps you remember what happened, spot changes over time, and bring a useful summary to your clinician — free to start.
+Recovery Health Companion is a calm recovery companion for injuries, surgery, illness, and flare-ups. It helps you remember what happened, spot changes over time, and bring a useful summary to your clinician — free to start.
 
 WHAT YOU GET
 
 • A quick recovery setup
-Answer a few questions about what you are recovering from, when it started, your symptoms, and your goal. Healthcompanion keeps your recovery context in one place.
+Answer a few questions about what you are recovering from, when it started, your symptoms, and your goal. Recovery Health Companion keeps your recovery context in one place.
 
 • Fast check-ins and notes
 Log how you are doing in a few taps. Add journal notes, questions for your doctor, medication records, appointments, and weekly reflections without pressure or streaks.
@@ -39,22 +39,22 @@ Read short, plain-language recovery articles with sources and safety reminders. 
 • Safety guidance and a doctor summary
 Know the warning signs that mean you should see a clinician, and generate a quick summary of your symptoms and pain history to bring to an appointment.
 
-WHY HEALTHCOMPANION
+WHY Recovery Health Companion
 
-Recovery is hard to remember clearly, especially when symptoms change slowly. Healthcompanion gives you a simple place to capture what matters and turn it into something useful later.
+Recovery is hard to remember clearly, especially when symptoms change slowly. Recovery Health Companion gives you a simple place to capture what matters and turn it into something useful later.
 
 FREE TO START
 
-Healthcompanion is free to use. Optional premium features may be offered in the future, but the core check-in, timeline, safety guidance, and doctor report are available at no cost.
+Recovery Health Companion is free to use. Optional premium features may be offered in the future, but the core check-in, timeline, safety guidance, and doctor report are available at no cost.
 
 IMPORTANT — MEDICAL DISCLAIMER
 
-Healthcompanion is a general health & fitness / recovery-education app. It is not a medical device and does not diagnose, treat, cure, or prevent any condition. It provides educational recovery information and does not replace assessment, diagnosis, or treatment by a qualified clinician. Always seek professional care for your specific situation, and seek urgent help for severe or worsening symptoms.
+Recovery Health Companion is a general health & fitness / recovery-education app. It is not a medical device and does not diagnose, treat, cure, or prevent any condition. It provides educational recovery information and does not replace assessment, diagnosis, or treatment by a qualified clinician. Always seek professional care for your specific situation, and seek urgent help for severe or worsening symptoms.
 
 Questions or feedback? Email 24.stom.wasswatimothy@gmail.com
 
 ## What's New (version 0.1.0 release notes)
-`First Healthcompanion release. Track recovery changes, save notes and photos, review safety guidance, and create a doctor-ready report — free to start.`
+`First Recovery Health Companion release. Track recovery changes, save notes and photos, review safety guidance, and create a doctor-ready report — free to start.`
 
 ---
 

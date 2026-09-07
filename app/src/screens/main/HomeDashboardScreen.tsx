@@ -37,7 +37,7 @@ export function HomeDashboardScreen() {
     <ScreenContainer>
       <View style={[styles.headerHero, { backgroundColor: tokens.color.accent.default }]}>
         <View>
-          <Text style={styles.kicker}>Healthcompanion</Text>
+          <Text style={styles.kicker}>Recovery Health Companion</Text>
           <Text style={styles.title}>Today's Recovery Plan</Text>
         </View>
         <View style={styles.headerIcon}>

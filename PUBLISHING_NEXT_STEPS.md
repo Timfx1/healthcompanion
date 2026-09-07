@@ -1,4 +1,4 @@
-# Healthcompanion Publishing Next Steps
+# Recovery Health Companion Publishing Next Steps
 
 This repo is locally committed and ready to push, but the remote repository
 `timfx1/healthcompanion` must exist on GitHub first.

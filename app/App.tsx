@@ -110,7 +110,7 @@ function RootErrorFallback() {
   return (
     <View style={styles.errorFallback}>
       <Text style={styles.errorTitle}>Something went wrong</Text>
-      <Text style={styles.errorText}>Please close and reopen Healthcompanion. The error has been reported.</Text>
+      <Text style={styles.errorText}>Please close and reopen Recovery Health Companion. The error has been reported.</Text>
     </View>
   );
 }

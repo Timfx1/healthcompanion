@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Healthcompanion",
+    "name": "Recovery Health Companion",
     "slug": "healthcompanion",
     "version": "1.0.4",
     "orientation": "portrait",
@@ -41,7 +41,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow Healthcompanion to choose a recovery photo from your photo library."
+          "photosPermission": "Allow Recovery Health Companion to choose a recovery photo from your photo library."
         }
       ],
       [

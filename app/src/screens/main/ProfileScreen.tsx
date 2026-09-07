@@ -83,7 +83,7 @@ export function ProfileScreen() {
   const emailDeletionRequest = () => {
     const subject = encodeURIComponent("Delete my account");
     const body = encodeURIComponent(
-      `Please delete my Healthcompanion account and associated data.\n\nAccount: ${profile.displayName}`
+      `Please delete my Recovery Health Companion account and associated data.\n\nAccount: ${profile.displayName}`
     );
     Linking.openURL(`mailto:${LEGAL.supportEmail}?subject=${subject}&body=${body}`).catch(() => {});
   };
@@ -143,7 +143,7 @@ export function ProfileScreen() {
         completedExerciseIds
       });
       await Share.share({
-        title: "Healthcompanion data export",
+        title: "Recovery Health Companion data export",
         message: JSON.stringify(payload, null, 2)
       });
     } catch (error) {
@@ -376,7 +376,7 @@ export function ProfileScreen() {
             subtitle="Development and preview builds only"
             icon="bug"
             onPress={() =>
-              captureAppError(new Error("Healthcompanion Sentry test error"), {
+              captureAppError(new Error("Recovery Health Companion Sentry test error"), {
                 source: "manual_test",
                 sourceScreen: "Profile",
                 buildProfile
@@ -421,13 +421,13 @@ export function ProfileScreen() {
         />
         <InfoCard
           title="Terms of Use"
-          subtitle="The rules for using Healthcompanion"
+          subtitle="The rules for using Recovery Health Companion"
           icon="document-text"
           onPress={() => WebBrowser.openBrowserAsync(LEGAL.termsUrl)}
         />
         <InfoCard
           title="Impressum"
-          subtitle="Who operates Healthcompanion"
+          subtitle="Who operates Recovery Health Companion"
           icon="business"
           onPress={() => WebBrowser.openBrowserAsync(LEGAL.impressumUrl)}
         />

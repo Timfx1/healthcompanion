@@ -132,7 +132,7 @@ export function RecoveryProfileScreen({
 
       {/* §10: permanent, not dismissible. */}
       <Caption>
-        Healthcompanion is not a medical device and does not diagnose, treat or cure anything. Ranges shown in the
+        Recovery Health Companion is not a medical device and does not diagnose, treat or cure anything. Ranges shown in the
         app describe common experiences, not a schedule. Always speak to a qualified clinician about your own recovery.
       </Caption>
       <Caption>Your entries stay on this device.</Caption>

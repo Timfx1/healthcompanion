@@ -1,6 +1,6 @@
 # Store-Ready MVP Checklist
 
-Use this for the free Healthcompanion release. Billing stays dormant for this
+Use this for the free Recovery Health Companion release. Billing stays dormant for this
 milestone: keep `EXPO_PUBLIC_PAYWALL_ENABLED=false` and
 `EXPO_PUBLIC_BILLING_ENABLED=false`.
 

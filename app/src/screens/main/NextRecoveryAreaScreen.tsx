@@ -100,7 +100,7 @@ export function NextRecoveryAreaScreen() {
         "We could not save your request right now. Please check your connection and try again."
       );
       if (__DEV__) {
-        console.log("[Healthcompanion/FeatureRequest] Submit failed", {
+        console.log("[Recovery Health Companion/FeatureRequest] Submit failed", {
           message: error instanceof Error ? error.message : "Unknown error"
         });
       }
@@ -117,7 +117,7 @@ export function NextRecoveryAreaScreen() {
             Thanks - this helps us decide what to build next.
           </Text>
           <Text style={[styles.successText, { color: palette.textMuted }]}>
-            Ankle recovery remains the current Healthcompanion focus while we learn what support users want next.
+            Ankle recovery remains the current Recovery Health Companion focus while we learn what support users want next.
           </Text>
           <AppButton label="Back to app" onPress={() => navigation.goBack()} />
         </View>

@@ -1,6 +1,6 @@
-# Healthcompanion
+# Recovery Health Companion
 
-Expo React Native frontend for Healthcompanion, a free-first recovery companion app.
+Expo React Native frontend for Recovery Health Companion, a free-first recovery companion app.
 The Recovery Companion experience is the active app shell; older AnklePath Plan,
 Track, and Learn screens remain only as unreferenced legacy code until a
 deletion-only cleanup.
@@ -83,13 +83,13 @@ This uses LAN because it is more reliable for the installed development build. I
 npm.cmd run start:dev-client:tunnel
 ```
 
-Open the installed Healthcompanion development app after Metro starts. A development build does not include the JavaScript bundle inside the APK, so it shows "Unable to load script" when Metro is not running.
+Open the installed Recovery Health Companion development app after Metro starts. A development build does not include the JavaScript bundle inside the APK, so it shows "Unable to load script" when Metro is not running.
 
 ## Firebase Setup
 
 Create a Firebase web app in the Firebase console, enable Authentication, enable Anonymous sign-in, and create a Firestore database.
 
-Important: Healthcompanion uses **Cloud Firestore**, not Realtime Database. If the waitlist says the client is offline while your internet works, check that Firebase Console has `Build > Firestore Database` created for this project. The Realtime Database screen is a different Firebase product and will not receive Healthcompanion waitlist writes.
+Important: Recovery Health Companion uses **Cloud Firestore**, not Realtime Database. If the waitlist says the client is offline while your internet works, check that Firebase Console has `Build > Firestore Database` created for this project. The Realtime Database screen is a different Firebase product and will not receive Recovery Health Companion waitlist writes.
 
 Create a local `.env` file from `.env.example`:
 
@@ -111,7 +111,7 @@ npm.cmd start -- --clear
 In development, Metro will print a safe connection log when Firebase is available:
 
 ```text
-[Healthcompanion/Firebase] Connected
+[Recovery Health Companion/Firebase] Connected
 ```
 
 ### Sign-In Provider Setup
@@ -131,7 +131,7 @@ EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=your_web_client_id
 
 Apple sign-in requires Firebase Authentication > Sign-in method > Apple to be enabled. It is available on supported iOS devices and will need Apple developer configuration before production release.
 
-OAuth note: Google and Apple sign-in should be tested in an EAS development build, not Expo Go. Expo Go cannot use Healthcompanion's own custom URL scheme for OAuth redirects. Email and Guest can still be tested in Expo Go.
+OAuth note: Google and Apple sign-in should be tested in an EAS development build, not Expo Go. Expo Go cannot use Recovery Health Companion's own custom URL scheme for OAuth redirects. Email and Guest can still be tested in Expo Go.
 
 After installing or changing native auth packages, rebuild the development app:
 
@@ -241,7 +241,7 @@ npm.cmd start -- --clear
 In development, Metro will print a safe connection log when PostHog is available:
 
 ```text
-[Healthcompanion/PostHog] Connected
+[Recovery Health Companion/PostHog] Connected
 ```
 
 ## Test Analytics
@@ -269,8 +269,8 @@ pain_log_saved
 When testing the waitlist, Metro should also show:
 
 ```text
-[Healthcompanion/PostHog] Event sent
-[Healthcompanion/Firestore] Waitlist signup saved
+[Recovery Health Companion/PostHog] Event sent
+[Recovery Health Companion/Firestore] Waitlist signup saved
 ```
 
 Events are centralized in:
@@ -284,7 +284,7 @@ Add new events there first, then call the helper from screens or service flows.
 
 ## Dormant Paywall Setup
 
-Healthcompanion includes a dormant paywall screen that can be previewed later without changing the app flow today. The app remains free-first by default:
+Recovery Health Companion includes a dormant paywall screen that can be previewed later without changing the app flow today. The app remains free-first by default:
 
 ```bash
 EXPO_PUBLIC_PAYWALL_ENABLED=false
@@ -348,7 +348,7 @@ Entitlement is the store's source of truth via RevenueCat. `PremiumSync` re-chec
 ### RevenueCat and Google Play Billing setup
 
 0. In Google Play Console, set up your **Payments profile / merchant account** (bank account, tax, and identity) under Setup → Payments profile. Subscriptions cannot be sold until this exists.
-1. In Google Play Console, create the Healthcompanion app with package name `com.timfx1.healthcompanion`.
+1. In Google Play Console, create the Recovery Health Companion app with package name `com.timfx1.healthcompanion`.
 2. Create a subscription product, for example `healthcompanion_premium_monthly`.
 3. Add an auto-renewing monthly base plan priced at EUR 9.99/month, and set the countries/regions it is available in.
 4. Add a free-trial offer for 14 days if you want the trial shown in the native Google purchase sheet.
@@ -462,7 +462,7 @@ Recommendation for now: stay with the curated in-app articles and, when ready, d
 
 ## Sentry Crash Monitoring
 
-Healthcompanion uses Sentry only for crash and error monitoring. Firebase remains the data layer, and PostHog remains the product analytics layer.
+Recovery Health Companion uses Sentry only for crash and error monitoring. Firebase remains the data layer, and PostHog remains the product analytics layer.
 
 ### Environment variables
 
@@ -488,7 +488,7 @@ Also add `EXPO_PUBLIC_SENTRY_DSN` to your EAS environment so the app can send ev
 ### Create Sentry project
 
 1. Create a Sentry account or open your Sentry organization.
-2. Create a React Native project for Healthcompanion.
+2. Create a React Native project for Recovery Health Companion.
 3. Copy the DSN from Project Settings > Client Keys.
 4. Paste it into `.env` as `EXPO_PUBLIC_SENTRY_DSN`.
 5. Create an auth token with source map upload/release permissions.
@@ -524,7 +524,7 @@ Open Profile. In development or preview builds, a dev-only card appears:
 Test Sentry Error
 ```
 
-Tap it, then check Sentry Issues for `Healthcompanion Sentry test error`.
+Tap it, then check Sentry Issues for `Recovery Health Companion Sentry test error`.
 
 ### Android preview build
 

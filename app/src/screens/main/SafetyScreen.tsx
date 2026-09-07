@@ -43,7 +43,7 @@ export function SafetyScreen() {
 
   const shareSummary = () => {
     if (!summary) return;
-    Share.share({ title: "Healthcompanion summary", message: summary }).catch(() => undefined);
+    Share.share({ title: "Recovery Health Companion summary", message: summary }).catch(() => undefined);
   };
 
   return (

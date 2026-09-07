@@ -1,4 +1,4 @@
-# Healthcompanion
+# Recovery Health Companion
 
 A calm, guilt-free recovery companion for anyone recovering from an injury, surgery,
 illness or chronic flare. It remembers your recovery so you don't have to, and
@@ -16,7 +16,7 @@ Being precise about this, because the gap matters:
 |---|---|
 | **Design system** (`design-system/`) | Real. One token source, two platforms **plus paper**, ten gates. |
 | **Web prototype** (`Onboarding Flow/`) | Real, and the reference implementation — 12 onboarding screens + 5 tabs, both colour modes. A Figma Make export, since evolved. |
-| **React Native app** (`app/`) | **Feature-complete for Phase 1 §5, and now tested.** The public app name is **Healthcompanion**. Five Recovery Companion tabs and all seventeen detail screens run over `types/recovery.ts`, a cited corridor and an AsyncStorage store. Fresh users now start from their onboarding answers rather than the 45-day demo journey; that demo remains explicit harness-only fixture data. 93 pure-rule tests, 66 render and behaviour tests over 50 baselines, and 27 vertical-slice tests run the REAL provider over storage into a real screen. The obsolete AnklePath tab navigator has been removed; older Plan / Track / Learn screens remain only as unreferenced legacy code. |
+| **React Native app** (`app/`) | **Feature-complete for Phase 1 §5, and now tested.** The public app name is **Recovery Health Companion**. Five Recovery Companion tabs and all seventeen detail screens run over `types/recovery.ts`, a cited corridor and an AsyncStorage store. Fresh users now start from their onboarding answers rather than the 45-day demo journey; that demo remains explicit harness-only fixture data. 93 pure-rule tests, 66 render and behaviour tests over 50 baselines, and 27 vertical-slice tests run the REAL provider over storage into a real screen. The obsolete AnklePath tab navigator has been removed; older Plan / Track / Learn screens remain only as unreferenced legacy code. |
 | **§5 detail/modal screens** | **All 17 exist** in the prototype, each with a dev route and a baseline. Includes the Doctor Report, the flagship, which is free forever and enforced as such by `restricted.mjs`. |
 
 `tokens.native.ts` is now consumed by `app/`, vendored as
