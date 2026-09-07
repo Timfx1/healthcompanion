@@ -35,7 +35,9 @@ jobs:
           test -f app/legal/impressum.html
           touch app/legal/.nojekyll
 
-      - uses: actions/configure-pages@v5
+      # If this fails with "Get Pages site failed", enable Pages in
+      # Settings -> Pages -> Source: GitHub Actions, then rerun this workflow.
+      - uses: actions/configure-pages@v6
 
       - uses: actions/upload-pages-artifact@v3
         with:

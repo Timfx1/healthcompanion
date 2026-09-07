@@ -24,8 +24,17 @@ After the first push:
 
 1. Open `https://github.com/timfx1/healthcompanion/settings/pages`
 2. Set Source to `GitHub Actions`
-3. Open the Actions tab.
-4. Run or wait for the `legal-pages` workflow.
+3. Click Save.
+4. Open the Actions tab.
+5. Re-run the `legal-pages` workflow if it already failed once.
+
+The workflow uses `actions/configure-pages@v6`. If GitHub reports
+`Get Pages site failed` / `HttpError: Not Found`, the Pages site has not been
+enabled for the repository yet. The fix is the Settings -> Pages step above.
+
+Automatic enablement is possible only with a token other than `GITHUB_TOKEN`
+that has Pages/admin permission. For this repo, manual enablement is simpler
+and safer.
 
 Expected public legal URLs:
 
@@ -90,4 +99,3 @@ node tests/run.mjs
 corepack pnpm@10.34.3 exec playwright test --config harness/playwright.config.ts slice
 node device/check.mjs
 ```
-
